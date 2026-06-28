@@ -19,10 +19,10 @@ Capture signups by role while the platform is built.
 ## Phase 1: MVP Platform
 Goal: artist profiles live, shareable, discoverable.
 
-- [ ] Next.js app scaffolded on Cloudflare Pages
+- [x] Next.js app scaffolded (Workers via OpenNext), deployed to preview
 - [ ] Auth (sign up, log in, email verify)
 - [ ] Artist profile creation (bio, genre, photo, links)
-- [ ] Public artist page at cerberuslive.studio/artist/{slug}
+- [x] Public artist page at cerberuslive.studio/artist/{slug}
 - [ ] Fan accounts (follow an artist)
 - [ ] Central discovery feed (browse artists by genre)
 - [ ] Admin dashboard (signups, users, approvals)

@@ -37,12 +37,12 @@ Project Manager: Francisco De La Paz
 
 | ID | Task | Status |
 |---|---|---|
-| 1.2.1 | Scaffold Next.js 14 app on Cloudflare via OpenNext | Pending |
+| 1.2.1 | Scaffold Next.js 15.5 app on Cloudflare Workers via OpenNext | Complete |
 | 1.2.2 | Choose auth provider (Clerk or NextAuth) | Pending |
 | 1.2.3 | Auth: sign up, log in, email verify | Pending |
 | 1.2.4 | Account roles: artist, fan, venue, admin | Pending |
 | 1.2.5 | Artist profile creation (bio, genre, photo, links) | Pending |
-| 1.2.6 | Public artist page at /artist/{slug} | Pending |
+| 1.2.6 | Public artist page at /artist/{slug} | Complete |
 | 1.2.7 | Fan accounts and follow system | Pending |
 | 1.2.8 | Central discovery feed, browse by genre | Pending |
 | 1.2.9 | Admin dashboard (signups, users, approvals) | Pending |
@@ -168,7 +168,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md. 36.5 hours to date at $85/hr (approximately $3,102.50).
+Seeded from docs/HOURS.md, extended at checkpoint. 49 hours to date at $85/hr (approximately $4,165).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -192,4 +192,11 @@ Seeded from docs/HOURS.md. 36.5 hours to date at $85/hr (approximately $3,102.50
 | Pre-session | Artist Agent Design | Software Engineer | 4.0 |
 | Pre-session | TOS and Content Policy | Project Manager | 2.0 |
 | Pre-session | Commission Structure Document | Project Manager | 1.0 |
-| **Total** | | | **36.5** |
+| 2026-06-28 | Next and OpenNext scaffold (version-trap, Windows debugging) | Lead Developer | 2.5 |
+| 2026-06-28 | Stack and CI architecture decisions | Solutions Architect | 1.5 |
+| 2026-06-28 | CI pipeline (GitHub Actions) and Resend setup | Deployment Engineer | 2.0 |
+| 2026-06-28 | Artist profile pages, home discovery, D1 schema and seed | Lead Developer | 2.5 |
+| 2026-06-28 | Deploy and SSR runtime verification | QA Engineer | 1.0 |
+| 2026-06-28 | Doc suite formalization (SPEC, VISION, ROADMAP, BUGS, PMP) | Technical Writer | 2.0 |
+| 2026-06-28 | WBS and Schedule formalization | Project Manager | 1.0 |
+| **Total** | | | **49.0** |
