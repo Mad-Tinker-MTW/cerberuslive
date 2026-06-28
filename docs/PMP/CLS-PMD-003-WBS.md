@@ -1,0 +1,195 @@
+# Work Breakdown Structure
+**Cerberus Live Studio**
+Document ID: CLS-PMD-003
+Version: 1.0
+Date: 2026-06-28
+Project Manager: Francisco De La Paz
+
+---
+
+## WBS Structure
+
+### 1.0 Cerberus Live Studio Project
+
+---
+
+#### 1.1 Stage 1: Phase 0 Waitlist
+
+| ID | Task | Status |
+|---|---|---|
+| 1.1.1 | Register domain cerberuslive.studio | Complete |
+| 1.1.2 | Landing page and brand identity (logo) | Complete |
+| 1.1.3 | Waitlist Worker plus D1 capturing signups by role | Complete |
+| 1.1.4 | hello@ and admin@ email routing to Outlook | Complete |
+| 1.1.5 | SSL provisioning | Complete |
+| 1.1.6 | One-worker IaC relaunch (wrangler.jsonc, D1 plus assets bindings) | Complete |
+| 1.1.7 | Turnstile bot protection wired and verified end to end | Complete |
+| 1.1.8 | Project homed at Q:\MTW\cerberuslive and registered in TinkerOps | Complete |
+| 1.1.9 | Platform planning: ULTRAPLAN, business model, commission structure | Complete |
+| 1.1.10 | Architecture and D1 schema design | Complete |
+| 1.1.11 | Documentation and PMP suite generated | Complete |
+| 1.1.12 | Clear test waitlist row before public launch | Open |
+| 1.1.13 | Create GitHub repo and push IaC relaunch | Open |
+
+---
+
+#### 1.2 Stage 2: Phase 1 MVP Platform
+
+| ID | Task | Status |
+|---|---|---|
+| 1.2.1 | Scaffold Next.js 14 app on Cloudflare via OpenNext | Pending |
+| 1.2.2 | Choose auth provider (Clerk or NextAuth) | Pending |
+| 1.2.3 | Auth: sign up, log in, email verify | Pending |
+| 1.2.4 | Account roles: artist, fan, venue, admin | Pending |
+| 1.2.5 | Artist profile creation (bio, genre, photo, links) | Pending |
+| 1.2.6 | Public artist page at /artist/{slug} | Pending |
+| 1.2.7 | Fan accounts and follow system | Pending |
+| 1.2.8 | Central discovery feed, browse by genre | Pending |
+| 1.2.9 | Admin dashboard (signups, users, approvals) | Pending |
+| 1.2.10 | Migrate waitlist emails to platform invites | Pending |
+| 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
+| 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
+
+---
+
+#### 1.3 Stage 3: Phase 2 Media Vault
+
+| ID | Task | Status |
+|---|---|---|
+| 1.3.1 | Artist agent app (Electron, Windows first) | Pending |
+| 1.3.2 | Agent: bundle cloudflared and local Express server | Pending |
+| 1.3.3 | Agent: one-click serve and tunnel URL auto-registration | Pending |
+| 1.3.4 | Track upload UI on artist dashboard | Pending |
+| 1.3.5 | Public media player on artist profile | Pending |
+| 1.3.6 | Featured track on profile card | Pending |
+| 1.3.7 | Play count tracking | Pending |
+| 1.3.8 | R2 admin-hosted always-on storage tier | Pending |
+| 1.3.9 | Phase 2 validation: acceptance criteria verified | Pending |
+
+---
+
+#### 1.4 Stage 4: Phase 3 Live Room and Venues
+
+| ID | Task | Status |
+|---|---|---|
+| 1.4.1 | Live stream window on artist profile | Pending |
+| 1.4.2 | Artist agent updated with stream output | Pending |
+| 1.4.3 | Event scheduling | Pending |
+| 1.4.4 | Central live feed, who is live now by genre | Pending |
+| 1.4.5 | 10-minute cap on free tier, extended via paid | Pending |
+| 1.4.6 | Manual Live Room approval flow | Pending |
+| 1.4.7 | Report button on every stream | Pending |
+| 1.4.8 | Venue profiles (space, capacity, dates, genres) | Pending |
+| 1.4.9 | Territory claim system (Booking Ready tier) | Pending |
+| 1.4.10 | Geographic discovery feed | Pending |
+| 1.4.11 | Phase 3 validation: acceptance criteria verified | Pending |
+
+---
+
+#### 1.5 Stage 5: Phase 4 Booking Layer
+
+| ID | Task | Status |
+|---|---|---|
+| 1.5.1 | Artist availability calendar | Pending |
+| 1.5.2 | Booking request form, venue to artist | Pending |
+| 1.5.3 | Accept, decline, counter flow | Pending |
+| 1.5.4 | Booking confirmation and messaging thread | Pending |
+| 1.5.5 | Book This Artist button | Pending |
+| 1.5.6 | Request a Live Set button | Pending |
+| 1.5.7 | Invite to Venue button | Pending |
+| 1.5.8 | Venue discovery dashboard | Pending |
+| 1.5.9 | Phase 4 validation: acquisition-ready milestone verified | Pending |
+
+---
+
+#### 1.6 Stage 6: Phase 5 Cerberus Managed
+
+| ID | Task | Status |
+|---|---|---|
+| 1.6.1 | Managed artist badge on profile | Pending |
+| 1.6.2 | Managed contract creation and tracking | Pending |
+| 1.6.3 | Commission tracking per booking (17.5 artist, 12.5 venue) | Pending |
+| 1.6.4 | Showcase creation and management tools | Pending |
+| 1.6.5 | Open platform performer slot booking | Pending |
+| 1.6.6 | Ticket minimum enforcement | Pending |
+| 1.6.7 | Artist reporting (plays, follows, booking history) | Pending |
+| 1.6.8 | Press kit PDF export | Pending |
+| 1.6.9 | Sponsorship tracking for showcases | Pending |
+| 1.6.10 | Phase 5 validation: acceptance criteria verified | Pending |
+
+---
+
+#### 1.7 Stage 7: Phase 6 Monetization and Growth
+
+| ID | Task | Status |
+|---|---|---|
+| 1.7.1 | Stripe integration for paid tiers | Pending |
+| 1.7.2 | R2 storage billing | Pending |
+| 1.7.3 | Live time extension purchases | Pending |
+| 1.7.4 | Artist analytics dashboard | Pending |
+| 1.7.5 | Email campaigns to segmented waitlist | Pending |
+| 1.7.6 | Social sharing on artist pages | Pending |
+| 1.7.7 | Embed player for external sites | Pending |
+| 1.7.8 | Content ID scanning for admin-hosted files | Pending |
+| 1.7.9 | Phase 6 validation: revenue on, acceptance verified | Pending |
+
+---
+
+#### 1.8 Project Management (ongoing)
+
+| ID | Task | Status |
+|---|---|---|
+| 1.8.1 | Maintain BUGS.md, log and close issues | Ongoing |
+| 1.8.2 | Maintain CHANGELOG.md, document all changes | Ongoing |
+| 1.8.3 | Update ROADMAP.md checkboxes per phase completion | Ongoing |
+| 1.8.4 | Obsidian journal entries per work block | Ongoing |
+| 1.8.5 | GitHub commits per work block | Ongoing |
+| 1.8.6 | PMP document updates at each phase gate | Ongoing |
+
+---
+
+## Estimated Hours by Stage
+
+| Stage | Phase | Estimated Hours |
+|---|---|---|
+| 1.1 | Phase 0 Waitlist | 36.5 (actual) |
+| 1.2 | Phase 1 MVP Platform | 60 |
+| 1.3 | Phase 2 Media Vault | 70 |
+| 1.4 | Phase 3 Live Room and Venues | 65 |
+| 1.5 | Phase 4 Booking Layer | 45 |
+| 1.6 | Phase 5 Cerberus Managed | 50 |
+| 1.7 | Phase 6 Monetization and Growth | 45 |
+| 1.8 | Project Management (ongoing) | 15 |
+| **Total** | | **386.5** |
+
+Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing project management are forward estimates at $85/hr, totaling 350 estimated hours, for a project total of 386.5 hours.
+
+---
+
+## Actual Hours Log
+
+Seeded from docs/HOURS.md. 36.5 hours to date at $85/hr (approximately $3,102.50).
+
+| Date | Work Package | Role | Hours |
+|---|---|---|---|
+| 2026-06-28 | Turnstile incident fix | Lead Developer | 2.0 |
+| 2026-06-28 | Turnstile incident fix | QA Engineer | 0.5 |
+| 2026-06-28 | Cloudflare account audit, wipe, backup, clean slate | Deployment Engineer | 2.5 |
+| 2026-06-28 | Cloudflare teardown architecture | Solutions Architect | 1.0 |
+| 2026-06-28 | IaC and stack architecture (OpenNext, one-worker, monorepo) | Solutions Architect | 1.5 |
+| 2026-06-28 | Planning and scope reconciliation | Project Manager | 1.0 |
+| 2026-06-28 | cerberuslive scaffold and worker refactor | Lead Developer | 1.5 |
+| 2026-06-28 | Project homing, registry, README | Technical Writer | 0.5 |
+| 2026-06-28 | Rebuild and relaunch (D1, Turnstile, deploy, domain) | Deployment Engineer | 1.5 |
+| 2026-06-28 | Live end-to-end verification | QA Engineer | 0.5 |
+| Pre-session | Project Charter | Project Manager | 2.0 |
+| Pre-session | Stakeholder Register | Project Manager | 1.0 |
+| Pre-session | Risk Register | Project Manager | 2.0 |
+| Pre-session | WBS | Project Manager | 3.0 |
+| Pre-session | Architecture Document | Solutions Architect | 4.0 |
+| Pre-session | Database Schema | Backend Engineer | 3.0 |
+| Pre-session | Business Model Document | Project Manager | 2.0 |
+| Pre-session | Artist Agent Design | Software Engineer | 4.0 |
+| Pre-session | TOS and Content Policy | Project Manager | 2.0 |
+| Pre-session | Commission Structure Document | Project Manager | 1.0 |
+| **Total** | | | **36.5** |
