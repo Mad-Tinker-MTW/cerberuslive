@@ -31,7 +31,7 @@ export const features = {
   liveFeed:             false,  // Central feed of who is live right now
   liveTimeExtension:    false,  // Paid extension beyond 10-minute cap
   venueProfiles:        false,  // Venue listing and discovery
-  territoryClaimsn:     false,  // Artist territory claim system
+  territoryClaims:      false,  // Artist territory claim system
   geographicFeed:       false,  // Discovery feed filtered by location
 
   // PHASE 4 — Booking Layer

@@ -1,5 +1,18 @@
 # Changelog — Cerberus Live Studio
 
+## [0.3.1] — 2026-06-28
+
+Branded home + housekeeping (L-030 brand port, L-031 typo).
+
+### Added
+- Real Cerberus landing ported to the Next home route (`web/src/app/page.tsx`): logo hero, "guarding the gates" tagline, three pillars (Profile/Media/Booking), and the artist discovery grid, sharing the dossier site header and tuned theme. Logo copied to `web/public/logo.png`.
+
+### Fixed
+- `features.config.ts` Phase 3 flag typo `territoryClaimsn` renamed to `territoryClaims` (no other references; BUGS entry closed).
+
+### Notes
+- The waitlist signup form stays on the dedicated waitlist worker; bringing it onto the platform home would need a Next `/api/waitlist` route plus the `TURNSTILE_SECRET` bound on the web worker (deferred, deploy-time).
+
 ## [0.3.0] — 2026-06-28
 
 Artist dossier page v1 (L-028): the rich talent-dossier replaces the minimal artist page.

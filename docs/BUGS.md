@@ -16,9 +16,6 @@ The project is homed locally at `Q:\MTW\cerberuslive` and registered in TinkerOp
 **Auth provider not chosen**
 The platform stack lists "Clerk or NextAuth" for auth. The choice is unresolved and gates the entire Phase 1 sign-up, log-in, and verify flow. Decide before scaffolding the Next.js app.
 
-**features.config.ts typo: territoryClaimsn**
-The Phase 3 flag is misspelled `territoryClaimsn` (trailing n). Rename to `territoryClaims` before any code gates on it, or the gate will reference a key that does not match the documented feature name.
-
 **Deployment enum mismatch**
 The registry tags deployment as `cloudflare-pages`, but the real target is Cloudflare Workers serving static assets via OpenNext. The deployment enum lacks a Workers value. Tracked as a registry-schema gap, not a code bug.
 
@@ -29,3 +26,4 @@ The registry tags deployment as `cloudflare-pages`, but the real target is Cloud
 - Turnstile incident on the live waitlist: a two-character sitekey transposition (`dS` instead of `Ds`) plus an unset `TURNSTILE_SECRET`, which 403'd every signup. Resolved 2026-06-28, sitekey corrected and secret set, verified end to end.
 - Cloudflare account drift and stale resources: resolved 2026-06-28 by auditing, backing up (backup at `Q:\MTW\CloudflareBackup\2026-06-28`), and wiping to a clean slate, then rebuilding the waitlist IaC-style.
 - D1 `cerberus-waitlist` schema not applied after wipe: resolved 2026-06-28, schema reapplied and a new Turnstile widget secret wired to the worker.
+- features.config.ts typo `territoryClaimsn`: resolved 2026-06-28, renamed to `territoryClaims` (no other references; verified by grep).
