@@ -1,0 +1,36 @@
+name: Deploy cerberuslive-web (preview)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 949e06c2a8427e64f40783d3cb3aefb2
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build (OpenNext) — proves the Linux build, runs even without the deploy token
+        run: bunx opennextjs-cloudflare build
+
+      - name: Deploy to Cloudflare Workers (preview)
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' }}
+        run: bunx opennextjs-cloudflare deploy

@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cerberuslive-web",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-06-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "cerberus-waitlist",
+      "database_id": "8eda792e-cc45-49db-9e1d-648a79837478"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
