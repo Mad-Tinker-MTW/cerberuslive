@@ -58,15 +58,23 @@ export default async function AccountPage() {
             Artist profile
           </h2>
           {profile ? (
-            <p className="text-sm">
-              Your dossier:{" "}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm">
+                Your dossier:{" "}
+                <Link
+                  href={`/artist/${profile.slug}`}
+                  className="text-red hover:underline"
+                >
+                  {profile.display_name}
+                </Link>
+              </p>
               <Link
-                href={`/artist/${profile.slug}`}
-                className="text-red hover:underline"
+                href="/account/edit"
+                className="rounded-md border border-border px-3 py-1.5 text-xs text-muted transition hover:border-red hover:text-foreground"
               >
-                {profile.display_name}
+                Edit dossier
               </Link>
-            </p>
+            </div>
           ) : (
             <p className="text-sm text-muted">
               You do not have an artist dossier yet. Claim one to appear in
