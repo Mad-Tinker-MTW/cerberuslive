@@ -110,3 +110,18 @@ artist's machine (self-hosted via cloudflared tunnel); listeners stream THROUGH 
 ### AI-artist transparency
 Label AI artists openly (dossier Class: "AI Artist / AI-Assisted"). Most platforms ban or hide AI music;
 Cerberus leaning in honestly is a differentiator and a trust signal. Cerberus can own the AI-artist showcase niche.
+
+### Copyright filing — a Cerberus Managed service (figure out / verify before offering)
+- Value-add of the Managed tier ($75/mo): file artists' human-authored works with the US Copyright Office
+  (copyright.gov / eCO) as their AUTHORIZED AGENT, for a service fee. No lawyer needed for the filing itself;
+  anyone can file. Get WRITTEN authorization from the artist to file on their behalf.
+- KEY distinction: register in the ARTIST's name (they own it). Filing is a SERVICE, not ownership. Any
+  revenue stake (publishing share, etc.) = a SEPARATE written agreement (management/publishing), lawyer-reviewed once.
+- AI NOTE (the part to figure out): for AI-assisted music the Copyright Office requires DISCLOSING the
+  AI-generated portions; only the HUMAN-authored parts register (lyrics, arrangement/editing choices). Do NOT
+  claim AI audio as human-made, that can void the registration. So file claiming lyrics + human authorship and
+  disclaim the AI. The Office has published AI guidance; confirm the exact eCO disclosure workflow before offering this.
+- Ties to guardianship + provenance: "we register and protect your copyrights." Bundle with lyric registration
+  and provenance anchoring (hash + Suno id + public timestamp).
+- Franky TODO before launch: confirm current per-work fees, the eCO AI-disclosure steps, and a lawyer-reviewed
+  management/publishing agreement template. (Not legal advice.)
