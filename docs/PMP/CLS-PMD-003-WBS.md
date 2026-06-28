@@ -168,7 +168,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 49 hours to date at $85/hr (approximately $4,165).
+Seeded from docs/HOURS.md, extended at checkpoint. 50.5 hours to date at $85/hr (approximately $4,292.50).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -199,4 +199,7 @@ Seeded from docs/HOURS.md, extended at checkpoint. 49 hours to date at $85/hr (a
 | 2026-06-28 | Deploy and SSR runtime verification | QA Engineer | 1.0 |
 | 2026-06-28 | Doc suite formalization (SPEC, VISION, ROADMAP, BUGS, PMP) | Technical Writer | 2.0 |
 | 2026-06-28 | WBS and Schedule formalization | Project Manager | 1.0 |
-| **Total** | | | **49.0** |
+| 2026-06-28 | Artist dossier spec + verification model (brief authoring) | Technical Writer | 0.5 |
+| 2026-06-28 | Product decisions: dossier concept, earned-verification flow | Project Manager | 0.5 |
+| 2026-06-28 | Local dev environment setup and verification | Deployment Engineer | 0.5 |
+| **Total** | | | **50.5** |

@@ -34,4 +34,4 @@ entries into the WBS Actual Hours Log when `/doc-project` generates the suite.
 | **Subtotal** | | **24** |
 
 ## Running total
-**49h to date ≈ $4,165** (36.5h relaunch + planning, plus 12.5h Phase 1 build and doc suite on 2026-06-28). Authoritative log now lives in the WBS Actual Hours Log (CLS-PMD-003).
+**50.5h to date ≈ $4,292.50** (36.5h relaunch + planning, 12.5h Phase 1 build + docs, 1.5h dossier spec + local dev, all 2026-06-28). Authoritative log lives in the WBS Actual Hours Log (CLS-PMD-003).
