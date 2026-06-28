@@ -20,8 +20,8 @@ Capture signups by role while the platform is built.
 Goal: artist profiles live, shareable, discoverable.
 
 - [x] Next.js app scaffolded (Workers via OpenNext), deployed to preview
-- [ ] Auth (sign up, log in, email verify)
-- [ ] Artist profile creation (bio, genre, photo, links)
+- [x] Auth (Better Auth, passwordless magic-link via Resend)
+- [x] Artist profile creation (self-serve claim from /account)
 - [x] Public artist page at cerberuslive.studio/artist/{slug}
 - [ ] Fan accounts (follow an artist)
 - [ ] Central discovery feed (browse artists by genre)

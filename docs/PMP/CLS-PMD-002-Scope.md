@@ -9,7 +9,7 @@ Project Manager: Francisco De La Paz
 
 ## Project Description
 
-Cerberus Live Studio is a creator platform delivered as a Next.js 14 application backed by Cloudflare infrastructure. The frontend deploys to Cloudflare Workers through the OpenNext adapter, the API runs on Cloudflare Workers, data lives in Cloudflare D1, and admin-hosted media lives in Cloudflare R2. The defining architectural property is that artists self-host their own media through a Cloudflare Tunnel driven by an Electron desktop agent, so the platform stores only the directory and the tunnel URL rather than the media itself.
+Cerberus Live Studio is a creator platform delivered as a Next.js 15.5 application backed by Cloudflare infrastructure. The frontend deploys to Cloudflare Workers through the OpenNext adapter, the API runs on Cloudflare Workers, data lives in Cloudflare D1, and admin-hosted media lives in Cloudflare R2. The defining architectural property is that artists self-host their own media through a Cloudflare Tunnel driven by an Electron desktop agent, so the platform stores only the directory and the tunnel URL rather than the media itself.
 
 The product is built in six phases on top of a live Phase 0 waitlist.
 

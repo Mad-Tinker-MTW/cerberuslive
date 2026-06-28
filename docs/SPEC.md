@@ -16,7 +16,7 @@ Three heads, one platform: Profile, Media, and Booking.
 
 | Layer | Tech |
 |---|---|
-| Frontend | Next.js 14 (App Router), TypeScript |
+| Frontend | Next.js 15.5 (App Router), TypeScript |
 | Styling | Tailwind CSS |
 | Auth | Better Auth (self-hosted in the OpenNext Worker) |
 | API | Cloudflare Workers |
