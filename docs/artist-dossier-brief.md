@@ -83,7 +83,7 @@ dossier + catalog, distinct sound preserved. A "one lyric, many artists, many ge
 ### Offerings / licensing model
 Every track carries offering flags (default OFF): stream/use-as-is, remix, license (sync), buy-out
 (= EXCLUSIVE LICENSE + pulled from catalog, NOT a copyright transfer), commission (hire the creator).
-It is a LICENSING marketplace — selling usage, not ownership — which sidesteps the AI-copyright question.
+It is a LICENSING marketplace, selling usage not ownership, which sidesteps the AI-copyright question.
 CTAs flex by artist type: live performer to "Book Artist"; recording/AI artist to "License / Remix / Buy / Commission."
 
 ### Rights / IP reality (AI music via paid Suno)

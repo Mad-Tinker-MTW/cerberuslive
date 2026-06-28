@@ -7,9 +7,6 @@
 **Test waitlist row in production D1**
 The live waitlist D1 holds a test row (`mad.tinker@outlook.com`) from end-to-end verification. Clear it before public launch so the first real signup count is clean.
 
-**GitHub repo not yet created**
-The project is homed locally at `Q:\MTW\cerberuslive` and registered in TinkerOps as `Mad-Tinker-MTW/cerberuslive`, but the remote repo does not exist yet and nothing has been pushed. Create the repo and push the IaC relaunch commit.
-
 **Resend confirmation emails not wired**
 `emailConfirmations` is false in `features.config.ts`. Waitlist signups land in D1 but no confirmation email goes out. Needs Resend account setup and a Worker send step on `POST /api/waitlist`.
 
@@ -25,3 +22,4 @@ The registry tags deployment as `cloudflare-pages`, but the real target is Cloud
 - D1 `cerberus-waitlist` schema not applied after wipe: resolved 2026-06-28, schema reapplied and a new Turnstile widget secret wired to the worker.
 - features.config.ts typo `territoryClaimsn`: resolved 2026-06-28, renamed to `territoryClaims` (no other references; verified by grep).
 - Auth provider decision: resolved 2026-06-28, **Better Auth** chosen (over Clerk / NextAuth). Self-hosted in the OpenNext Worker, links to `artist_profiles.user_id`, magic-link via Resend. Docs reconciled (SPEC, ULTRAPLAN, WBS 1.2.2, Schedule).
+- GitHub repo: resolved 2026-06-28 (audit), repo `Mad-Tinker-MTW/cerberuslive` exists and origin/main is pushed; the "not yet created" note was stale.

@@ -12,9 +12,9 @@
 A creator platform for underground artists, DJs, and performers. Not a streaming service. Not social media. A professional identity and booking layer that puts the artist in control of their own infrastructure.
 
 Three heads, one platform:
-- **Profile** — Artist identity, bio, genre, photos, links
-- **Media** — Self-hosted music vault, video clips, live streaming
-- **Booking** — Availability calendar, booking requests, venue discovery
+- **Profile**: Artist identity, bio, genre, photos, links
+- **Media**: Self-hosted music vault, video clips, live streaming
+- **Booking**: Availability calendar, booking requests, venue discovery
 
 Differentiator: Artists self-host their own media via Cloudflare Tunnel. The platform is the directory and social layer, not the storage. Optional cloud storage for artists who want always-on.
 
@@ -55,7 +55,7 @@ Fan and listener accounts are free. Venue profiles are free to list.
 - Cover all costs first from door before split kicks in
 - Managed artists get weighted split based on draw and popularity
 - Open platform artists pay $250 flat or guarantee 25 tickets sold minimum
-- Ticket minimum is preferred — if they sell 30 tickets at $15 that's $450, better than flat fee
+- Ticket minimum is preferred, since if they sell 30 tickets at $15 that's $450, better than flat fee
 - Sponsorship from local businesses can cover base costs before a ticket sells
 
 ### Revenue Streams

@@ -29,7 +29,7 @@ Project Manager: Francisco De La Paz
 | 1.1.10 | Architecture and D1 schema design | Complete |
 | 1.1.11 | Documentation and PMP suite generated | Complete |
 | 1.1.12 | Clear test waitlist row before public launch | Open |
-| 1.1.13 | Create GitHub repo and push IaC relaunch | Open |
+| 1.1.13 | Create GitHub repo and push IaC relaunch | Complete |
 
 ---
 
