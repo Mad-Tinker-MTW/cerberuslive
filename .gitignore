@@ -1,0 +1,10 @@
+node_modules/
+.wrangler/
+.dev.vars
+.env
+*.key
+config.toml
+Output/
+.venv/
+*.log
+.DS_Store
