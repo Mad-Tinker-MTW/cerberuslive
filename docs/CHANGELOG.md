@@ -1,5 +1,19 @@
 # Changelog — Cerberus Live Studio
 
+## [0.3.0] — 2026-06-28
+
+Artist dossier page v1 (L-028): the rich talent-dossier replaces the minimal artist page.
+
+### Added
+- Rich SSR `/artist/[slug]` dossier per `docs/artist-dossier-brief.md`: site header, artist sidebar (portrait with earned Verified badge, Book/Message, Quick Info, social row, Dossier ID card with barcode), dossier hero with the Cerberus Dossier table (Class, Signal, Gate Status, Booking Range, Clearance, Member Since), featured track card, tabbed profile (Overview live; Media/Live Sets/Press Kit/Reviews UI-only), Overview cards (About, Sound & Style, Best For tiles, Performance Profile, Media Highlights), and a Booking section (availability strip + request)
+- D1 migration `web/db/0002_artist_dossier.sql`: nullable dossier columns + `profile_json` blob; seeds STCO (CLS-STCO-001) and partially enriches nyx-prowl
+- `getArtistDossier`, dossier types, and a safe `parseJson` helper in `web/src/lib/db.ts`
+- 12 dossier components under `web/src/components/dossier/`
+
+### Changed
+- Theme tuned toward the dossier brief palette (darker base `#050505`, brighter red `#d71920`, new panel/panel-soft/red-soft/green tokens)
+- The page is fully data-driven and degrades gracefully: a missing field hides its card, row, or badge (designed for a 30%-complete profile, verified across full/partial/sparse seed artists)
+
 ## [0.2.0] — 2026-06-28
 
 Phase 1 platform shell and public artist profile pages.

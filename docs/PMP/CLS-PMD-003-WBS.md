@@ -43,6 +43,7 @@ Project Manager: Francisco De La Paz
 | 1.2.4 | Account roles: artist, fan, venue, admin | Pending |
 | 1.2.5 | Artist profile creation (bio, genre, photo, links) | Pending |
 | 1.2.6 | Public artist page at /artist/{slug} | Complete |
+| 1.2.13 | Artist dossier page v1: rich SSR /artist/{slug}, data-driven with graceful degradation, schema expansion + STCO seed | Complete |
 | 1.2.7 | Fan accounts and follow system | Pending |
 | 1.2.8 | Central discovery feed, browse by genre | Pending |
 | 1.2.9 | Admin dashboard (signups, users, approvals) | Pending |
@@ -168,7 +169,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 50.5 hours to date at $85/hr (approximately $4,292.50).
+Seeded from docs/HOURS.md, extended at checkpoint. 58.0 hours to date at $85/hr (approximately $4,930).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -202,4 +203,9 @@ Seeded from docs/HOURS.md, extended at checkpoint. 50.5 hours to date at $85/hr 
 | 2026-06-28 | Artist dossier spec + verification model (brief authoring) | Technical Writer | 0.5 |
 | 2026-06-28 | Product decisions: dossier concept, earned-verification flow | Project Manager | 0.5 |
 | 2026-06-28 | Local dev environment setup and verification | Deployment Engineer | 0.5 |
-| **Total** | | | **50.5** |
+| 2026-06-28 | Dossier data model: schema migration 0002, profile_json, graceful-degradation design | Solutions Architect | 1.5 |
+| 2026-06-28 | Dossier page build: 12 components, page assembly, db layer, theme tuning | Lead Developer | 4.0 |
+| 2026-06-28 | Dossier QA: tsc, next build, local visual (full/partial/sparse, desktop/mobile) | QA Engineer | 1.0 |
+| 2026-06-28 | CHANGELOG and checkpoint docs | Technical Writer | 0.5 |
+| 2026-06-28 | Dossier scope from brief, ledger reconciliation | Project Manager | 0.5 |
+| **Total** | | | **58.0** |
