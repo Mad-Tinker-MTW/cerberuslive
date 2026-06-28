@@ -34,4 +34,4 @@ entries into the WBS Actual Hours Log when `/doc-project` generates the suite.
 | **Subtotal** | | **24** |
 
 ## Running total
-**66.5h to date ≈ $5,652.50** (36.5h relaunch + planning, 12.5h Phase 1 build + docs, 1.5h dossier spec + local dev, 7.5h dossier page v1, 2.0h landing port + typo, 6.5h Better Auth integration, all 2026-06-28). Authoritative log lives in the WBS Actual Hours Log (CLS-PMD-003).
+**67.0h to date ≈ $5,695** (36.5h relaunch + planning, 12.5h Phase 1 build + docs, 1.5h dossier spec + local dev, 7.5h dossier page v1, 2.0h landing port + typo, 6.5h Better Auth integration, 0.5h auth decision reconcile, all 2026-06-28). Authoritative log lives in the WBS Actual Hours Log (CLS-PMD-003).

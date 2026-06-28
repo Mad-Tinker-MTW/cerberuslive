@@ -171,7 +171,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 66.5 hours to date at $85/hr (approximately $5,652.50).
+Seeded from docs/HOURS.md, extended at checkpoint. 67.0 hours to date at $85/hr (approximately $5,695).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -217,4 +217,5 @@ Seeded from docs/HOURS.md, extended at checkpoint. 66.5 hours to date at $85/hr 
 | 2026-06-28 | Better Auth build (config, route, client, /login, /account, profile-claim route, migration 0003) | Lead Developer | 3.5 |
 | 2026-06-28 | Auth secrets wiring (RESEND_KEY + BETTER_AUTH_SECRET, local + web worker) | Deployment Engineer | 0.5 |
 | 2026-06-28 | Auth end-to-end QA (magic-link, session, profile claim, local data cleanup) | QA Engineer | 1.0 |
-| **Total** | | | **66.5** |
+| 2026-06-28 | Auth provider decision reconciliation across SPEC/ULTRAPLAN/WBS/Schedule/BUGS | Technical Writer | 0.5 |
+| **Total** | | | **67.0** |
