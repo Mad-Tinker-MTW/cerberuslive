@@ -46,8 +46,8 @@ Goal: artist profiles live, shareable, discoverable.
 | Sequence | Target Tasks |
 |---|---|
 | 1 | Resolve open Phase 0 items: clear test row, create GitHub repo and push |
-| 2 | Scaffold Next.js 14 app via OpenNext, choose auth provider |
-| 3 | Auth flow: sign up, log in, email verify, account roles |
+| 2 | Scaffold Next.js app via OpenNext, auth provider chosen (Better Auth) |
+| 3 | Better Auth flow: sign up, log in, magic-link verify (Resend), account roles |
 | 4 | Artist profile creation and public artist page at /artist/{slug} |
 | 5 | Fan accounts, follows, and the genre discovery feed |
 | 6 | Admin dashboard and waitlist-to-invite migration |

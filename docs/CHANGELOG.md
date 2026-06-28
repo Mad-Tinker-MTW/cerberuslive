@@ -10,6 +10,9 @@ Branded home + housekeeping (L-030 brand port, L-031 typo).
 ### Fixed
 - `features.config.ts` Phase 3 flag typo `territoryClaimsn` renamed to `territoryClaims` (no other references; BUGS entry closed).
 
+### Decided
+- Auth provider locked in: **Better Auth** (over Clerk / NextAuth), self-hosted in the OpenNext Worker, links to `artist_profiles.user_id`, magic-link via Resend. Reconciled the stale "Clerk or NextAuth (TBD)" wording across SPEC, ULTRAPLAN, WBS 1.2.2, and the Schedule; BUGS "auth provider not chosen" closed.
+
 ### Notes
 - The waitlist signup form stays on the dedicated waitlist worker; bringing it onto the platform home would need a Next `/api/waitlist` route plus the `TURNSTILE_SECRET` bound on the web worker (deferred, deploy-time).
 

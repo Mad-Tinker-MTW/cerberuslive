@@ -38,7 +38,7 @@ Project Manager: Francisco De La Paz
 | ID | Task | Status |
 |---|---|---|
 | 1.2.1 | Scaffold Next.js 15.5 app on Cloudflare Workers via OpenNext | Complete |
-| 1.2.2 | Choose auth provider (Clerk or NextAuth) | Pending |
+| 1.2.2 | Auth provider chosen: Better Auth (self-hosted in the OpenNext Worker) | Complete |
 | 1.2.3 | Auth: sign up, log in, email verify | Pending |
 | 1.2.4 | Account roles: artist, fan, venue, admin | Pending |
 | 1.2.5 | Artist profile creation (bio, genre, photo, links) | Pending |

@@ -18,7 +18,7 @@ Three heads, one platform: Profile, Media, and Booking.
 |---|---|
 | Frontend | Next.js 14 (App Router), TypeScript |
 | Styling | Tailwind CSS |
-| Auth | Clerk or NextAuth (TBD) |
+| Auth | Better Auth (self-hosted in the OpenNext Worker) |
 | API | Cloudflare Workers |
 | Database | Cloudflare D1 |
 | Media storage | Cloudflare R2 (admin-hosted tier) |

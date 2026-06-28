@@ -13,9 +13,6 @@ The project is homed locally at `Q:\MTW\cerberuslive` and registered in TinkerOp
 **Resend confirmation emails not wired**
 `emailConfirmations` is false in `features.config.ts`. Waitlist signups land in D1 but no confirmation email goes out. Needs Resend account setup and a Worker send step on `POST /api/waitlist`.
 
-**Auth provider not chosen**
-The platform stack lists "Clerk or NextAuth" for auth. The choice is unresolved and gates the entire Phase 1 sign-up, log-in, and verify flow. Decide before scaffolding the Next.js app.
-
 **Deployment enum mismatch**
 The registry tags deployment as `cloudflare-pages`, but the real target is Cloudflare Workers serving static assets via OpenNext. The deployment enum lacks a Workers value. Tracked as a registry-schema gap, not a code bug.
 
@@ -27,3 +24,4 @@ The registry tags deployment as `cloudflare-pages`, but the real target is Cloud
 - Cloudflare account drift and stale resources: resolved 2026-06-28 by auditing, backing up (backup at `Q:\MTW\CloudflareBackup\2026-06-28`), and wiping to a clean slate, then rebuilding the waitlist IaC-style.
 - D1 `cerberus-waitlist` schema not applied after wipe: resolved 2026-06-28, schema reapplied and a new Turnstile widget secret wired to the worker.
 - features.config.ts typo `territoryClaimsn`: resolved 2026-06-28, renamed to `territoryClaims` (no other references; verified by grep).
+- Auth provider decision: resolved 2026-06-28, **Better Auth** chosen (over Clerk / NextAuth). Self-hosted in the OpenNext Worker, links to `artist_profiles.user_id`, magic-link via Resend. Docs reconciled (SPEC, ULTRAPLAN, WBS 1.2.2, Schedule).

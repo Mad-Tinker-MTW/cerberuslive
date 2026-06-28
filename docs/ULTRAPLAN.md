@@ -98,7 +98,7 @@ Target range: $50k-$500k depending on traction. Acquisition-ready after Phase 4.
 ### Frontend
 - Framework: Next.js 14 (App Router)
 - Styling: Tailwind CSS
-- Auth: Clerk or NextAuth
+- Auth: Better Auth (self-hosted in the OpenNext Worker)
 - Deployment: Cloudflare Pages
 
 ### Backend / API
@@ -280,7 +280,7 @@ Goal: MTW as booking agent
 | Layer | Technology |
 |-------|-----------|
 | Frontend | Next.js 14, Tailwind, TypeScript |
-| Auth | Clerk or NextAuth |
+| Auth | Better Auth (self-hosted in the OpenNext Worker) |
 | API | Cloudflare Workers |
 | Database | Cloudflare D1 |
 | Media Storage | Cloudflare R2 |
