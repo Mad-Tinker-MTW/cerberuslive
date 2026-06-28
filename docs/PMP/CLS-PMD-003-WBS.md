@@ -39,12 +39,13 @@ Project Manager: Francisco De La Paz
 |---|---|---|
 | 1.2.1 | Scaffold Next.js 15.5 app on Cloudflare Workers via OpenNext | Complete |
 | 1.2.2 | Auth provider chosen: Better Auth (self-hosted in the OpenNext Worker) | Complete |
-| 1.2.3 | Auth: sign up, log in, email verify | Pending |
+| 1.2.3 | Auth: sign up, log in, email verify (Better Auth magic-link via Resend) | Complete |
 | 1.2.4 | Account roles: artist, fan, venue, admin | Pending |
-| 1.2.5 | Artist profile creation (bio, genre, photo, links) | Pending |
+| 1.2.5 | Artist profile creation (self-serve claim from /account, linked to user_id) | Complete |
 | 1.2.6 | Public artist page at /artist/{slug} | Complete |
 | 1.2.13 | Artist dossier page v1: rich SSR /artist/{slug}, data-driven with graceful degradation, schema expansion + STCO seed | Complete |
 | 1.2.14 | Port the real Cerberus landing (brand hero, pillars, discovery) to the Next home route | Complete |
+| 1.2.15 | Better Auth integration: D1 tables, magic-link via Resend, /login, /account, self-serve profile claim | Complete |
 | 1.2.7 | Fan accounts and follow system | Pending |
 | 1.2.8 | Central discovery feed, browse by genre | Pending |
 | 1.2.9 | Admin dashboard (signups, users, approvals) | Pending |
@@ -170,7 +171,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 60.0 hours to date at $85/hr (approximately $5,100).
+Seeded from docs/HOURS.md, extended at checkpoint. 66.5 hours to date at $85/hr (approximately $5,652.50).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -212,4 +213,8 @@ Seeded from docs/HOURS.md, extended at checkpoint. 60.0 hours to date at $85/hr 
 | 2026-06-28 | Landing page port to Next home (brand hero, pillars, discovery, logo) | Lead Developer | 1.5 |
 | 2026-06-28 | features.config.ts territoryClaims typo fix + BUGS close | Lead Developer | 0.25 |
 | 2026-06-28 | Home QA (tsc, build, visual desktop) | QA Engineer | 0.25 |
-| **Total** | | | **60.0** |
+| 2026-06-28 | Better Auth architecture (per-request D1 factory, D1 dialect discovery, schema) | Solutions Architect | 1.5 |
+| 2026-06-28 | Better Auth build (config, route, client, /login, /account, profile-claim route, migration 0003) | Lead Developer | 3.5 |
+| 2026-06-28 | Auth secrets wiring (RESEND_KEY + BETTER_AUTH_SECRET, local + web worker) | Deployment Engineer | 0.5 |
+| 2026-06-28 | Auth end-to-end QA (magic-link, session, profile claim, local data cleanup) | QA Engineer | 1.0 |
+| **Total** | | | **66.5** |

@@ -1,5 +1,21 @@
 # Changelog — Cerberus Live Studio
 
+## [0.4.0] — 2026-06-28
+
+Authentication: Better Auth, passwordless magic-link (L-029).
+
+### Added
+- **Better Auth** integrated on the `cerberuslive-web` Worker, passwordless magic-link via Resend. D1 is passed straight to the adapter (Better Auth auto-detects D1 and builds its own `D1SqliteDialect`; no kysely-d1 needed). The instance is built per-request from the Cloudflare context (`getAuth(env)` / `authFromContext()`).
+- Migration `web/db/0003_better_auth.sql`: Better Auth core tables (`user`, `session`, `account`, `verification`) in sqlite mode (ISO-string dates, integer booleans), with a `role` column on user (artist / fan / venue / admin, default fan).
+- `/login` (passwordless email → magic link), `/account` (session view, sign out, self-serve artist-dossier claim), `POST /api/auth/[...all]` handler, `POST /api/profile/create` (creates `artist_profiles` linked to `user_id`, promotes role to artist), `lib/auth-client.ts`.
+- Header account icon links to `/account` (gates to `/login`).
+
+### Verified
+- Full flow exercised locally against D1: magic-link send (link logged in dev) → verify → session (`role=fan`, `emailVerified=true`) → profile claim (slug minted, role → artist) → dossier renders and appears in discovery. Test data cleaned from local D1.
+
+### Notes
+- Secrets `RESEND_KEY` + `BETTER_AUTH_SECRET` are set on the web worker and in local `web/.dev.vars` (gitignored). Migration 0003 still needs applying to the remote prod D1 at deploy.
+
 ## [0.3.1] — 2026-06-28
 
 Branded home + housekeeping (L-030 brand port, L-031 typo).

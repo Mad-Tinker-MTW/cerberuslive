@@ -41,12 +41,13 @@ export function SiteHeader() {
           >
             ⌗
           </span>
-          <span
-            aria-hidden
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted"
+          <Link
+            href="/account"
+            aria-label="Account"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition hover:border-red hover:text-foreground"
           >
             ◔
-          </span>
+          </Link>
         </div>
       </div>
     </header>
