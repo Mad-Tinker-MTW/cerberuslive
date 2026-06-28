@@ -1,13 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --muted: #8a8a8a;
-  --red: #e11d2a;
+  /* Tuned toward the dossier brief: darker base, brighter red, tactical greys. */
+  --background: #050505;
+  --foreground: #f2f2f2;
+  --muted: #8f8f8f;
+  --red: #d71920;
   --red-dark: #b3121e;
-  --card: #141414;
-  --border: #262626;
+  --red-soft: #7a1115;
+  --green: #28c76f;
+  --card: #101010;
+  --panel: #101010;
+  --panel-soft: #151515;
+  --border: #2a2a2a;
 }
 
 @theme inline {
@@ -16,7 +21,11 @@
   --color-muted: var(--muted);
   --color-red: var(--red);
   --color-red-dark: var(--red-dark);
+  --color-red-soft: var(--red-soft);
+  --color-green: var(--green);
   --color-card: var(--card);
+  --color-panel: var(--panel);
+  --color-panel-soft: var(--panel-soft);
   --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

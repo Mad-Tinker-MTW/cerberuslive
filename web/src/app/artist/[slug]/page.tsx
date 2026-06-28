@@ -1,19 +1,19 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getDb, genreList, type Artist } from "@/lib/db";
+import {
+  getArtistDossier,
+  parseJson,
+  type Socials,
+  type DossierProfile,
+} from "@/lib/db";
+import { SiteHeader } from "@/components/dossier/SiteHeader";
+import { ArtistSidebar } from "@/components/dossier/Sidebar";
+import { DossierHero, FeaturedTrackCard } from "@/components/dossier/Hero";
+import { ProfileTabs } from "@/components/dossier/Tabs";
+import { OverviewPanel } from "@/components/dossier/Overview";
+import { BookingPanel } from "@/components/dossier/Booking";
 
 export const dynamic = "force-dynamic";
-
-async function getArtist(slug: string): Promise<Artist | null> {
-  const db = getDb();
-  return db
-    .prepare(
-      "SELECT slug, display_name, bio, city, genre_tags, photo_url, tier FROM artist_profiles WHERE slug = ?"
-    )
-    .bind(slug)
-    .first<Artist>();
-}
 
 export async function generateMetadata({
   params,
@@ -21,11 +21,18 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const a = await getArtist(slug);
+  const a = await getArtistDossier(slug);
   if (!a) return { title: "Artist not found — Cerberus Live Studio" };
+  const desc =
+    a.bio ?? `${a.display_name} on Cerberus Live Studio. ${a.subtitle ?? ""}`.trim();
   return {
     title: `${a.display_name} — Cerberus Live Studio`,
-    description: a.bio ?? `${a.display_name} on Cerberus Live Studio.`,
+    description: desc,
+    openGraph: {
+      title: `${a.display_name} — Cerberus Live Studio`,
+      description: desc,
+      type: "profile",
+    },
   };
 }
 
@@ -35,56 +42,46 @@ export default async function ArtistPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const a = await getArtist(slug);
-  if (!a) notFound();
-  const genres = genreList(a.genre_tags);
+  const artist = await getArtistDossier(slug);
+  if (!artist) notFound();
+
+  const socials = parseJson<Socials>(artist.social_links, {});
+  const profile = parseJson<DossierProfile>(artist.profile_json, {});
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-16">
-      <Link href="/" className="text-sm text-muted transition hover:text-red">
-        &larr; Cerberus Live Studio
-      </Link>
+    <>
+      <SiteHeader />
+      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[320px_1fr]">
+          {/* Left sidebar */}
+          <div className="lg:sticky lg:top-20 lg:self-start">
+            <ArtistSidebar artist={artist} socials={socials} />
+          </div>
 
-      <header className="mt-8">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            {a.display_name}
-          </h1>
-          {a.tier === "managed" && (
-            <span className="rounded-full border border-red/40 bg-red/10 px-2 py-1 text-xs text-red">
-              Cerberus Managed
-            </span>
-          )}
+          {/* Main content */}
+          <div className="flex flex-col gap-6">
+            <DossierHero artist={artist} />
+            {profile.featuredTrack && (
+              <FeaturedTrackCard track={profile.featuredTrack} />
+            )}
+            <ProfileTabs
+              overview={
+                <OverviewPanel
+                  artist={artist}
+                  performanceProfile={profile.performanceProfile}
+                  bestFor={profile.bestFor}
+                  media={profile.media}
+                />
+              }
+            />
+            <BookingPanel
+              name={artist.display_name}
+              bookingEmail={artist.booking_email}
+              availability={profile.availability}
+            />
+          </div>
         </div>
-        {a.city && <p className="mt-2 text-muted">{a.city}</p>}
-      </header>
-
-      {genres.length > 0 && (
-        <div className="mt-6 flex flex-wrap gap-2">
-          {genres.map((g) => (
-            <span
-              key={g}
-              className="rounded-full border border-border px-3 py-1 text-sm text-muted"
-            >
-              {g}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {a.bio && (
-        <p className="mt-8 text-lg leading-relaxed text-foreground/80">{a.bio}</p>
-      )}
-
-      <div className="mt-12 rounded-xl border border-border bg-card p-6 text-sm text-muted">
-        <p className="font-medium text-foreground">
-          Media, live room, and booking coming soon.
-        </p>
-        <p className="mt-1">
-          This artist page is live on the Cerberus platform. Phase 2 adds the
-          self-hosted media vault.
-        </p>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
