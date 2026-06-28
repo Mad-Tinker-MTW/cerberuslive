@@ -51,3 +51,18 @@ press-kit downloads, admin verification, search/filter directory, live-stream em
   card / badge; design for a 30%-complete profile, not just polished STCO).
 - Keep SSR + SEO (the reason we run Next).
 - Dossier ID format reuses the CLS- prefix (matches PMP doc IDs). Nice consistency.
+
+## Verification and Reviews (trust model)
+- "Verified Artist" is EARNED, not self-declared: granted after the artist completes a
+  booking THROUGH the site AND a customer leaves a review. The badge means real proof.
+- Reviews are ADMIN-MODERATED: they route to Franky, who approves before publish. He
+  passes positives, tracks neutrals and negatives.
+- Escalation: repeated negatives to an artist trigger a warning, then removal of booking
+  ability. Marketplace governance keeps quality high. This gate IS the Cerberus brand.
+- Data model adds: a `reviews` table (status pending/approved/rejected, sentiment, links
+  to a booking + artist + reviewer), `bookings` records, and a `verified` flag on the
+  artist that is admin-set / computed from (completed booking + at least one approved review).
+- Scale note: manual review approval is fine at launch but becomes a bottleneck later;
+  plan a lightweight admin moderation queue.
+- Maps to the dossier hero: Signal = "Media Verified" only once earned; Gate Status open/closed
+  reflects booking standing (closed if removed for negatives).
