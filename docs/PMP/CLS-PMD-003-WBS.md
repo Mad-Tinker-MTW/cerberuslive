@@ -59,10 +59,10 @@ Project Manager: Francisco De La Paz
 
 | ID | Task | Status |
 |---|---|---|
-| 1.3.1 | Artist agent app (Electron, Windows first) | Pending |
+| 1.3.1 | Artist agent app (Electron, Windows first): branded setup wizard + must-stay-running disclaimer | Pending |
 | 1.3.2 | Agent: bundle cloudflared and local Express server | Pending |
-| 1.3.3 | Agent: one-click serve and tunnel URL auto-registration | Pending |
-| 1.3.4 | Track upload UI on artist dashboard | Pending |
+| 1.3.3 | Agent: one-click serve, publish-to-Cerberus, tunnel URL auto-registration | Pending |
+| 1.3.4 | Track upload UI on artist dashboard (admin-hosted R2 tier, separate paid option) | Pending |
 | 1.3.5 | Public media player on artist profile | Pending |
 | 1.3.6 | Featured track on profile card | Pending |
 | 1.3.7 | Play count tracking | Pending |

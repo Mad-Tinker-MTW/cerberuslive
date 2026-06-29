@@ -89,7 +89,9 @@ function SocialRow({ links }: { links: Socials }) {
   if (entries.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="rounded-xl border border-border bg-panel p-5">
+      <h3 className="mb-3 text-xs uppercase tracking-widest text-muted">Follow</h3>
+      <div className="flex flex-wrap gap-2">
       {entries.map(([k, url]) => (
         <a
           key={k}
@@ -102,6 +104,7 @@ function SocialRow({ links }: { links: Socials }) {
           {SOCIAL_LABELS[k]}
         </a>
       ))}
+      </div>
     </div>
   );
 }

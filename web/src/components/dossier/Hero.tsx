@@ -50,8 +50,11 @@ export function FeaturedTrackCard({ track }: { track: FeaturedTrack }) {
         <span>{track.duration ?? "0:00"}</span>
       </div>
 
+      {/* On-platform actions only. Media is first-party (self-hosted via the
+          artist agent or the admin-hosted R2 tier), never linked off to other
+          platforms. License/Remix/Buy land with the offerings model. */}
       <div className="mt-4 flex flex-wrap gap-2">
-        {["Spotify", "YouTube", "SoundCloud", "Share"].map((p) => (
+        {["Share"].map((p) => (
           <button
             key={p}
             type="button"

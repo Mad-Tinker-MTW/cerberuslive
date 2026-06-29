@@ -35,18 +35,12 @@ export function SiteHeader() {
           <div className="hidden items-center rounded-md border border-border bg-panel-soft px-3 py-1.5 sm:flex">
             <span className="text-sm text-muted">Search artists...</span>
           </div>
-          <span
-            aria-hidden
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted"
-          >
-            ⌗
-          </span>
           <Link
             href="/account"
             aria-label="Account"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition hover:border-red hover:text-foreground"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-xs font-semibold text-muted transition hover:border-red hover:text-foreground"
           >
-            ◔
+            ☰
           </Link>
         </div>
       </div>
