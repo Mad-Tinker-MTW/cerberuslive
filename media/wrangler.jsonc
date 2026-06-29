@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cerberus-media",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "cerberus-waitlist",
+      "database_id": "8eda792e-cc45-49db-9e1d-648a79837478"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "cerberus-media"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
