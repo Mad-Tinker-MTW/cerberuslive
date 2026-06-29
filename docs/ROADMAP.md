@@ -23,9 +23,9 @@ Goal: artist profiles live, shareable, discoverable.
 - [x] Auth (Better Auth, passwordless magic-link via Resend)
 - [x] Artist profile creation (self-serve claim from /account)
 - [x] Public artist page at cerberuslive.studio/artist/{slug}
-- [ ] Fan accounts (follow an artist)
+- [x] Fan accounts (follow an artist)
 - [ ] Central discovery feed (browse artists by genre)
-- [ ] Admin dashboard (signups, users, approvals)
+- [x] Admin dashboard (review moderation, verify/gate, tunnel visibility, bookings)
 - [ ] Migrate waitlist emails to user invites
 - [ ] Resend confirmation emails on waitlist signup
 
@@ -34,10 +34,10 @@ Goal: artist profiles live, shareable, discoverable.
 ## Phase 2: Media Vault
 Goal: artists can share music.
 
-- [ ] Artist agent app (Electron, Windows first)
-- [ ] Track upload UI on artist dashboard
-- [ ] Public media player on artist profile
-- [ ] Featured track on profile card
+- [x] Artist agent app (Tauri v2, Windows first) — see Q:\MTW\CerberusAgent
+- [ ] Track upload UI on artist dashboard (admin-hosted R2 tier)
+- [x] Public media player on artist profile (first-party tunnel streaming)
+- [x] Featured track on profile card
 - [ ] Play count tracking
 - [ ] R2 admin-hosted tier for always-on storage
 
