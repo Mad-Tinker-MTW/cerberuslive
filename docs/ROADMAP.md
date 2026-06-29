@@ -29,6 +29,8 @@ Goal: artist profiles live, shareable, discoverable.
 - [x] Admin dashboard build-out (users + role control, platform stats, waitlist + CSV export, artist suspend/feature/delete)
 - [x] Owner/admin password login (Better Auth username plugin, alongside magic-link)
 - [x] Artist photo upload (R2-backed, editor control)
+- [ ] Dossier enrichment: Artist Traits (ratings), Signature Sounds, Influences sections (see docs/PROFILE-AND-DOSSIER-NOTES.md, L-046)
+- [ ] "Artist DNA" radar/stat chart on the dossier (SVG; the dossier-theme differentiator)
 - [ ] Migrate waitlist emails to user invites
 - [ ] Resend confirmation emails on waitlist signup
 
