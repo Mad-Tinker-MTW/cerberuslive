@@ -9,7 +9,12 @@ import { AgentConnect } from "@/components/account/AgentConnect";
 
 export const dynamic = "force-dynamic";
 
-type ProfileRow = { slug: string; display_name: string; tunnel_url: string | null };
+type ProfileRow = {
+  slug: string;
+  display_name: string;
+  tunnel_url: string | null;
+  media_origin: string | null;
+};
 
 export default async function AccountPage() {
   const auth = authFromContext();
@@ -20,7 +25,7 @@ export default async function AccountPage() {
   const db = getDb();
   const profile = await db
     .prepare(
-      "SELECT slug, display_name, tunnel_url FROM artist_profiles WHERE user_id = ? LIMIT 1"
+      "SELECT slug, display_name, tunnel_url, media_origin FROM artist_profiles WHERE user_id = ? LIMIT 1"
     )
     .bind(user.id)
     .first<ProfileRow>();
@@ -92,7 +97,11 @@ export default async function AccountPage() {
 
         {profile && (
           <div className="mt-6">
-            <AgentConnect slug={profile.slug} tunnelUrl={profile.tunnel_url} />
+            <AgentConnect
+              slug={profile.slug}
+              tunnelUrl={profile.tunnel_url}
+              mediaOrigin={profile.media_origin}
+            />
           </div>
         )}
 
