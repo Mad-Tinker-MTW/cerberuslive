@@ -58,6 +58,7 @@ Project Manager: Francisco De La Paz
 | 1.2.22 | Owner/admin password login (Better Auth username plugin, /login dual-mode) | Complete |
 | 1.2.23 | Artist photo upload (R2 upload + serve route, editor control) | Complete |
 | 1.2.24 | Admin dashboard build-out: users + role control, platform stats, waitlist + CSV export, artist suspend/feature/delete | Complete |
+| 1.2.25 | Dossier enrichment: Artist DNA radar (SVG) + Artist Traits/Signature Sounds/Influences sections, render + editor + API, stored in profile_json | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -184,7 +185,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 83.5 hours to date at $85/hr (approximately $7,097.50).
+Seeded from docs/HOURS.md, extended at checkpoint. 127.0 hours to date at $85/hr (approximately $10,795.00).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -272,4 +273,8 @@ Seeded from docs/HOURS.md, extended at checkpoint. 83.5 hours to date at $85/hr 
 | 2026-06-29 | Admin QA (sections render, suspend->404, last-admin 409, prod verify) | QA Engineer | 1.0 |
 | 2026-06-29 | Admin data model + enforcement design | Solutions Architect | 0.5 |
 | 2026-06-29 | CHANGELOG + docs (round 2) | Technical Writer | 0.5 |
-| **Total** | | | **122.0** |
+| 2026-06-29 | Dossier enrichment data model + radar geometry/layout design (reuse profile_json no-migration, 6-axis viewBox sizing, graceful-degradation card flow) | Solutions Architect | 1.0 |
+| 2026-06-29 | Artist DNA radar (SVG) + Traits/Signature Sounds/Influences (render cards, editor controls, /api/profile/update clamp + persist) | Lead Developer | 2.5 |
+| 2026-06-29 | Enrichment QA (tsc, eslint, live preview render, local D1 seed-verify, screenshot review) | QA Engineer | 1.0 |
+| 2026-06-29 | CHANGELOG + checkpoint docs (round 3) | Technical Writer | 0.5 |
+| **Total** | | | **127.0** |

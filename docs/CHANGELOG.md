@@ -1,5 +1,23 @@
 # Changelog — Cerberus Live Studio
 
+## [0.7.2] — 2026-06-29
+
+Dossier enrichment (L-046): the artist page gains a visual, quick-scan layer aimed at a booker's
+ten-second read, plus self-serve editor controls for it.
+
+### Added
+- **Artist DNA radar**: a pure-SVG six-axis stat chart (Stage Energy, Technical Skill, Crowd
+  Interaction, Originality, Versatility, Improvisation), 0-100 per axis, server-rendered and themed.
+  Axis labels live inside the viewBox so they scale with the chart and never clip.
+- **Artist Traits** (1-5 star ratings), **Signature Sounds** (checklist), and **Influences** (tag
+  chips) sections on the Overview tab, after Sound & Style.
+- Editor controls for all four: DNA sliders, per-trait star raters, and toggle-chip pickers, with
+  `/api/profile/update` whitelisting and clamping (ratings 1-5, DNA 0-100, blanks dropped).
+
+### Notes
+- All four fields live in the existing `profile_json` blob, so no migration was required.
+- Each card hides when its data is empty, preserving graceful degradation for sparse profiles.
+
 ## [0.7.1] — 2026-06-29
 
 Go-live: the real domain now serves the platform, and the Phase 0 waitlist worker is retired.
