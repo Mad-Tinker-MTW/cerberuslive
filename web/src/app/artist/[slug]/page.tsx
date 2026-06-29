@@ -7,6 +7,7 @@ import {
   getTracks,
   getFollowerCount,
   isFollowing,
+  getApprovedReviews,
   trackUrl,
   parseJson,
   type Socials,
@@ -14,6 +15,7 @@ import {
   type FeaturedTrack,
 } from "@/lib/db";
 import { FollowButton } from "@/components/dossier/FollowButton";
+import { ReviewsPanel } from "@/components/dossier/ReviewsPanel";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { ArtistSidebar } from "@/components/dossier/Sidebar";
 import { DossierHero, FeaturedTrackCard } from "@/components/dossier/Hero";
@@ -70,6 +72,7 @@ export default async function ArtistPage({
   const session = await authFromContext().api.getSession({ headers: await headers() });
   const followerCount = await getFollowerCount(slug);
   const following = session ? await isFollowing(slug, session.user.id) : false;
+  const reviews = await getApprovedReviews(slug);
 
   return (
     <>
@@ -107,6 +110,7 @@ export default async function ArtistPage({
                   <MediaList tracks={tracks} tunnelUrl={artist.tunnel_url} />
                 ) : undefined
               }
+              reviews={<ReviewsPanel slug={artist.slug} reviews={reviews} />}
             />
             <BookingPanel
               slug={artist.slug}

@@ -73,6 +73,33 @@ export function trackUrl(tunnelUrl: string | null, t: Track): string | null {
   return t.filename;
 }
 
+export type Review = {
+  id: number;
+  reviewer_name: string;
+  rating: number;
+  body: string | null;
+  sentiment: string | null;
+  status: string;
+  created_at: string;
+};
+
+export function sentimentFromRating(r: number): "positive" | "neutral" | "negative" {
+  if (r >= 4) return "positive";
+  if (r === 3) return "neutral";
+  return "negative";
+}
+
+export async function getApprovedReviews(slug: string): Promise<Review[]> {
+  const db = getDb();
+  const { results } = await db
+    .prepare(
+      "SELECT id, reviewer_name, rating, body, sentiment, status, created_at FROM reviews WHERE artist_slug = ? AND status = 'approved' ORDER BY created_at DESC"
+    )
+    .bind(slug)
+    .all<Review>();
+  return results ?? [];
+}
+
 export async function getFollowerCount(slug: string): Promise<number> {
   const db = getDb();
   const r = await db

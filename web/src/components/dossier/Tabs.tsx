@@ -29,9 +29,11 @@ function ComingSoon({ label }: { label: string }) {
 export function ProfileTabs({
   overview,
   media,
+  reviews,
 }: {
   overview: React.ReactNode;
   media?: React.ReactNode;
+  reviews?: React.ReactNode;
 }) {
   const [active, setActive] = useState<Tab>("Overview");
 
@@ -59,7 +61,9 @@ export function ProfileTabs({
           ? overview
           : active === "Media" && media
             ? media
-            : <ComingSoon label={active} />}
+            : active === "Reviews" && reviews
+              ? reviews
+              : <ComingSoon label={active} />}
       </div>
     </div>
   );
