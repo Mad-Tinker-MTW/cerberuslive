@@ -37,6 +37,9 @@ export function DiscoveryGrid({ artists }: { artists: Artist[] }) {
     <div>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <input
+          id="discovery-search"
+          name="search"
+          type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by name, city, or genre..."

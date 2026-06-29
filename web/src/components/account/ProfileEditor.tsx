@@ -66,11 +66,14 @@ function Field({
   placeholder?: string;
   textarea?: boolean;
 }) {
+  const fid = "f-" + label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   return (
-    <label className="flex flex-col gap-1.5">
+    <label className="flex flex-col gap-1.5" htmlFor={fid}>
       <span className="text-xs uppercase tracking-widest text-muted">{label}</span>
       {textarea ? (
         <textarea
+          id={fid}
+          name={fid}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
@@ -79,6 +82,8 @@ function Field({
         />
       ) : (
         <input
+          id={fid}
+          name={fid}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}

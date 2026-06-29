@@ -77,8 +77,8 @@ export function ReviewsPanel({
         ) : (
           <form onSubmit={submit} className="flex flex-col gap-3">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="h-11 rounded-md border border-border bg-panel px-3 text-sm outline-none focus:border-red" />
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="h-11 rounded-md border border-border bg-panel px-3 text-sm outline-none focus:border-red" />
+              <input id="review-name" name="name" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="h-11 rounded-md border border-border bg-panel px-3 text-sm outline-none focus:border-red" />
+              <input id="review-email" name="email" autoComplete="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="h-11 rounded-md border border-border bg-panel px-3 text-sm outline-none focus:border-red" />
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs uppercase tracking-widest text-muted">Rating</span>
@@ -88,7 +88,7 @@ export function ReviewsPanel({
                 </button>
               ))}
             </div>
-            <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="How was working with them?" rows={3} className="rounded-md border border-border bg-panel px-3 py-2 text-sm outline-none focus:border-red" />
+            <textarea id="review-body" name="body" value={body} onChange={(e) => setBody(e.target.value)} placeholder="How was working with them?" rows={3} className="rounded-md border border-border bg-panel px-3 py-2 text-sm outline-none focus:border-red" />
             <button type="submit" disabled={status === "sending"} className="h-11 rounded-md bg-red text-sm font-semibold text-white transition hover:bg-red-dark disabled:opacity-50">
               {status === "sending" ? "Submitting..." : "Submit review"}
             </button>

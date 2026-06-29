@@ -57,6 +57,8 @@ export function AccountActions({
           </h2>
           <div className="flex flex-col gap-3 sm:flex-row">
             <input
+              id="claim-display-name"
+              name="displayName"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Display name"

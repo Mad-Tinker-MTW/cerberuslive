@@ -73,6 +73,8 @@ export default function LoginPage() {
             <p className="mt-1 text-sm text-muted">Username and password.</p>
             <form onSubmit={submitOwner} className="mt-5 flex flex-col gap-3">
               <input
+                id="username"
+                name="username"
                 type="text"
                 value={uname}
                 onChange={(e) => setUname(e.target.value)}
@@ -81,6 +83,8 @@ export default function LoginPage() {
                 className="h-11 rounded-md border border-border bg-panel-soft px-3 text-sm outline-none focus:border-red"
               />
               <input
+                id="password"
+                name="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -106,6 +110,8 @@ export default function LoginPage() {
             </p>
             <form onSubmit={submitMagic} className="mt-5 flex flex-col gap-3">
               <input
+                id="email"
+                name="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

@@ -92,12 +92,18 @@ export function BookingForm({
       <div className="flex flex-col gap-3">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <input
+            id="booking-name"
+            name="name"
+            autoComplete="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
             className="h-11 rounded-md border border-border bg-panel px-3 text-sm outline-none focus:border-red"
           />
           <input
+            id="booking-email"
+            name="email"
+            autoComplete="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -107,6 +113,8 @@ export function BookingForm({
         </div>
         {kind === "booking" && (
           <input
+            id="booking-date"
+            name="eventDate"
             value={eventDate}
             onChange={(e) => setEventDate(e.target.value)}
             placeholder="Event date / window (optional)"
@@ -114,6 +122,8 @@ export function BookingForm({
           />
         )}
         <textarea
+          id="booking-message"
+          name="message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={kind === "booking" ? "Venue, budget, details..." : "Your message..."}
