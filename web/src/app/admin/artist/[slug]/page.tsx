@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { authFromContext } from "@/lib/auth";
+import { isControlDeckRequest } from "@/lib/host";
 import { getDb, getTracks } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { ArtistAdminControls, type ArtistAdminState } from "@/components/admin/ArtistAdminControls";
@@ -42,10 +43,11 @@ function Card({ title, count, children }: { title: string; count?: number; child
 
 export default async function AdminArtistDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  if (!(await isControlDeckRequest())) notFound();
   const auth = authFromContext();
   const session = await auth.api.getSession({ headers: await headers() });
   const role = (session?.user as { role?: string } | undefined)?.role;
-  if (!session) redirect("/login");
+  if (!session) redirect("/admin/login");
   if (role !== "admin") {
     return (
       <>

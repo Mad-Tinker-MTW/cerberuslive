@@ -1,7 +1,8 @@
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { authFromContext } from "@/lib/auth";
+import { isControlDeckRequest } from "@/lib/host";
 import { getDb } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { AdminConsole } from "@/components/admin/AdminConsole";
@@ -17,10 +18,13 @@ import type {
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
+  // The control deck only exists on its own host; on the public origin it 404s.
+  if (!(await isControlDeckRequest())) notFound();
+
   const auth = authFromContext();
   const session = await auth.api.getSession({ headers: await headers() });
   const role = (session?.user as { role?: string } | undefined)?.role;
-  if (!session) redirect("/login");
+  if (!session) redirect("/admin/login");
   if (role !== "admin") {
     return (
       <>
