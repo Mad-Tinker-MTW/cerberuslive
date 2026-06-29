@@ -20,6 +20,7 @@ Local `wrangler dev` accepts the TCP connection but never returns a response (ev
 
 ## Closed
 
+- /account/edit 500 on sparse dossiers: `WEEK` was a non-component export from the `"use client"` ProfileEditor, which Next resolves to `undefined` when imported by a server component, so the edit page crashed for any profile with no availability data (every freshly-claimed dossier). Resolved 2026-06-29: moved `WEEK` to a shared non-client module (`availability.ts`). Reproduced (500 -> 200) before/after.
 - RSC origin-host leak (media gateway): the hidden tunnel origin (`media_origin`/`tunnel_url`) serialized into the public dossier's client RSC payload via `ProfileTabs` props. Resolved 2026-06-29: `MediaCtx` reduced to slug + `hasMedia` boolean, and the dossier page scrubs both fields before render. Verified absent in SSR output.
 - Media host had no edge cert: `<slug>.media.cerberuslive.studio` (three-level) is not covered by Universal SSL (`cerberuslive.studio` + `*.cerberuslive.studio` only), so media TLS failed with handshake_failure. Resolved 2026-06-29 by moving hidden origins to two-level `t-<slug>.cerberuslive.studio` and fronting media with the gateway worker (OPEN-LOOPS L-045).
 - Turnstile incident on the live waitlist: a two-character sitekey transposition (`dS` instead of `Ds`) plus an unset `TURNSTILE_SECRET`, which 403'd every signup. Resolved 2026-06-28, sitekey corrected and secret set, verified end to end.

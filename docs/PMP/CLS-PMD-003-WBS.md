@@ -40,7 +40,7 @@ Project Manager: Francisco De La Paz
 | 1.2.1 | Scaffold Next.js 15.5 app on Cloudflare Workers via OpenNext | Complete |
 | 1.2.2 | Auth provider chosen: Better Auth (self-hosted in the OpenNext Worker) | Complete |
 | 1.2.3 | Auth: sign up, log in, email verify (Better Auth magic-link via Resend) | Complete |
-| 1.2.4 | Account roles: artist, fan, venue, admin | Pending |
+| 1.2.4 | Account roles: artist, fan, venue, admin (admin role control built) | Complete |
 | 1.2.5 | Artist profile creation (self-serve claim from /account, linked to user_id) | Complete |
 | 1.2.6 | Public artist page at /artist/{slug} | Complete |
 | 1.2.13 | Artist dossier page v1: rich SSR /artist/{slug}, data-driven with graceful degradation, schema expansion + STCO seed | Complete |
@@ -55,6 +55,9 @@ Project Manager: Francisco De La Paz
 | 1.2.19 | Agent-key UI + tunnel status in /account | Complete |
 | 1.2.20 | Profile editor: performance profile + availability (nested self-serve fields) | Complete |
 | 1.2.21 | Negative-review escalation + booking-gate enforcement (warn -> remove booking) | Complete |
+| 1.2.22 | Owner/admin password login (Better Auth username plugin, /login dual-mode) | Complete |
+| 1.2.23 | Artist photo upload (R2 upload + serve route, editor control) | Complete |
+| 1.2.24 | Admin dashboard build-out: users + role control, platform stats, waitlist + CSV export, artist suspend/feature/delete | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -77,7 +80,7 @@ Project Manager: Francisco De La Paz
 | 1.3.10 | Media Gateway worker (cerberus-media): R2 read-through cache over hidden 2-level per-artist tunnel origins, Range-aware | Complete |
 | 1.3.11 | Self-serve named-tunnel provisioning (cf-tunnel CF API, /api/agent/provision, /account "Set up streaming") | Complete |
 | 1.3.12 | Agent named token-mode: cloudflared tunnel run --token (Bun engine + Tauri desktop) | Complete |
-| 1.3.13 | Gateway deploy + live media verification | Pending |
+| 1.3.13 | Gateway deploy + live media verification (deployed; provision + 206 stream + R2 cache verified on prod) | Complete |
 
 ---
 
@@ -256,4 +259,17 @@ Seeded from docs/HOURS.md, extended at checkpoint. 83.5 hours to date at $85/hr 
 | 2026-06-29 | Cross-repo build verification (cargo check, tsc, bun-build) | QA Engineer | 0.5 |
 | 2026-06-29 | Docs (MEDIA-GATEWAY-PLAN, media README, config, CHANGELOG) | Technical Writer | 1.5 |
 | 2026-06-29 | Operator deploy sequencing + ledger steps | Deployment Engineer | 0.5 |
-| **Total** | | | **103.5** |
+| 2026-06-29 | Artist photo upload: R2 binding, upload + serve routes, editor control | Lead Developer | 2.0 |
+| 2026-06-29 | Photo upload QA (binding, serve 404, tsc) | QA Engineer | 0.5 |
+| 2026-06-29 | Owner/admin auth design (email+password + username plugin alongside magic-link) | Solutions Architect | 1.0 |
+| 2026-06-29 | Owner/admin auth build (auth.ts, client, /login dual-mode, migration 0009) | Lead Developer | 2.0 |
+| 2026-06-29 | Auth QA (signup/signin/wrong-pw/role-grant round-trip) | QA Engineer | 1.0 |
+| 2026-06-29 | /account/edit 500 fix (sparse-dossier repro, WEEK client-module root cause) | Lead Developer | 1.0 |
+| 2026-06-29 | Media gateway go-live (R2 buckets, custom domain deploy, CF token scoping, secrets, TLS) | Deployment Engineer | 2.5 |
+| 2026-06-29 | Media QA (live provision, 206 + R2 cache, DNS resolution) | QA Engineer | 1.0 |
+| 2026-06-29 | Prod virgin wipe + owner bring-up (cleanup-all, migrations to prod, seed, reseed, CI) | Deployment Engineer | 2.0 |
+| 2026-06-29 | Admin build-out (users+role API, stats, waitlist+CSV, suspend/feature/delete, enforcement, migration 0010, console) | Lead Developer | 3.5 |
+| 2026-06-29 | Admin QA (sections render, suspend->404, last-admin 409, prod verify) | QA Engineer | 1.0 |
+| 2026-06-29 | Admin data model + enforcement design | Solutions Architect | 0.5 |
+| 2026-06-29 | CHANGELOG + docs (round 2) | Technical Writer | 0.5 |
+| **Total** | | | **122.0** |

@@ -26,6 +26,9 @@ Goal: artist profiles live, shareable, discoverable.
 - [x] Fan accounts (follow an artist)
 - [x] Central discovery feed (search + browse artists by genre)
 - [x] Admin dashboard (review moderation, verify/gate, tunnel visibility, bookings)
+- [x] Admin dashboard build-out (users + role control, platform stats, waitlist + CSV export, artist suspend/feature/delete)
+- [x] Owner/admin password login (Better Auth username plugin, alongside magic-link)
+- [x] Artist photo upload (R2-backed, editor control)
 - [ ] Migrate waitlist emails to user invites
 - [ ] Resend confirmation emails on waitlist signup
 
@@ -35,7 +38,7 @@ Goal: artist profiles live, shareable, discoverable.
 Goal: artists can share music.
 
 - [x] Artist agent app (Tauri v2, Windows first), see Q:\MTW\CerberusAgent
-- [x] Media Gateway: media.cerberuslive.studio edge worker + R2 read-through cache over hidden per-artist tunnels (built; deploy pending)
+- [x] Media Gateway: media.cerberuslive.studio edge worker + R2 read-through cache over hidden per-artist tunnels (LIVE on prod; 206 streaming + cache verified)
 - [x] Self-serve streaming provisioning (one-click named tunnel, artist never touches Cloudflare)
 - [x] Agent named token-mode (stable named tunnel, not ephemeral quick tunnel)
 - [ ] Track upload UI on artist dashboard (admin-hosted R2 tier)

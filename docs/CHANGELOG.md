@@ -1,5 +1,24 @@
 # Changelog — Cerberus Live Studio
 
+## [0.7.0] — 2026-06-29
+
+Go-live round: the platform is operational on prod for a real-user run. Media streams end to end, the owner has a password login, and the admin console is built out.
+
+### Added
+- **Artist photo upload**: editor gets an upload/replace control; images store in R2 (`cerberus-images`, key `photos/<slug>`) and serve via `GET /api/media/photo/[slug]`. Fills the dossier photo slot that previously had no input.
+- **Owner/admin password login**: Better Auth `emailAndPassword` + the `username` plugin alongside passwordless magic-link, so the site owner (`mad.tinker`) signs in by username + password while everyone else uses magic-link. `/login` gains an "Owner / admin sign-in" toggle. Migration 0009 (`username`, `displayUsername`).
+- **Admin dashboard build-out**: platform stats row; **Users** panel with role control (fan/artist/venue/admin) and a last-admin lock-out guard (`/api/admin/user`); **Waitlist** viewer + CSV export; artist **suspend / feature / delete** (`/api/admin/artist`, cascades dependent rows). Migration 0010 (`suspended`, `featured`).
+- **Media gateway live on prod**: `cerberus-media` worker deployed to the `media.cerberuslive.studio` custom domain; R2 buckets `cerberus-media` + `cerberus-images` created; self-serve provisioning verified end to end (named tunnel + DNS + token, 206 range streaming, R2 cache warm).
+
+### Changed
+- Discovery excludes suspended artists and pins featured ones first; the dossier 404s a suspended artist; the media gateway 403s a suspended artist.
+
+### Fixed
+- **/account/edit 500 on sparse dossiers**: `WEEK` was a non-component export from a `"use client"` module, which is `undefined` when imported by a server component, so the edit page crashed for any profile with no availability data (every freshly-claimed dossier). Moved `WEEK` to a shared non-client module.
+
+### Infrastructure
+- Prod D1 wiped to a virgin state for the real-user run (`db/cleanup-all.sql`; artists + auth cleared, waitlist + schema kept). Migrations 0008-0010 applied to prod. Owner account seeded + granted admin; owner password rotated off the bootstrap value. CF provisioning secrets (`CF_API_TOKEN`/`CF_ACCOUNT_ID`/`CF_ZONE_ID`) set on the web worker.
+
 ## [0.6.0] — 2026-06-29
 
 The Media Gateway: media now streams through a Cerberus-controlled edge with an R2 cache, instead of pointing the browser at each artist's raw tunnel. Built but not yet deployed (operator deploy steps pending).
