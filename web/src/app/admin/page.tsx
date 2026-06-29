@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { authFromContext } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
@@ -127,7 +128,12 @@ export default async function AdminPage() {
     <>
       <SiteHeader />
       <main className="mx-auto w-full max-w-5xl px-6 py-12">
-        <h1 className="mb-8 text-2xl font-bold tracking-tight">Cerberus Control Deck</h1>
+        <div className="mb-8 flex items-center justify-between gap-3">
+          <h1 className="text-2xl font-bold tracking-tight">Cerberus Control Deck</h1>
+          <Link href="/admin/security" className="text-sm text-muted transition hover:text-foreground">
+            Security
+          </Link>
+        </div>
         <AdminConsole
           reviews={reviews}
           artists={artists}
