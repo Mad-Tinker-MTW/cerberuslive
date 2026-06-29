@@ -1,18 +1,18 @@
-import type { Track } from "@/lib/db";
+import type { Track, MediaCtx } from "@/lib/db";
 import { trackUrl } from "@/lib/db";
 import { AudioPlayer } from "./AudioPlayer";
 
-// Full track list for the Media tab. First-party audio only, streamed through
-// the artist's self-host tunnel (or the admin-hosted tier).
+// Full track list for the Media tab. First-party audio only, streamed through the media
+// gateway (R2-cached over the artist's hidden self-host tunnel) or the admin-hosted tier.
 export function MediaList({
   tracks,
-  tunnelUrl,
+  mediaCtx,
 }: {
   tracks: Track[];
-  tunnelUrl: string | null;
+  mediaCtx: MediaCtx;
 }) {
   const playable = tracks
-    .map((t) => ({ t, src: trackUrl(tunnelUrl, t) }))
+    .map((t) => ({ t, src: trackUrl(mediaCtx, t) }))
     .filter((x): x is { t: Track; src: string } => Boolean(x.src));
 
   if (playable.length === 0) {

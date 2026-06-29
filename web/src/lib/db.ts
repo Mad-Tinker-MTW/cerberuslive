@@ -51,6 +51,7 @@ export type ArtistDossier = Artist & {
   social_links: string | null;
   profile_json: string | null;
   tunnel_url: string | null;
+  media_origin: string | null;
 };
 
 export type Track = {
@@ -64,11 +65,29 @@ export type Track = {
   play_count: number;
 };
 
-/** Public media URL for a track served through the artist's self-host tunnel. */
-export function trackUrl(tunnelUrl: string | null, t: Track): string | null {
+/** Where the media gateway lives. The gateway resolves the artist's hidden tunnel origin
+ *  and R2-caches, so the public URL is path-based and never exposes the tunnel host. */
+const MEDIA_BASE = (process.env.NEXT_PUBLIC_MEDIA_BASE || "https://media.cerberuslive.studio").replace(/\/$/, "");
+
+/** Context needed to build a self-hosted track's public URL. Carries only the public slug and
+ *  a boolean — NEVER the hidden origin host, since this object is serialized into the client
+ *  RSC payload and the origin must never be advertised. Build it with mediaCtx(). */
+export type MediaCtx = { slug: string; hasMedia: boolean };
+
+/** Derive the client-safe media context. hasMedia is true once the artist has provisioned a
+ *  gateway origin or has an agent connected, so something is cached or live. */
+export function mediaCtx(artist: { slug: string; media_origin: string | null; tunnel_url: string | null }): MediaCtx {
+  return { slug: artist.slug, hasMedia: Boolean(artist.media_origin || artist.tunnel_url) };
+}
+
+/** Public media URL for a track. Self-hosted tracks route through the media gateway
+ *  (media.cerberuslive.studio/<slug>/<file>); the gateway serves from its R2 cache when the
+ *  artist is offline. Returns null only when the artist has never provisioned nor connected,
+ *  so nothing is cached or live — the player stays hidden (graceful degradation). */
+export function trackUrl(ctx: MediaCtx, t: Track): string | null {
   if (t.source === "self") {
-    if (!tunnelUrl) return null;
-    return `${tunnelUrl.replace(/\/$/, "")}/${encodeURIComponent(t.filename)}`;
+    if (!ctx.hasMedia) return null;
+    return `${MEDIA_BASE}/${encodeURIComponent(ctx.slug)}/${encodeURIComponent(t.filename)}`;
   }
   // 'r2' (admin-hosted) filenames are already absolute URLs.
   return t.filename;
@@ -170,7 +189,8 @@ const DOSSIER_COLUMNS =
   "slug, display_name, bio, city, genre_tags, photo_url, tier, " +
   "subtitle, dossier_id, artist_class, performance_type, set_length, travel_range, " +
   "availability_status, response_time, member_since, verified, booking_range, clearance, " +
-  "signal_status, gate_status, sound_style, booking_email, social_links, profile_json, tunnel_url";
+  "signal_status, gate_status, sound_style, booking_email, social_links, profile_json, " +
+  "tunnel_url, media_origin";
 
 export async function getArtistDossier(
   slug: string

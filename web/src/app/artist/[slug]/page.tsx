@@ -9,6 +9,7 @@ import {
   isFollowing,
   getApprovedReviews,
   trackUrl,
+  mediaCtx as makeMediaCtx,
   parseJson,
   type Socials,
   type DossierProfile,
@@ -63,7 +64,12 @@ export default async function ArtistPage({
   // over the static profile_json featured track.
   const tracks = await getTracks(slug);
   const featuredRow = tracks.find((t) => t.is_featured === 1) ?? tracks[0];
-  const featuredSrc = featuredRow ? trackUrl(artist.tunnel_url, featuredRow) : null;
+  const mediaCtx = makeMediaCtx(artist);
+  const featuredSrc = featuredRow ? trackUrl(mediaCtx, featuredRow) : null;
+  // The hidden tunnel origin must never reach the client RSC payload. Scrub it now that the
+  // client-safe mediaCtx is built; nothing on the public dossier needs these.
+  artist.media_origin = null;
+  artist.tunnel_url = null;
   const featuredTrack: FeaturedTrack | undefined = featuredRow
     ? { title: featuredRow.title, artist: artist.display_name, duration: featuredRow.duration ?? undefined }
     : profile.featuredTrack;
@@ -113,7 +119,7 @@ export default async function ArtistPage({
               }
               media={
                 tracks.length > 0 ? (
-                  <MediaList tracks={tracks} tunnelUrl={artist.tunnel_url} />
+                  <MediaList tracks={tracks} mediaCtx={mediaCtx} />
                 ) : undefined
               }
               reviews={<ReviewsPanel slug={artist.slug} reviews={reviews} />}
