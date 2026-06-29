@@ -1,5 +1,30 @@
 # Changelog — Cerberus Live Studio
 
+## [0.7.1] — 2026-06-29
+
+Go-live: the real domain now serves the platform, and the Phase 0 waitlist worker is retired.
+
+### Changed
+- **Domain cutover**: `cerberuslive.studio` (apex) cut over from the waitlist worker to the platform
+  (`cerberuslive-web`). The platform is the live site; `media.cerberuslive.studio` already serves the
+  gateway. Verified live: home, /login, owner login, dossier, and 206 media streaming at the apex.
+
+### Removed
+- **Phase 0 waitlist worker retired**: repo source removed (`src/index.js`, `public/`, root
+  `wrangler.jsonc`). The deployment deletion is a one-command operator step
+  (`bunx wrangler delete --name cerberuslive`). The `waitlist` table + rows are preserved in D1 and
+  surfaced in /admin; `schema.sql` keeps that table's DDL.
+
+### Fixed
+- **Form-field a11y/autofill**: added `id` + `name` to every form input (login, profile editor,
+  discovery search, booking, review, dossier claim) so password managers and browser autofill work
+  and the DevTools "form field should have an id or name" warning clears.
+
+### Notes
+- `www.cerberuslive.studio` redirect to the apex is still pending (optional; apex is canonical).
+- The Protected Audience / Shared Storage / StorageType.persistent console deprecations come from a
+  browser extension (`main.js`), not the platform.
+
 ## [0.7.0] — 2026-06-29
 
 Go-live round: the platform is operational on prod for a real-user run. Media streams end to end, the owner has a password login, and the admin console is built out.

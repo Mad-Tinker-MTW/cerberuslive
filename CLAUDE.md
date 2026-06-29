@@ -6,18 +6,21 @@ a self-hosted media vault (via Cloudflare Tunnel), and a booking layer. Phase 0 
 live at cerberuslive.studio; the full 6-phase platform is in build. Tagline: "Guarding the
 gates of the underground."
 
-## Repo Shape (three workers, one D1)
-- `src/index.js` + `public/`: the Phase 0 **waitlist worker** (cerberus-waitlist). Serves the
-  static landing via the ASSETS binding and handles `POST /api/waitlist`. Still live on cerberuslive.studio.
+## Repo Shape (two workers, one D1)
 - `web/`: the **Next.js 15.5 platform** (cerberuslive-web), built to Cloudflare Workers via the
-  OpenNext adapter. On the preview URL (cerberuslive-web.frankydlp.workers.dev), running against PROD D1.
+  OpenNext adapter. Serves the live `cerberuslive.studio` (cut over 2026-06-29) and runs against PROD D1.
+  Deployed by CI (GitHub Actions, builds on Linux).
 - `media/`: the **media gateway worker** (cerberus-media), a plain Worker on the
   `media.cerberuslive.studio` custom domain. Resolves each artist's hidden tunnel origin from D1 and
   serves media through an R2 read-through cache. Unlike the OpenNext web worker, it builds + deploys
   on Windows via `wrangler deploy`. See the Media Gateway section + docs/MEDIA-GATEWAY-PLAN.md.
-- All three bind the **same D1** `cerberus-waitlist` (binding name `DB`): tables `waitlist`,
+- Both bind the **same D1** `cerberus-waitlist` (binding name `DB`): tables `waitlist`,
   `artist_profiles`, `tracks`, `bookings`, `follows`, `reviews`, and the Better Auth tables
   (`user`/`session`/`account`/`verification`).
+- The Phase 0 **waitlist worker** (`cerberuslive`, formerly `src/index.js` + `public/`) was RETIRED at
+  go-live: domain cut to the platform, repo source removed, deployment deletion is a one-command
+  operator step (`bunx wrangler delete --name cerberuslive`). The `waitlist` table + rows are preserved
+  in D1 (surfaced in /admin); `schema.sql` keeps that table's DDL.
 
 ## Media Gateway (how media streams)
 Public media is `GET media.cerberuslive.studio/<slug>/<file>`, served by the `media/` worker. Each

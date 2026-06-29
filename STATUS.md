@@ -1,32 +1,34 @@
 # Cerberus Live Studio — Status
 
 ## Current State
-Phase 1 (MVP Platform) in build. Phase 0 waitlist is live at cerberuslive.studio. The platform
-(web/) runs on the preview worker (cerberuslive-web.frankydlp.workers.dev); the artist dossier
-page, branded home, and Better Auth are built and verified locally but NOT yet cut over to prod.
+LIVE on prod. `cerberuslive.studio` serves the platform (cut over from the Phase 0 waitlist
+2026-06-29). Phase 1 (MVP Platform) plus the media layer are operational for a real-user run.
+122.0h logged; see `docs/PMP/CLS-PMD-003-WBS.md` (authoritative).
 
 ## Last Updated
-2026-06-28
+2026-06-29
 
-## What Works
-- Phase 0 waitlist: live signup by role, Turnstile-protected, lands in D1 (cerberuslive.studio)
-- Platform scaffold: Next.js 15.5 + OpenNext to Workers, GitHub Actions CI (builds on Linux)
-- Rich artist dossier page (SSR /artist/[slug]): sidebar, dossier hero, featured track, tabs,
-  overview, booking; data-driven with graceful degradation (verified full/partial/sparse)
-- Branded home: logo hero, tagline, three pillars, artist discovery grid
-- Better Auth: passwordless magic-link via Resend, /login + /account, self-serve dossier claim,
-  role on user (artist/fan/venue/admin). Full flow verified locally against D1.
-- D1 migrations 0001 (artist_profiles), 0002 (dossier), 0003 (better_auth) applied to local D1
-- tsc, next build, and lint all clean
+## What Works (live on prod)
+- Platform at cerberuslive.studio: branded home + discovery (search / genre)
+- Auth: magic-link (Resend) for everyone + owner username+password (Better Auth username plugin)
+- Artist dossiers (SSR /artist/[slug]), self-serve claim + profile editor + photo upload (R2)
+- Media streaming: media.cerberuslive.studio gateway + R2 read-through cache (named per-artist
+  tunnels via the Cerberus Agent); verified 206 end to end
+- Bookings, follows, reviews + earned verification
+- Admin console (/admin): users + role control, platform stats, waitlist viewer + CSV export,
+  artist verify / gate / feature / suspend / delete
+- D1 migrations 0001-0010 applied to prod; R2 buckets cerberus-media + cerberus-images
 
 ## What Needs Work
-- DEPLOY GATE: apply migrations 0002 + 0003 to the remote prod D1, deploy via CI, cut
-  cerberuslive.studio over from the waitlist worker to the platform, clear the prod test row
-  (mad.tinker@outlook.com)
-- Auth follow-ups (non-blocking): full role management (venue/admin), profile-edit UI,
-  optional waitlist form on the platform home
-- Phases 2-6 (media vault, live room, booking, managed, monetization) per ROADMAP
+- `www.cerberuslive.studio` redirect to the apex (optional; apex is canonical)
+- Delete the orphan `cerberuslive` waitlist worker deployment (operator: `bunx wrangler delete
+  --name cerberuslive`; repo source already removed)
+- Phase 2+ depth: admin-hosted R2 track-upload tier; waitlist -> invite migration; Resend
+  signup confirmations
+- DMARC / magic-link junk-folder deliverability
+- CerberusAgent: NSIS installer + desktop GUI run-through (own repo + docs now)
 
-## Next Session
-The deploy gate: prod migrations + deploy + domain cutover. Everything blocking it is a
-production/secrets action for the operator. A formal deploy runbook can be prepared on request.
+## Notes
+The Phase 0 waitlist worker is retired; its `waitlist` table + rows are preserved in D1 and
+surfaced in /admin. Cross-workshop threads tracked in Q:\MTW\Docs\OPEN-LOOPS.md (L-030 done,
+L-044, L-045).

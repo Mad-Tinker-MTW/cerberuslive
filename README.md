@@ -1,29 +1,38 @@
 # Cerberus Live Studio
 
-Creator platform for underground artists, DJs, and performers: profile, self-hosted media vault, and booking layer. Built by Mad Tinker's Workshop (MTW) under 4Kings Enterprises.
+Creator platform for underground artists, DJs, and performers: artist dossiers, a self-hosted media
+vault, and a booking layer. Built by Mad Tinker's Workshop (MTW) under 4Kings Enterprises.
 
-- **Live:** https://cerberuslive.studio (Phase 0, waitlist)
-- **Status:** Waitlist live; full 6-phase platform in build. See `docs/ULTRAPLAN.md`.
+- **Live:** https://cerberuslive.studio (the platform)
+- **Status:** Phase 1 operational on prod; see `STATUS.md` and `docs/PMP/CLS-PMD-003-WBS.md`.
+
+## Repo shape (two workers, one D1)
+- `web/`: the **Next.js 15.5 platform** (`cerberuslive-web`), built to Cloudflare Workers via the
+  OpenNext adapter. Serves `cerberuslive.studio`. Deployed by CI (GitHub Actions, builds on Linux).
+- `media/`: the **media gateway worker** (`cerberus-media`) on `media.cerberuslive.studio`: resolves
+  each artist's hidden tunnel origin and streams through an R2 read-through cache. Deploys with
+  `wrangler deploy` (builds on Windows).
+- Both bind the same D1 `cerberus-waitlist` (binding `DB`): `waitlist`, `artist_profiles`, `tracks`,
+  `bookings`, `follows`, `reviews`, and the Better Auth tables.
+
+The Phase 0 waitlist worker was retired at go-live 2026-06-29 (`cerberuslive.studio` cut over to the
+platform). The `waitlist` table and its rows are preserved in D1 and surfaced in the admin console;
+`schema.sql` keeps that table's DDL.
 
 ## Stack
-- Cloudflare Workers (static assets + API), D1, R2, Turnstile
-- Platform (planned): Next.js App Router via the OpenNext adapter, deployed to Workers
-- Package manager: **bun** (never npm or npx, use `bunx`)
+- Next.js 15.5 (App Router, not 16), React 19, TypeScript, Tailwind v4
+- Cloudflare Workers + D1 + R2 + Turnstile, OpenNext adapter, Resend (email)
+- Better Auth (magic-link, plus username+password for the owner)
+- Package manager: **bun** (never npm/npx; use `bunx`)
 
-## Layout
-- `public/` — landing page, served as static assets
-- `src/index.js` — Worker: serves the page and handles `POST /api/waitlist`
-- `schema.sql` — D1 `waitlist` table
-- `features.config.ts` — phased feature flags
-- `wrangler.jsonc` — Cloudflare config (D1 + assets bindings)
-- `docs/` — ULTRAPLAN (master plan) plus legacy reference files
-
-## Develop
+## Dev
 ```
-bun install
-bunx wrangler dev        # local
-bunx wrangler deploy     # ship
+cd web && bun run dev        # the platform (next dev); bindings via .dev.vars
+cd media && bun run dev      # the media gateway worker
 ```
+Note: `wrangler dev` / workerd does not run on the Windows dev box; plain-worker binding paths verify
+at deploy, pure logic via `bun test` (see `media/test`).
 
-## Required secret
-`TURNSTILE_SECRET` must be set on the Worker (`bunx wrangler secret put TURNSTILE_SECRET`), or every signup returns 403 "Bot verification failed".
+## Docs
+`docs/` (SPEC, VISION, ROADMAP, BUGS, CHANGELOG, ULTRAPLAN, MEDIA-GATEWAY-PLAN) and `docs/PMP/`
+(CLS-PMD-001..006). `CLAUDE.md` holds the working context.
