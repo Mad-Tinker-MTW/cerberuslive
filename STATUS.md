@@ -21,8 +21,6 @@ LIVE on prod. `cerberuslive.studio` serves the platform (cut over from the Phase
 
 ## What Needs Work
 - `www.cerberuslive.studio` redirect to the apex (optional; apex is canonical)
-- Delete the orphan `cerberuslive` waitlist worker deployment (operator: `bunx wrangler delete
-  --name cerberuslive`; repo source already removed)
 - Phase 2+ depth: admin-hosted R2 track-upload tier; waitlist -> invite migration; Resend
   signup confirmations
 - DMARC / magic-link junk-folder deliverability

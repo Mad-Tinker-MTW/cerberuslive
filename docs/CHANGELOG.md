@@ -11,9 +11,8 @@ Go-live: the real domain now serves the platform, and the Phase 0 waitlist worke
 
 ### Removed
 - **Phase 0 waitlist worker retired**: repo source removed (`src/index.js`, `public/`, root
-  `wrangler.jsonc`). The deployment deletion is a one-command operator step
-  (`bunx wrangler delete --name cerberuslive`). The `waitlist` table + rows are preserved in D1 and
-  surfaced in /admin; `schema.sql` keeps that table's DDL.
+  `wrangler.jsonc`) and the deployed worker deleted. The `waitlist` table + rows are preserved in D1
+  and surfaced in /admin; `schema.sql` keeps that table's DDL.
 
 ### Fixed
 - **Form-field a11y/autofill**: added `id` + `name` to every form input (login, profile editor,

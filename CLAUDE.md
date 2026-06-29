@@ -18,9 +18,8 @@ gates of the underground."
   `artist_profiles`, `tracks`, `bookings`, `follows`, `reviews`, and the Better Auth tables
   (`user`/`session`/`account`/`verification`).
 - The Phase 0 **waitlist worker** (`cerberuslive`, formerly `src/index.js` + `public/`) was RETIRED at
-  go-live: domain cut to the platform, repo source removed, deployment deletion is a one-command
-  operator step (`bunx wrangler delete --name cerberuslive`). The `waitlist` table + rows are preserved
-  in D1 (surfaced in /admin); `schema.sql` keeps that table's DDL.
+  go-live 2026-06-29: domain cut to the platform, repo source removed, deployed worker deleted. The
+  `waitlist` table + rows are preserved in D1 (surfaced in /admin); `schema.sql` keeps that table's DDL.
 
 ## Media Gateway (how media streams)
 Public media is `GET media.cerberuslive.studio/<slug>/<file>`, served by the `media/` worker. Each
