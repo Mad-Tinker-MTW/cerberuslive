@@ -1,5 +1,22 @@
 # Changelog — Cerberus Live Studio
 
+## [0.5.0] — 2026-06-28
+
+Media, bookings, follows, and the reviews/verification trust model.
+
+### Added
+- **First-party media playback**: AudioPlayer (Range streaming through the artist's self-host tunnel, graceful offline state), Media tab, featured-track playback. `POST /api/agent/register` publishes the tunnel URL + track list. Migration 0004 (tunnel_url, agent_key, contact_email, `tracks`, `bookings`).
+- **Bookings backend**: in-platform Book/Message/Request replaces the mailto stubs. Routes notifications to the artist's email, or the admin desk for managed artists. Correct subjects, reply-to the requester.
+- **Follow / fan system**: Follow button + count on dossiers, `/following` page. Migration 0005.
+- **Agent-key UI**: "Self-host agent" panel in /account (generate key, config snippet, tunnel status).
+- **Reviews + admin moderation + earned verification**: reviews submit as pending; `/admin` (role-gated) approves/rejects, sets verify/gate, shows tunnel status + bookings. Verified/signal/gate stay admin-only. Migration 0006.
+
+### Changed
+- Media is first-party only (off-platform Spotify/YouTube/SoundCloud buttons removed); social links reframed as "Follow".
+
+### Companion
+- New **Cerberus Agent** desktop app (Tauri v2) + Bun CLI engine at `Q:\MTW\CerberusAgent` — the artist self-host media tool.
+
 ## [0.4.0] — 2026-06-28
 
 Authentication: Better Auth, passwordless magic-link (L-029).

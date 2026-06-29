@@ -46,9 +46,13 @@ Project Manager: Francisco De La Paz
 | 1.2.13 | Artist dossier page v1: rich SSR /artist/{slug}, data-driven with graceful degradation, schema expansion + STCO seed | Complete |
 | 1.2.14 | Port the real Cerberus landing (brand hero, pillars, discovery) to the Next home route | Complete |
 | 1.2.15 | Better Auth integration: D1 tables, magic-link via Resend, /login, /account, self-serve profile claim | Complete |
-| 1.2.7 | Fan accounts and follow system | Pending |
+| 1.2.7 | Fan accounts and follow system | Complete |
 | 1.2.8 | Central discovery feed, browse by genre | Pending |
-| 1.2.9 | Admin dashboard (signups, users, approvals) | Pending |
+| 1.2.9 | Admin dashboard (review moderation, verify/gate, tunnel visibility, bookings) | Complete |
+| 1.2.16 | Media playback (first-party audio streaming via self-host tunnel) + /api/agent/register | Complete |
+| 1.2.17 | Bookings backend (in-platform request/message, managed->admin else artist email) | Complete |
+| 1.2.18 | Reviews + earned verification (admin-moderated, completed-booking + approved-review) | Complete |
+| 1.2.19 | Agent-key UI + tunnel status in /account | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -171,7 +175,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 67.0 hours to date at $85/hr (approximately $5,695).
+Seeded from docs/HOURS.md, extended at checkpoint. 79.5 hours to date at $85/hr (approximately $6,757.50).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -218,4 +222,15 @@ Seeded from docs/HOURS.md, extended at checkpoint. 67.0 hours to date at $85/hr 
 | 2026-06-28 | Auth secrets wiring (RESEND_KEY + BETTER_AUTH_SECRET, local + web worker) | Deployment Engineer | 0.5 |
 | 2026-06-28 | Auth end-to-end QA (magic-link, session, profile claim, local data cleanup) | QA Engineer | 1.0 |
 | 2026-06-28 | Auth provider decision reconciliation across SPEC/ULTRAPLAN/WBS/Schedule/BUGS | Technical Writer | 0.5 |
-| **Total** | | | **67.0** |
+| 2026-06-28 | Media playback architecture (tunnel streaming, schema 0004) | Solutions Architect | 0.5 |
+| 2026-06-28 | Media playback build (AudioPlayer, MediaList, /api/agent/register, wiring) | Lead Developer | 2.0 |
+| 2026-06-28 | Bookings backend (/api/bookings, form, managed routing) | Lead Developer | 1.5 |
+| 2026-06-28 | Follow system (schema 0005, /api/follow, FollowButton, /following) | Lead Developer | 1.5 |
+| 2026-06-28 | Agent-key UI + tunnel status (/account, /api/agent/key) | Lead Developer | 1.0 |
+| 2026-06-28 | Reviews + admin moderation architecture (schema 0006, earned verification) | Solutions Architect | 0.5 |
+| 2026-06-28 | Reviews + admin build (/api/reviews, /admin, /api/admin/*, AdminConsole) | Lead Developer | 2.5 |
+| 2026-06-28 | Dossier/socials alignment (media first-party, Follow, header) | Lead Developer | 0.5 |
+| 2026-06-28 | Cloudflare inventory + email routing design | Deployment Engineer | 0.5 |
+| 2026-06-28 | End-to-end QA (media, bookings, follow, reviews, admin, routing) | QA Engineer | 1.5 |
+| 2026-06-28 | CHANGELOG + checkpoint docs | Technical Writer | 0.5 |
+| **Total** | | | **79.5** |
