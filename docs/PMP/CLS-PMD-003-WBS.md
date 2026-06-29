@@ -61,8 +61,9 @@ Project Manager: Francisco De La Paz
 | 1.2.25 | Dossier enrichment: Artist DNA radar (SVG) + Artist Traits/Signature Sounds/Influences sections, render + editor + API, stored in profile_json | Complete |
 | 1.2.26 | Control deck redesign: tabbed admin (Overview/Managed/Roster/Fans/Venues/Inbox), metric bar (owner excluded), sortable tables, expandable controls, tier promote/demote, artist + fan detail pages | Complete |
 | 1.2.27 | Support inbox + contact: migration 0011 support_messages, /contact intake form, Inbox queue (resolve/reply via Resend), contact-a-user from detail pages | Complete |
-| 1.2.28 | Controldeck subdomain auth scaffold: host-gating (lib/host.ts) + relocated owner login (/admin/login); subdomain + Cloudflare Access + TOTP still operator/PC pending | Open |
+| 1.2.28 | Controldeck auth: host-gating (lib/host.ts) + relocated owner login (/admin/login) + in-app TOTP 2FA (better-auth two-factor, migration 0012, enrollment at /admin/security, login challenge) | Complete |
 | 1.2.29 | Status-field consolidation (verified trio -> single source) + booking activity metrics + admin BCC on non-managed bookings | Complete |
+| 1.2.30 | Secure controldeck go-live: custom domain via CF API, prod D1 migrations 0011+0012, Cloudflare Access (email-PIN, owner-only), final lockdown (public /login magic-link only + /admin* controldeck-only). Admin is controldeck-only behind 3 layers | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -189,7 +190,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 147.5 hours to date at $85/hr (approximately $12,537.50).
+Seeded from docs/HOURS.md, extended at checkpoint. 156.5 hours to date at $85/hr (approximately $13,302.50).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -289,4 +290,12 @@ Seeded from docs/HOURS.md, extended at checkpoint. 147.5 hours to date at $85/hr
 | 2026-06-29 | Status-field consolidation + booking activity metrics + admin BCC (1.2.29) | Lead Developer | 1.5 |
 | 2026-06-29 | Admin build QA (preview verification all phases, tsc/eslint, local D1 seed/teardown) | QA Engineer | 2.5 |
 | 2026-06-29 | ADMIN-CONTROLDECK-PLAN.md authoring + checkpoint docs (round 4) | Technical Writer | 1.5 |
-| **Total** | | | **147.5** |
+| 2026-06-29 | TOTP 2FA design (better-auth two-factor: enrollment + login-challenge flow) | Solutions Architect | 0.5 |
+| 2026-06-29 | TOTP build: plugin wiring, migration 0012, OwnerLoginForm 2FA stage, /admin/security enrollment (1.2.28) | Lead Developer | 2.0 |
+| 2026-06-29 | TOTP QA (enroll + re-login-challenge round-trip, RFC-6238 code verify) | QA Engineer | 1.0 |
+| 2026-06-29 | Custom-domain root-cause (wizard vs OpenNext, token scopes) + deploy-order/no-lockout sequencing | Solutions Architect | 1.0 |
+| 2026-06-29 | Secure controldeck go-live: custom domain via CF API, prod D1 migrations 0011+0012, Cloudflare Access setup, lockdown deploy (1.2.30) | Deployment Engineer | 2.5 |
+| 2026-06-29 | Final lockdown code (strip apex owner login + /admin* host-gating across 5 routes) | Lead Developer | 0.5 |
+| 2026-06-29 | Prod verification (apex lockdown, Access edge gate, owner+2FA D1 state, host-isolation) | QA Engineer | 1.0 |
+| 2026-06-29 | Ledger + registry + checkpoint docs (round 5) | Technical Writer | 0.5 |
+| **Total** | | | **156.5** |

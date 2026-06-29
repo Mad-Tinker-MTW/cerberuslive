@@ -35,7 +35,7 @@ Goal: artist profiles live, shareable, discoverable.
 - [x] Support inbox + contact-a-user (migration 0011, /contact intake, reply via Resend)
 - [x] Booking activity metrics + owner BCC on non-managed bookings
 - [x] Status-field consolidation (verified trio -> single source; "Gate Status" -> "Booking")
-- [~] Controldeck subdomain + Cloudflare Access + TOTP 2FA (scaffold done; subdomain/Access/prod migration are operator/PC steps)
+- [x] Controldeck subdomain + Cloudflare Access + TOTP 2FA (LIVE on prod: admin controldeck-only behind Access email-PIN + owner password + authenticator TOTP)
 - [ ] Migrate waitlist emails to user invites
 - [ ] Resend confirmation emails on waitlist signup
 

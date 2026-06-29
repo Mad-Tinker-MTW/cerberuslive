@@ -1,5 +1,28 @@
 # Changelog — Cerberus Live Studio
 
+## [0.8.1] — 2026-06-29
+
+Secure control deck shipped to prod. Admin now lives on its own host behind three layers,
+and is gone from the public site entirely.
+
+### Added
+- **In-app TOTP 2FA** (better-auth `two-factor`, migration 0012): authenticator enrollment at
+  `/admin/security`, and a TOTP challenge on owner sign-in.
+- **`controldeck.cerberuslive.studio`** custom domain (attached to `cerberuslive-web` via the
+  Cloudflare API) front-ending the admin, with **Cloudflare Access** (email one-time PIN,
+  owner-only) gating it at the edge.
+
+### Changed
+- **Final lockdown**: the public `/login` is now magic-link only (owner toggle removed), and
+  `/admin`, `/admin/artist/[slug]`, `/admin/fan/[id]`, `/admin/security` are host-gated to the
+  control-deck host (they 404 on the apex). Admin is reachable only at
+  `controldeck.cerberuslive.studio` behind Access + owner password + authenticator TOTP.
+
+### Infrastructure
+- Prod D1 migrations `0011_support_messages` + `0012_two_factor` applied.
+- Custom domain added via Cloudflare API (the dashboard wizard mis-handled the subdomain);
+  OpenNext was not the blocker.
+
 ## [0.8.0] — 2026-06-29
 
 Admin control-deck overhaul. On the `controldeck` branch (not deployed): the owner-login
