@@ -15,6 +15,12 @@
       "database_id": "8eda792e-cc45-49db-9e1d-648a79837478"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "cerberus-images"
+    }
+  ],
   "observability": {
     "enabled": true
   }

@@ -38,6 +38,7 @@ export default async function EditProfilePage() {
   const profile = parseJson<DossierProfile>(p.profile_json, {});
 
   const initial: EditorValues = {
+    photoUrl: p.photo_url ?? "",
     display_name: p.display_name ?? "",
     subtitle: p.subtitle ?? "",
     artist_class: p.artist_class ?? "",

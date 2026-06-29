@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Socials } from "@/lib/db";
 
 export type EditorValues = {
+  photoUrl: string;
   display_name: string;
   subtitle: string;
   artist_class: string;
@@ -100,6 +101,26 @@ export function ProfileEditor({
   const [v, setV] = useState<EditorValues>(initial);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [photoUrl, setPhotoUrl] = useState(initial.photoUrl);
+  const [photoBusy, setPhotoBusy] = useState(false);
+
+  async function uploadPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoBusy(true);
+    setError("");
+    const fd = new FormData();
+    fd.append("photo", file);
+    const res = await fetch("/api/profile/photo", { method: "POST", body: fd });
+    if (res.ok) {
+      setPhotoUrl(((await res.json()) as { photoUrl: string }).photoUrl);
+      router.refresh();
+    } else {
+      setError(((await res.json().catch(() => ({}))) as { error?: string }).error || "Could not upload photo.");
+    }
+    setPhotoBusy(false);
+    e.target.value = "";
+  }
 
   const set = (k: keyof EditorValues, val: string) =>
     setV((p) => ({ ...p, [k]: val }));
@@ -174,6 +195,31 @@ export function ProfileEditor({
 
   return (
     <form onSubmit={save} className="flex flex-col gap-6">
+      <section className="flex items-center gap-4">
+        <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-border bg-panel-soft">
+          {photoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={photoUrl} alt="Artist photo" className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-2xl text-foreground/20">♪</div>
+          )}
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs uppercase tracking-widest text-muted">Artist photo</span>
+          <label className="inline-flex w-fit cursor-pointer items-center rounded-md border border-border bg-panel-soft px-4 py-2 text-sm font-semibold text-foreground transition hover:border-red">
+            {photoBusy ? "Uploading..." : photoUrl ? "Replace photo" : "Upload photo"}
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              onChange={uploadPhoto}
+              disabled={photoBusy}
+              className="hidden"
+            />
+          </label>
+          <span className="text-xs text-muted">PNG, JPEG, WebP, or GIF, up to 5 MB. Saves immediately.</span>
+        </div>
+      </section>
+
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Display name" value={v.display_name} onChange={(x) => set("display_name", x)} />
         <Field label="Subtitle / meaning" value={v.subtitle} onChange={(x) => set("subtitle", x)} placeholder="e.g. Self Truth Sees Cypher" />
