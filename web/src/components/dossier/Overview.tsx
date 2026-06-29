@@ -2,7 +2,11 @@ import type {
   ArtistDossier,
   PerformanceProfile,
   MediaItem,
+  ArtistTrait,
+  ArtistDna,
 } from "@/lib/db";
+import { DNA_AXES } from "@/lib/db";
+import { ArtistRadar } from "./ArtistRadar";
 
 function Card({
   title,
@@ -138,26 +142,115 @@ function MediaHighlightsCard({ media }: { media: MediaItem[] }) {
   );
 }
 
+function ArtistDnaCard({ dna }: { dna: ArtistDna }) {
+  return (
+    <Card title="Artist DNA">
+      <ArtistRadar dna={dna} />
+    </Card>
+  );
+}
+
+function ArtistTraitsCard({ traits }: { traits: ArtistTrait[] }) {
+  return (
+    <Card title="Artist Traits">
+      <dl className="grid grid-cols-1 gap-y-2.5 text-sm">
+        {traits.map((t) => (
+          <div key={t.name} className="flex items-center justify-between gap-3">
+            <dt className="text-muted">{t.name}</dt>
+            <dd className="text-right">
+              <Stars n={t.rating} />
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </Card>
+  );
+}
+
+function SignatureSoundsCard({ sounds }: { sounds: string[] }) {
+  return (
+    <Card title="Signature Sounds">
+      <ul className="flex flex-col gap-2 text-sm">
+        {sounds.map((s) => (
+          <li key={s} className="flex items-center gap-2 text-foreground/85">
+            <span className="text-red" aria-hidden>
+              ✓
+            </span>
+            {s}
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
+function InfluencesCard({ items }: { items: string[] }) {
+  return (
+    <Card title="Influences">
+      <div className="flex flex-wrap gap-2">
+        {items.map((i) => (
+          <span
+            key={i}
+            className="rounded-full border border-border bg-panel-soft px-3 py-1.5 text-xs text-foreground/85"
+          >
+            {i}
+          </span>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
 export function OverviewPanel({
   artist,
   performanceProfile,
   bestFor,
   media,
+  traits,
+  signatureSounds,
+  influences,
+  artistDna,
 }: {
   artist: ArtistDossier;
   performanceProfile?: PerformanceProfile;
   bestFor?: string[];
   media?: MediaItem[];
+  traits?: ArtistTrait[];
+  signatureSounds?: string[];
+  influences?: string[];
+  artistDna?: ArtistDna;
 }) {
   const hasPerf =
     performanceProfile && Object.keys(performanceProfile).length > 0;
   const hasBestFor = bestFor && bestFor.length > 0;
   const hasMedia = media && media.length > 0;
+  const cleanTraits = (traits ?? []).filter(
+    (t) => t && t.name && t.rating > 0
+  );
+  const hasTraits = cleanTraits.length > 0;
+  const hasSounds = signatureSounds && signatureSounds.length > 0;
+  const hasInfluences = influences && influences.length > 0;
+  const hasDna =
+    artistDna &&
+    DNA_AXES.some((a) => typeof artistDna[a.key] === "number" && artistDna[a.key]! > 0);
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       {artist.bio && <AboutArtistCard bio={artist.bio} />}
       {artist.sound_style && <SoundStyleCard text={artist.sound_style} />}
+      {hasDna && (
+        <div className="lg:col-span-2">
+          <ArtistDnaCard dna={artistDna} />
+        </div>
+      )}
+      {hasTraits && <ArtistTraitsCard traits={cleanTraits} />}
+      {hasSounds && <SignatureSoundsCard sounds={signatureSounds} />}
+      {hasInfluences && (
+        // Pairs with Signature Sounds; spans full width when it would sit alone.
+        <div className={hasSounds ? "lg:col-span-2" : ""}>
+          <InfluencesCard items={influences} />
+        </div>
+      )}
       {hasBestFor && <BestForCard items={bestFor} />}
       {hasPerf && <PerformanceProfileCard p={performanceProfile} />}
       {hasMedia && (

@@ -69,6 +69,12 @@ export default async function EditProfilePage() {
       profile.availability && profile.availability.length > 0
         ? profile.availability
         : WEEK.map((day) => ({ day, state: "available" as const })),
+    traitRatings: Object.fromEntries(
+      (profile.traits ?? []).map((t) => [t.name, t.rating])
+    ),
+    signatureSounds: profile.signatureSounds ?? [],
+    influences: profile.influences ?? [],
+    dna: { ...(profile.artistDna ?? {}) },
   };
 
   return (

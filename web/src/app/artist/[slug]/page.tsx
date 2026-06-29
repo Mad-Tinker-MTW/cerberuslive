@@ -115,6 +115,10 @@ export default async function ArtistPage({
                   }}
                   bestFor={profile.bestFor}
                   media={profile.media}
+                  traits={profile.traits}
+                  signatureSounds={profile.signatureSounds}
+                  influences={profile.influences}
+                  artistDna={profile.artistDna}
                 />
               }
               media={

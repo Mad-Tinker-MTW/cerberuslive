@@ -34,6 +34,11 @@ export type EditorValues = {
   ppEquipment: string;
   ppStagePresence: number;
   availability: { day: string; state: "available" | "booked" }[];
+  // L-046 dossier enrichment
+  traitRatings: Record<string, number>;
+  signatureSounds: string[];
+  influences: string[];
+  dna: Record<string, number>;
 };
 
 const BEST_FOR_OPTIONS = [
@@ -42,6 +47,51 @@ const BEST_FOR_OPTIONS = [
   "Colleges",
   "Festivals",
   "Community Events",
+];
+
+// L-046 dossier enrichment option sets (kept local to the client editor so it
+// pulls no server-only modules; the dossier render side reads DNA_AXES from db).
+const TRAIT_OPTIONS = [
+  "Crowd Reading",
+  "Freestyle",
+  "Mixing",
+  "Songwriting",
+  "Production",
+  "Stage Presence",
+  "Collaboration",
+];
+
+const SOUND_OPTIONS = [
+  "Conscious Hip-Hop",
+  "House",
+  "Freestyle",
+  "Latin Rhythm",
+  "Funk",
+  "80's Throwbacks",
+  "Modern Club",
+  "Mashups",
+  "AI-Assisted Production",
+];
+
+const INFLUENCE_OPTIONS = [
+  "Hip-Hop",
+  "House",
+  "Freestyle",
+  "Latin",
+  "Electronic",
+  "Rock",
+  "Synthwave",
+  "Old School",
+  "Modern Club",
+];
+
+const DNA_AXIS_FIELDS: { key: string; label: string }[] = [
+  { key: "stageEnergy", label: "Stage Energy" },
+  { key: "technicalSkill", label: "Technical Skill" },
+  { key: "crowdInteraction", label: "Crowd Interaction" },
+  { key: "originality", label: "Originality" },
+  { key: "versatility", label: "Versatility" },
+  { key: "improvisation", label: "Improvisation" },
 ];
 
 const SOCIAL_KEYS: (keyof Socials)[] = [
@@ -137,6 +187,18 @@ export function ProfileEditor({
         ? p.bestFor.filter((x) => x !== item)
         : [...p.bestFor, item],
     }));
+  const setTrait = (name: string, rating: number) =>
+    setV((p) => {
+      const cur = p.traitRatings[name] ?? 0;
+      return { ...p, traitRatings: { ...p.traitRatings, [name]: cur === rating ? 0 : rating } };
+    });
+  const toggleIn = (key: "signatureSounds" | "influences", item: string) =>
+    setV((p) => ({
+      ...p,
+      [key]: p[key].includes(item) ? p[key].filter((x) => x !== item) : [...p[key], item],
+    }));
+  const setDna = (key: string, n: number) =>
+    setV((p) => ({ ...p, dna: { ...p.dna, [key]: n } }));
   const toggleDay = (day: string) =>
     setV((p) => {
       const cur = p.availability.find((d) => d.day === day);
@@ -185,6 +247,13 @@ export function ProfileEditor({
           stagePresence: v.ppStagePresence,
         },
         availability: v.availability,
+        traits: TRAIT_OPTIONS.filter((n) => (v.traitRatings[n] ?? 0) > 0).map((n) => ({
+          name: n,
+          rating: v.traitRatings[n],
+        })),
+        signatureSounds: v.signatureSounds,
+        influences: v.influences,
+        artistDna: v.dna,
       }),
     });
     if (res.ok) {
@@ -256,6 +325,105 @@ export function ProfileEditor({
               onClick={() => toggleBestFor(item)}
               className={`rounded-full border px-3 py-1.5 text-xs transition ${
                 v.bestFor.includes(item)
+                  ? "border-red bg-red/10 text-red"
+                  : "border-border text-muted hover:border-red"
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <span className="text-xs uppercase tracking-widest text-muted">Artist DNA</span>
+        <p className="mt-1 text-xs text-muted">
+          Set each axis 0-100. Renders as the radar chart on your dossier (axes left at 0 still show, just flat).
+        </p>
+        <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {DNA_AXIS_FIELDS.map((a) => {
+            const val = v.dna[a.key] ?? 0;
+            return (
+              <label key={a.key} className="flex flex-col gap-1.5" htmlFor={`dna-${a.key}`}>
+                <span className="flex justify-between text-xs uppercase tracking-widest text-muted">
+                  <span>{a.label}</span>
+                  <span className="text-foreground">{val}</span>
+                </span>
+                <input
+                  id={`dna-${a.key}`}
+                  name={`dna-${a.key}`}
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={5}
+                  value={val}
+                  onChange={(e) => setDna(a.key, Number(e.target.value))}
+                  className="accent-red"
+                />
+              </label>
+            );
+          })}
+        </div>
+      </section>
+
+      <section>
+        <span className="text-xs uppercase tracking-widest text-muted">Artist traits</span>
+        <p className="mt-1 text-xs text-muted">Rate each 1-5; leave at 0 to hide it.</p>
+        <div className="mt-3 flex flex-col gap-2.5">
+          {TRAIT_OPTIONS.map((name) => {
+            const rating = v.traitRatings[name] ?? 0;
+            return (
+              <div key={name} className="flex items-center justify-between gap-3">
+                <span className="text-sm text-foreground/85">{name}</span>
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setTrait(name, n)}
+                      aria-label={`${name}: ${n} stars`}
+                      className={`text-lg ${n <= rating ? "text-red" : "text-foreground/20"}`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section>
+        <span className="text-xs uppercase tracking-widest text-muted">Signature sounds</span>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {SOUND_OPTIONS.map((item) => (
+            <button
+              type="button"
+              key={item}
+              onClick={() => toggleIn("signatureSounds", item)}
+              className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                v.signatureSounds.includes(item)
+                  ? "border-red bg-red/10 text-red"
+                  : "border-border text-muted hover:border-red"
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <span className="text-xs uppercase tracking-widest text-muted">Influences</span>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {INFLUENCE_OPTIONS.map((item) => (
+            <button
+              type="button"
+              key={item}
+              onClick={() => toggleIn("influences", item)}
+              className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                v.influences.includes(item)
                   ? "border-red bg-red/10 text-red"
                   : "border-border text-muted hover:border-red"
               }`}

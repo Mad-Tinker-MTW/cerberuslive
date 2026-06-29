@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { authFromContext } from "@/lib/auth";
-import { getDb, parseJson, type Socials, type DossierProfile, type PerformanceProfile, type AvailabilityDay } from "@/lib/db";
+import { getDb, parseJson, DNA_AXES, type Socials, type DossierProfile, type PerformanceProfile, type AvailabilityDay, type ArtistDna, type ArtistTrait } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +31,10 @@ type Body = Partial<Record<(typeof SCALAR_FIELDS)[number], string>> & {
   featuredTrack?: { title?: string; duration?: string };
   performanceProfile?: PerformanceProfile;
   availability?: AvailabilityDay[];
+  traits?: ArtistTrait[];
+  signatureSounds?: string[];
+  influences?: string[];
+  artistDna?: Record<string, number>;
 };
 
 export async function POST(req: Request) {
@@ -81,7 +85,16 @@ export async function POST(req: Request) {
   }
 
   // Nested fields merge into the existing profile_json blob.
-  if (body.bestFor || body.featuredTrack || body.performanceProfile || body.availability) {
+  if (
+    body.bestFor ||
+    body.featuredTrack ||
+    body.performanceProfile ||
+    body.availability ||
+    body.traits ||
+    body.signatureSounds ||
+    body.influences ||
+    body.artistDna
+  ) {
     const profileJson = parseJson<DossierProfile>(profile.profile_json, {});
     if (Array.isArray(body.bestFor)) {
       profileJson.bestFor = body.bestFor.filter((x) => typeof x === "string" && x.trim());
@@ -110,6 +123,37 @@ export async function POST(req: Request) {
       profileJson.availability = body.availability
         .filter((d) => d && typeof d.day === "string")
         .map((d) => ({ day: d.day, state: d.state === "booked" ? "booked" : "available" }));
+    }
+    // L-046 dossier enrichment: traits (1-5 stars), signature sounds + influences
+    // (checklists), and the Artist DNA radar values (0-100 per axis).
+    if (Array.isArray(body.traits)) {
+      profileJson.traits = body.traits
+        .filter((t) => t && typeof t.name === "string" && t.name.trim())
+        .map((t) => ({
+          name: t.name.trim(),
+          rating: Math.max(0, Math.min(5, Math.round(Number(t.rating) || 0))),
+        }))
+        .filter((t) => t.rating > 0);
+    }
+    if (Array.isArray(body.signatureSounds)) {
+      profileJson.signatureSounds = body.signatureSounds.filter(
+        (s) => typeof s === "string" && s.trim()
+      );
+    }
+    if (Array.isArray(body.influences)) {
+      profileJson.influences = body.influences.filter(
+        (s) => typeof s === "string" && s.trim()
+      );
+    }
+    if (body.artistDna && typeof body.artistDna === "object") {
+      const dna: ArtistDna = {};
+      for (const axis of DNA_AXES) {
+        const n = Number(body.artistDna[axis.key]);
+        if (Number.isFinite(n) && n > 0) {
+          dna[axis.key] = Math.max(0, Math.min(100, Math.round(n)));
+        }
+      }
+      profileJson.artistDna = dna;
     }
     sets.push("profile_json = ?");
     vals.push(JSON.stringify(profileJson));

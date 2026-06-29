@@ -178,12 +178,37 @@ export type AvailabilityDay = {
   state: "available" | "booked";
 };
 
+/**
+ * "Artist DNA" radar axes — a fixed six-spoke stat chart (game character-sheet
+ * style) giving a booker an instant visual read on a performer. The keys are the
+ * stored shape; labels render on the dossier and the editor. Each value is 0-100.
+ */
+export const DNA_AXES = [
+  { key: "stageEnergy", label: "Stage Energy" },
+  { key: "technicalSkill", label: "Technical Skill" },
+  { key: "crowdInteraction", label: "Crowd Interaction" },
+  { key: "originality", label: "Originality" },
+  { key: "versatility", label: "Versatility" },
+  { key: "improvisation", label: "Improvisation" },
+] as const;
+
+export type DnaAxisKey = (typeof DNA_AXES)[number]["key"];
+export type ArtistDna = Partial<Record<DnaAxisKey, number>>;
+
+/** A single quick-scan trait with a 1-5 star rating (e.g. "Mixing": 4). */
+export type ArtistTrait = { name: string; rating: number };
+
 export type DossierProfile = {
   featuredTrack?: FeaturedTrack;
   performanceProfile?: PerformanceProfile;
   bestFor?: string[];
   media?: MediaItem[];
   availability?: AvailabilityDay[];
+  // L-046 dossier enrichment — all optional, each card hides when empty.
+  traits?: ArtistTrait[];
+  signatureSounds?: string[];
+  influences?: string[];
+  artistDna?: ArtistDna;
 };
 
 const DOSSIER_COLUMNS =
