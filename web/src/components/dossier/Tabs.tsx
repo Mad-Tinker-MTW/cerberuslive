@@ -26,7 +26,13 @@ function ComingSoon({ label }: { label: string }) {
  * server component, preserving SSR); the rest are UI-only placeholders. Booking
  * lives in its own always-visible section below the tabs.
  */
-export function ProfileTabs({ overview }: { overview: React.ReactNode }) {
+export function ProfileTabs({
+  overview,
+  media,
+}: {
+  overview: React.ReactNode;
+  media?: React.ReactNode;
+}) {
   const [active, setActive] = useState<Tab>("Overview");
 
   return (
@@ -49,7 +55,11 @@ export function ProfileTabs({ overview }: { overview: React.ReactNode }) {
       </div>
 
       <div className="mt-5">
-        {active === "Overview" ? overview : <ComingSoon label={active} />}
+        {active === "Overview"
+          ? overview
+          : active === "Media" && media
+            ? media
+            : <ComingSoon label={active} />}
       </div>
     </div>
   );

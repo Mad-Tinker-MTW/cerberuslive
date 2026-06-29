@@ -149,13 +149,7 @@ export function ArtistSidebar({
       {/* Primary actions */}
       <div className="flex flex-col gap-2">
         <a
-          href={
-            artist.booking_email
-              ? `mailto:${artist.booking_email}?subject=Booking%20request:%20${encodeURIComponent(
-                  artist.display_name
-                )}`
-              : "#booking"
-          }
+          href="#booking"
           className="rounded-md bg-red px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-red-dark"
         >
           Book Artist

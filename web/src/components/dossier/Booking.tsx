@@ -1,4 +1,5 @@
 import type { AvailabilityDay } from "@/lib/db";
+import { BookingForm } from "./BookingForm";
 
 function AvailabilityCard({ days }: { days: AvailabilityDay[] }) {
   return (
@@ -42,57 +43,23 @@ function AvailabilityCard({ days }: { days: AvailabilityDay[] }) {
   );
 }
 
-function BookingRequestCard({
-  name,
-  email,
-}: {
-  name: string;
-  email: string;
-}) {
-  const mailto = `mailto:${email}?subject=${encodeURIComponent(
-    `Booking request: ${name}`
-  )}`;
-  return (
-    <div className="rounded-xl border border-border bg-panel-soft p-5">
-      <h3 className="mb-2 text-xs uppercase tracking-widest text-muted">
-        Booking Request
-      </h3>
-      <p className="mb-4 text-sm text-foreground/85">
-        Bring {name} to your stage. Send a request and the Cerberus desk routes it
-        to the artist.
-      </p>
-      <a
-        href={mailto}
-        className="block rounded-md bg-red px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-red-dark"
-      >
-        Request Booking
-      </a>
-      <a
-        href={mailto}
-        className="mt-3 block text-center text-sm text-muted transition hover:text-foreground"
-      >
-        {email}
-      </a>
-    </div>
-  );
-}
-
 export function BookingPanel({
+  slug,
   name,
-  bookingEmail,
   availability,
 }: {
+  slug: string;
   name: string;
-  bookingEmail: string | null;
   availability?: AvailabilityDay[];
 }) {
   const hasAvailability = availability && availability.length > 0;
-  const email = bookingEmail ?? "booking@cerberuslive.studio";
 
   return (
     <section id="booking" className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       {hasAvailability && <AvailabilityCard days={availability} />}
-      <BookingRequestCard name={name} email={email} />
+      <div className={hasAvailability ? "" : "lg:col-span-2"}>
+        <BookingForm slug={slug} artistName={name} />
+      </div>
     </section>
   );
 }

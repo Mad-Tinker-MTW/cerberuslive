@@ -1,7 +1,8 @@
 import type { ArtistDossier, FeaturedTrack } from "@/lib/db";
 import { genreList } from "@/lib/db";
+import { AudioPlayer } from "./AudioPlayer";
 
-/** A deterministic fake waveform (static UI in v1, no real audio yet). */
+/** A deterministic fake waveform, shown only when there's no real audio yet. */
 function Waveform() {
   const bars = Array.from({ length: 64 }, (_, i) => {
     const h = 20 + Math.abs(Math.sin(i * 0.7) * 60) + ((i * 13) % 20);
@@ -20,49 +21,59 @@ function Waveform() {
   );
 }
 
-export function FeaturedTrackCard({ track }: { track: FeaturedTrack }) {
+export function FeaturedTrackCard({
+  track,
+  src,
+}: {
+  track: FeaturedTrack;
+  src?: string | null;
+}) {
   return (
     <div className="rounded-xl border border-border bg-panel p-5">
       <h3 className="mb-4 text-xs uppercase tracking-widest text-muted">
         Featured Track
       </h3>
-      <div className="flex items-center gap-4">
-        <button
-          type="button"
-          aria-label={`Play ${track.title}`}
-          className="group relative flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-border bg-panel-soft"
-        >
-          <span className="text-2xl text-red transition group-hover:scale-110">▶</span>
-        </button>
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold text-foreground">{track.title}</p>
-          {track.artist && (
-            <p className="truncate text-sm text-muted">{track.artist}</p>
-          )}
-          <div className="mt-2">
-            <Waveform />
-          </div>
-        </div>
-      </div>
 
-      <div className="mt-3 flex items-center justify-between text-xs text-muted">
-        <span>0:00</span>
-        <span>{track.duration ?? "0:00"}</span>
-      </div>
+      {src ? (
+        // Real first-party audio streamed through the artist's tunnel.
+        <AudioPlayer
+          src={src}
+          title={track.title}
+          artist={track.artist}
+          duration={track.duration}
+        />
+      ) : (
+        <>
+          <div className="flex items-center gap-4">
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-border bg-panel-soft text-2xl text-foreground/30">
+              ▶
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-semibold text-foreground">{track.title}</p>
+              {track.artist && (
+                <p className="truncate text-sm text-muted">{track.artist}</p>
+              )}
+              <div className="mt-2">
+                <Waveform />
+              </div>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-muted">
+            Audio goes live once the artist connects their Cerberus agent.
+          </p>
+        </>
+      )}
 
       {/* On-platform actions only. Media is first-party (self-hosted via the
-          artist agent or the admin-hosted R2 tier), never linked off to other
-          platforms. License/Remix/Buy land with the offerings model. */}
+          artist agent or the admin-hosted R2 tier), never linked off platform.
+          License/Remix/Buy land with the offerings model. */}
       <div className="mt-4 flex flex-wrap gap-2">
-        {["Share"].map((p) => (
-          <button
-            key={p}
-            type="button"
-            className="rounded-md border border-border bg-panel-soft px-3 py-1.5 text-xs text-muted transition hover:border-red hover:text-foreground"
-          >
-            {p}
-          </button>
-        ))}
+        <button
+          type="button"
+          className="rounded-md border border-border bg-panel-soft px-3 py-1.5 text-xs text-muted transition hover:border-red hover:text-foreground"
+        >
+          Share
+        </button>
       </div>
     </div>
   );

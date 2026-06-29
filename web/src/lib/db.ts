@@ -50,7 +50,39 @@ export type ArtistDossier = Artist & {
   booking_email: string | null;
   social_links: string | null;
   profile_json: string | null;
+  tunnel_url: string | null;
 };
+
+export type Track = {
+  id: number;
+  title: string;
+  filename: string;
+  duration: string | null;
+  is_featured: number;
+  sort: number;
+  source: string;
+};
+
+/** Public media URL for a track served through the artist's self-host tunnel. */
+export function trackUrl(tunnelUrl: string | null, t: Track): string | null {
+  if (t.source === "self") {
+    if (!tunnelUrl) return null;
+    return `${tunnelUrl.replace(/\/$/, "")}/${encodeURIComponent(t.filename)}`;
+  }
+  // 'r2' (admin-hosted) filenames are already absolute URLs.
+  return t.filename;
+}
+
+export async function getTracks(slug: string): Promise<Track[]> {
+  const db = getDb();
+  const { results } = await db
+    .prepare(
+      "SELECT id, title, filename, duration, is_featured, sort, source FROM tracks WHERE artist_slug = ? ORDER BY is_featured DESC, sort, id"
+    )
+    .bind(slug)
+    .all<Track>();
+  return results ?? [];
+}
 
 export type Socials = Partial<
   Record<
@@ -92,7 +124,7 @@ const DOSSIER_COLUMNS =
   "slug, display_name, bio, city, genre_tags, photo_url, tier, " +
   "subtitle, dossier_id, artist_class, performance_type, set_length, travel_range, " +
   "availability_status, response_time, member_since, verified, booking_range, clearance, " +
-  "signal_status, gate_status, sound_style, booking_email, social_links, profile_json";
+  "signal_status, gate_status, sound_style, booking_email, social_links, profile_json, tunnel_url";
 
 export async function getArtistDossier(
   slug: string

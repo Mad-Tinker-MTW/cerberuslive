@@ -2,15 +2,19 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
   getArtistDossier,
+  getTracks,
+  trackUrl,
   parseJson,
   type Socials,
   type DossierProfile,
+  type FeaturedTrack,
 } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { ArtistSidebar } from "@/components/dossier/Sidebar";
 import { DossierHero, FeaturedTrackCard } from "@/components/dossier/Hero";
 import { ProfileTabs } from "@/components/dossier/Tabs";
 import { OverviewPanel } from "@/components/dossier/Overview";
+import { MediaList } from "@/components/dossier/MediaList";
 import { BookingPanel } from "@/components/dossier/Booking";
 
 export const dynamic = "force-dynamic";
@@ -48,6 +52,15 @@ export default async function ArtistPage({
   const socials = parseJson<Socials>(artist.social_links, {});
   const profile = parseJson<DossierProfile>(artist.profile_json, {});
 
+  // Real self-hosted tracks (if the artist's agent is connected) take precedence
+  // over the static profile_json featured track.
+  const tracks = await getTracks(slug);
+  const featuredRow = tracks.find((t) => t.is_featured === 1) ?? tracks[0];
+  const featuredSrc = featuredRow ? trackUrl(artist.tunnel_url, featuredRow) : null;
+  const featuredTrack: FeaturedTrack | undefined = featuredRow
+    ? { title: featuredRow.title, artist: artist.display_name, duration: featuredRow.duration ?? undefined }
+    : profile.featuredTrack;
+
   return (
     <>
       <SiteHeader />
@@ -61,8 +74,8 @@ export default async function ArtistPage({
           {/* Main content */}
           <div className="flex flex-col gap-6">
             <DossierHero artist={artist} />
-            {profile.featuredTrack && (
-              <FeaturedTrackCard track={profile.featuredTrack} />
+            {featuredTrack && (
+              <FeaturedTrackCard track={featuredTrack} src={featuredSrc} />
             )}
             <ProfileTabs
               overview={
@@ -73,10 +86,15 @@ export default async function ArtistPage({
                   media={profile.media}
                 />
               }
+              media={
+                tracks.length > 0 ? (
+                  <MediaList tracks={tracks} tunnelUrl={artist.tunnel_url} />
+                ) : undefined
+              }
             />
             <BookingPanel
+              slug={artist.slug}
               name={artist.display_name}
-              bookingEmail={artist.booking_email}
               availability={profile.availability}
             />
           </div>
