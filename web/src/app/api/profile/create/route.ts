@@ -62,9 +62,10 @@ export async function POST(req: Request) {
     .bind(userId, slug, displayName, now)
     .run();
 
-  // Promote the account to the artist role.
+  // Promote a fan to the artist role, but never downgrade an elevated role
+  // (admin/venue) just because they claimed a dossier.
   await db
-    .prepare("UPDATE user SET role = 'artist', updatedAt = ? WHERE id = ?")
+    .prepare("UPDATE user SET role = 'artist', updatedAt = ? WHERE id = ? AND (role IS NULL OR role = 'fan')")
     .bind(now, userId)
     .run();
 
