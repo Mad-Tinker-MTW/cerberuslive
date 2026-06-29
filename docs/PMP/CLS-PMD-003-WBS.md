@@ -47,7 +47,7 @@ Project Manager: Francisco De La Paz
 | 1.2.14 | Port the real Cerberus landing (brand hero, pillars, discovery) to the Next home route | Complete |
 | 1.2.15 | Better Auth integration: D1 tables, magic-link via Resend, /login, /account, self-serve profile claim | Complete |
 | 1.2.7 | Fan accounts and follow system | Complete |
-| 1.2.8 | Central discovery feed, browse by genre | Pending |
+| 1.2.8 | Central discovery feed, search + browse by genre | Complete |
 | 1.2.9 | Admin dashboard (review moderation, verify/gate, tunnel visibility, bookings) | Complete |
 | 1.2.16 | Media playback (first-party audio streaming via self-host tunnel) + /api/agent/register | Complete |
 | 1.2.17 | Bookings backend (in-platform request/message, managed->admin else artist email) | Complete |
@@ -175,7 +175,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 79.5 hours to date at $85/hr (approximately $6,757.50).
+Seeded from docs/HOURS.md, extended at checkpoint. 80.5 hours to date at $85/hr (approximately $6,842.50).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -233,4 +233,5 @@ Seeded from docs/HOURS.md, extended at checkpoint. 79.5 hours to date at $85/hr 
 | 2026-06-28 | Cloudflare inventory + email routing design | Deployment Engineer | 0.5 |
 | 2026-06-28 | End-to-end QA (media, bookings, follow, reviews, admin, routing) | QA Engineer | 1.5 |
 | 2026-06-28 | CHANGELOG + checkpoint docs | Technical Writer | 0.5 |
-| **Total** | | | **79.5** |
+| 2026-06-28 | Discovery search + genre filter (DiscoveryGrid, home) | Lead Developer | 1.0 |
+| **Total** | | | **80.5** |

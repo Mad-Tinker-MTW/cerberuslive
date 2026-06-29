@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { getDb, genreList, type Artist } from "@/lib/db";
+import { getDb, type Artist } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
+import { DiscoveryGrid } from "@/components/DiscoveryGrid";
 
 export const dynamic = "force-dynamic";
 
@@ -82,40 +82,7 @@ export default async function Home() {
         {artists.length === 0 ? (
           <p className="text-muted">No artists yet.</p>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {artists.map((a) => (
-              <Link
-                key={a.slug}
-                href={`/artist/${a.slug}`}
-                className="block rounded-xl border border-border bg-panel p-5 transition hover:border-red"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-xl font-semibold">{a.display_name}</h3>
-                  {a.tier === "managed" && (
-                    <span className="rounded-full border border-red/40 bg-red/10 px-2 py-0.5 text-xs text-red">
-                      Managed
-                    </span>
-                  )}
-                </div>
-                {a.city && <p className="mt-1 text-sm text-muted">{a.city}</p>}
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {genreList(a.genre_tags).map((g) => (
-                    <span
-                      key={g}
-                      className="rounded-full border border-border px-2 py-0.5 text-xs text-muted"
-                    >
-                      {g}
-                    </span>
-                  ))}
-                </div>
-                {a.bio && (
-                  <p className="mt-3 line-clamp-2 text-sm text-foreground/70">
-                    {a.bio}
-                  </p>
-                )}
-              </Link>
-            ))}
-          </div>
+          <DiscoveryGrid artists={artists} />
         )}
       </main>
 

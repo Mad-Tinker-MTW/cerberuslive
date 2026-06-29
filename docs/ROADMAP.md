@@ -24,7 +24,7 @@ Goal: artist profiles live, shareable, discoverable.
 - [x] Artist profile creation (self-serve claim from /account)
 - [x] Public artist page at cerberuslive.studio/artist/{slug}
 - [x] Fan accounts (follow an artist)
-- [ ] Central discovery feed (browse artists by genre)
+- [x] Central discovery feed (search + browse artists by genre)
 - [x] Admin dashboard (review moderation, verify/gate, tunnel visibility, bookings)
 - [ ] Migrate waitlist emails to user invites
 - [ ] Resend confirmation emails on waitlist signup
