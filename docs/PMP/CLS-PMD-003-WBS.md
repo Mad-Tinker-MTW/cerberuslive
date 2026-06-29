@@ -59,6 +59,10 @@ Project Manager: Francisco De La Paz
 | 1.2.23 | Artist photo upload (R2 upload + serve route, editor control) | Complete |
 | 1.2.24 | Admin dashboard build-out: users + role control, platform stats, waitlist + CSV export, artist suspend/feature/delete | Complete |
 | 1.2.25 | Dossier enrichment: Artist DNA radar (SVG) + Artist Traits/Signature Sounds/Influences sections, render + editor + API, stored in profile_json | Complete |
+| 1.2.26 | Control deck redesign: tabbed admin (Overview/Managed/Roster/Fans/Venues/Inbox), metric bar (owner excluded), sortable tables, expandable controls, tier promote/demote, artist + fan detail pages | Complete |
+| 1.2.27 | Support inbox + contact: migration 0011 support_messages, /contact intake form, Inbox queue (resolve/reply via Resend), contact-a-user from detail pages | Complete |
+| 1.2.28 | Controldeck subdomain auth scaffold: host-gating (lib/host.ts) + relocated owner login (/admin/login); subdomain + Cloudflare Access + TOTP still operator/PC pending | Open |
+| 1.2.29 | Status-field consolidation (verified trio -> single source) + booking activity metrics + admin BCC on non-managed bookings | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -185,7 +189,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 127.0 hours to date at $85/hr (approximately $10,795.00).
+Seeded from docs/HOURS.md, extended at checkpoint. 147.5 hours to date at $85/hr (approximately $12,537.50).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -277,4 +281,12 @@ Seeded from docs/HOURS.md, extended at checkpoint. 127.0 hours to date at $85/hr
 | 2026-06-29 | Artist DNA radar (SVG) + Traits/Signature Sounds/Influences (render cards, editor controls, /api/profile/update clamp + persist) | Lead Developer | 2.5 |
 | 2026-06-29 | Enrichment QA (tsc, eslint, live preview render, local D1 seed-verify, screenshot review) | QA Engineer | 1.0 |
 | 2026-06-29 | CHANGELOG + checkpoint docs (round 3) | Technical Writer | 0.5 |
-| **Total** | | | **127.0** |
+| 2026-06-29 | Admin IA + controldeck subdomain/2FA/Access + booking-model + status-consolidation design | Solutions Architect | 3.0 |
+| 2026-06-29 | Admin redesign requirements + scope decisions | Project Manager | 1.5 |
+| 2026-06-29 | Controldeck auth scaffold: host-gating, /admin/login owner sign-in, public login kept (1.2.28) | Lead Developer | 1.5 |
+| 2026-06-29 | Control deck redesign: AdminConsole rebuild + metrics queries + artist/fan detail pages (1.2.26) | Lead Developer | 5.5 |
+| 2026-06-29 | Support inbox + contact: migration 0011, mail.ts, /api/support + /api/admin/support + /api/admin/contact, /contact form, Inbox queue, ContactUser (1.2.27) | Lead Developer | 3.5 |
+| 2026-06-29 | Status-field consolidation + booking activity metrics + admin BCC (1.2.29) | Lead Developer | 1.5 |
+| 2026-06-29 | Admin build QA (preview verification all phases, tsc/eslint, local D1 seed/teardown) | QA Engineer | 2.5 |
+| 2026-06-29 | ADMIN-CONTROLDECK-PLAN.md authoring + checkpoint docs (round 4) | Technical Writer | 1.5 |
+| **Total** | | | **147.5** |

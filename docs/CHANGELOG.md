@@ -1,5 +1,35 @@
 # Changelog — Cerberus Live Studio
 
+## [0.8.0] — 2026-06-29
+
+Admin control-deck overhaul. On the `controldeck` branch (not deployed): the owner-login
+relocation and migration 0011 wait for the controldeck subdomain + Cloudflare Access + prod
+D1 migration. Plan: docs/ADMIN-CONTROLDECK-PLAN.md.
+
+### Added
+- **Control deck**: the admin page is rebuilt as a tabbed console (Overview / Managed / Roster /
+  Fans / Venues / Inbox) with a metric bar that excludes the owner, sortable per-entity tables,
+  expandable controls, and tier promote/demote.
+- **Entity detail pages**: `/admin/artist/[slug]` (tracks, bookings, reviews + moderation,
+  controls, contact) and `/admin/fan/[id]` (follows, reviews, bookings, role, contact).
+- **Support inbox**: a public `/contact` form (`/api/support`) writes to the new
+  `support_messages` table; the Inbox tab is a queue with resolve and reply (email via Resend).
+  Plus contact-a-user from any detail page.
+- **Booking activity metrics**: all-time bookings, distinct artists booked, and last-30-days, so
+  platform booking success is visible at a glance. The owner is BCC'd on non-managed bookings.
+- **Controldeck auth scaffold**: host-gating (`lib/host.ts`) and a relocated owner login at
+  `/admin/login`; the public `/login` is unchanged for now.
+
+### Changed
+- **Status fields consolidated**: the dossier's three verification fields (`signal_status`,
+  `clearance`, and the jargon "Gate Status") collapse to a single "Verification" row driven by
+  `verified`; "Gate Status" is relabeled "Booking". `signal_status`/`clearance` are retired as
+  separate state (columns kept, no longer read).
+- Header "Contact" link now points to the real `/contact` form.
+
+### Infrastructure
+- Migration `0011_support_messages.sql` (applied to local D1; prod is an operator step).
+
 ## [0.7.2] — 2026-06-29
 
 Dossier enrichment (L-046): the artist page gains a visual, quick-scan layer aimed at a booker's

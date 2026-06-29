@@ -31,6 +31,11 @@ Goal: artist profiles live, shareable, discoverable.
 - [x] Artist photo upload (R2-backed, editor control)
 - [x] Dossier enrichment: Artist Traits (ratings), Signature Sounds, Influences sections (see docs/PROFILE-AND-DOSSIER-NOTES.md, L-046)
 - [x] "Artist DNA" radar/stat chart on the dossier (SVG; the dossier-theme differentiator)
+- [x] Control deck: tabbed admin (role/tier sections, metrics, sortable), artist + fan detail pages (branch: controldeck)
+- [x] Support inbox + contact-a-user (migration 0011, /contact intake, reply via Resend)
+- [x] Booking activity metrics + owner BCC on non-managed bookings
+- [x] Status-field consolidation (verified trio -> single source; "Gate Status" -> "Booking")
+- [~] Controldeck subdomain + Cloudflare Access + TOTP 2FA (scaffold done; subdomain/Access/prod migration are operator/PC steps)
 - [ ] Migrate waitlist emails to user invites
 - [ ] Resend confirmation emails on waitlist signup
 
