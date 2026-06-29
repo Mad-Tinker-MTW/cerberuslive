@@ -5,10 +5,11 @@ import { authFromContext } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { AccountActions } from "@/components/account/AccountActions";
+import { AgentConnect } from "@/components/account/AgentConnect";
 
 export const dynamic = "force-dynamic";
 
-type ProfileRow = { slug: string; display_name: string };
+type ProfileRow = { slug: string; display_name: string; tunnel_url: string | null };
 
 export default async function AccountPage() {
   const auth = authFromContext();
@@ -19,7 +20,7 @@ export default async function AccountPage() {
   const db = getDb();
   const profile = await db
     .prepare(
-      "SELECT slug, display_name FROM artist_profiles WHERE user_id = ? LIMIT 1"
+      "SELECT slug, display_name, tunnel_url FROM artist_profiles WHERE user_id = ? LIMIT 1"
     )
     .bind(user.id)
     .first<ProfileRow>();
@@ -36,6 +37,12 @@ export default async function AccountPage() {
           <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted">
             {role}
           </span>
+          <Link
+            href="/following"
+            className="ml-auto text-sm text-muted transition hover:text-foreground"
+          >
+            Following
+          </Link>
         </div>
 
         <div className="rounded-xl border border-border bg-panel p-5">
@@ -82,6 +89,12 @@ export default async function AccountPage() {
             </p>
           )}
         </div>
+
+        {profile && (
+          <div className="mt-6">
+            <AgentConnect slug={profile.slug} tunnelUrl={profile.tunnel_url} />
+          </div>
+        )}
 
         <AccountActions hasProfile={!!profile} defaultName={user.name ?? ""} />
       </main>

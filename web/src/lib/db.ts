@@ -73,6 +73,24 @@ export function trackUrl(tunnelUrl: string | null, t: Track): string | null {
   return t.filename;
 }
 
+export async function getFollowerCount(slug: string): Promise<number> {
+  const db = getDb();
+  const r = await db
+    .prepare("SELECT COUNT(*) AS n FROM follows WHERE artist_slug = ?")
+    .bind(slug)
+    .first<{ n: number }>();
+  return r?.n ?? 0;
+}
+
+export async function isFollowing(slug: string, userId: string): Promise<boolean> {
+  const db = getDb();
+  const r = await db
+    .prepare("SELECT id FROM follows WHERE artist_slug = ? AND fan_user_id = ? LIMIT 1")
+    .bind(slug, userId)
+    .first<{ id: number }>();
+  return !!r;
+}
+
 export async function getTracks(slug: string): Promise<Track[]> {
   const db = getDb();
   const { results } = await db

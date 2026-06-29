@@ -1,14 +1,19 @@
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import type { Metadata } from "next";
+import { authFromContext } from "@/lib/auth";
 import {
   getArtistDossier,
   getTracks,
+  getFollowerCount,
+  isFollowing,
   trackUrl,
   parseJson,
   type Socials,
   type DossierProfile,
   type FeaturedTrack,
 } from "@/lib/db";
+import { FollowButton } from "@/components/dossier/FollowButton";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { ArtistSidebar } from "@/components/dossier/Sidebar";
 import { DossierHero, FeaturedTrackCard } from "@/components/dossier/Hero";
@@ -61,6 +66,11 @@ export default async function ArtistPage({
     ? { title: featuredRow.title, artist: artist.display_name, duration: featuredRow.duration ?? undefined }
     : profile.featuredTrack;
 
+  // Follow state (session optional — public page).
+  const session = await authFromContext().api.getSession({ headers: await headers() });
+  const followerCount = await getFollowerCount(slug);
+  const following = session ? await isFollowing(slug, session.user.id) : false;
+
   return (
     <>
       <SiteHeader />
@@ -74,6 +84,12 @@ export default async function ArtistPage({
           {/* Main content */}
           <div className="flex flex-col gap-6">
             <DossierHero artist={artist} />
+            <FollowButton
+              slug={artist.slug}
+              initialFollowing={following}
+              initialCount={followerCount}
+              signedIn={!!session}
+            />
             {featuredTrack && (
               <FeaturedTrackCard track={featuredTrack} src={featuredSrc} />
             )}
