@@ -83,20 +83,22 @@ export function FeaturedTrackCard({
 }
 
 function DossierTable({ artist }: { artist: ArtistDossier }) {
+  // Verification is one concept now, driven by the single `verified` flag (the
+  // old signal_status + clearance fields are retired as separate state). Booking
+  // standing reads from gate_status, relabeled to plain "Booking".
   const rows: { label: string; value: string | null; good?: boolean }[] = [
     { label: "Class", value: artist.artist_class },
     {
-      label: "Signal",
-      value: artist.signal_status,
-      good: Boolean(artist.signal_status),
+      label: "Verification",
+      value: artist.verified === 1 ? "Media Verified" : null,
+      good: artist.verified === 1,
     },
     {
-      label: "Gate Status",
+      label: "Booking",
       value: artist.gate_status,
       good: artist.gate_status?.toLowerCase() === "open",
     },
     { label: "Booking Range", value: artist.booking_range },
-    { label: "Clearance", value: artist.clearance },
     { label: "Member Since", value: artist.member_since },
   ];
   const present = rows.filter((r) => r.value);

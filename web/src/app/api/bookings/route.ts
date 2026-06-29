@@ -110,10 +110,15 @@ export async function POST(req: Request) {
         <p style="color:#555;font-size:12px;margin-top:16px">Reply directly to this email to reach ${name}.</p>
       </div>`;
     try {
+      // The artist handles their own booking when not managed, but Cerberus is
+      // BCC'd on those so the owner is notified of all booking activity (metrics:
+      // "artists are getting booked on the platform"). Managed already goes to admin.
+      const payload: Record<string, unknown> = { from: FROM, to: recipient, reply_to: email, subject, html };
+      if (!managed && recipient !== ADMIN_ADDRESS) payload.bcc = ADMIN_ADDRESS;
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from: FROM, to: recipient, reply_to: email, subject, html }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) console.error("[bookings] Resend failed", res.status, await res.text());
     } catch (e) {

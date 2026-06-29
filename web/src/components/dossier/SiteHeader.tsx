@@ -5,7 +5,7 @@ const NAV = [
   { label: "Live Streams", href: "/#live" },
   { label: "Shows", href: "/#shows" },
   { label: "About", href: "/#about" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Contact", href: "/contact" },
 ];
 
 /** Sticky top navigation. Search and the notif/user icons are static UI in v1. */

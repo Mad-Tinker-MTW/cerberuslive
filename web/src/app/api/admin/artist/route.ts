@@ -48,16 +48,12 @@ export async function POST(req: Request) {
 
   const sets: string[] = [];
   const vals: (string | number | null)[] = [];
+  // `verified` is the single source of truth for verification; the dossier derives
+  // its "Media Verified" label from it (signal_status / clearance are retired).
   if (typeof body.verified === "boolean") {
     sets.push("verified = ?");
     vals.push(body.verified ? 1 : 0);
-    // Keep the hero signal coherent with the verified flag by default.
-    if (body.verified && body.signal_status === undefined) {
-      sets.push("signal_status = ?");
-      vals.push("Media Verified");
-    }
   }
-  if (body.signal_status !== undefined) { sets.push("signal_status = ?"); vals.push(body.signal_status); }
   if (body.gate_status !== undefined) { sets.push("gate_status = ?"); vals.push(body.gate_status); }
   if (body.tier !== undefined) { sets.push("tier = ?"); vals.push(body.tier); }
   if (typeof body.suspended === "boolean") { sets.push("suspended = ?"); vals.push(body.suspended ? 1 : 0); }
