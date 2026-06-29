@@ -7,11 +7,11 @@ live at cerberuslive.studio; the full 6-phase platform is in build. Tagline: "Gu
 gates of the underground."
 
 ## Repo Shape (three workers, one D1)
-- `src/index.js` + `public/` — the Phase 0 **waitlist worker** (cerberus-waitlist). Serves the
+- `src/index.js` + `public/`: the Phase 0 **waitlist worker** (cerberus-waitlist). Serves the
   static landing via the ASSETS binding and handles `POST /api/waitlist`. Still live on cerberuslive.studio.
-- `web/` — the **Next.js 15.5 platform** (cerberuslive-web), built to Cloudflare Workers via the
+- `web/`: the **Next.js 15.5 platform** (cerberuslive-web), built to Cloudflare Workers via the
   OpenNext adapter. On the preview URL (cerberuslive-web.frankydlp.workers.dev), running against PROD D1.
-- `media/` — the **media gateway worker** (cerberus-media), a plain Worker on the
+- `media/`: the **media gateway worker** (cerberus-media), a plain Worker on the
   `media.cerberuslive.studio` custom domain. Resolves each artist's hidden tunnel origin from D1 and
   serves media through an R2 read-through cache. Unlike the OpenNext web worker, it builds + deploys
   on Windows via `wrangler deploy`. See the Media Gateway section + docs/MEDIA-GATEWAY-PLAN.md.
@@ -32,7 +32,7 @@ NEVER sent to the client (the dossier scrubs `media_origin`/`tunnel_url`; `Media
 slug + a `hasMedia` boolean).
 
 ## Stack
-- Next.js 15.5 (App Router, NOT 16 — version trap), React 19, TypeScript, Tailwind v4
+- Next.js 15.5 (App Router, NOT 16, a version trap), React 19, TypeScript, Tailwind v4
 - Cloudflare Workers + D1 + R2 (cerberus-media cache, cerberus-images photos) + Turnstile,
   OpenNext adapter, Resend (email)
 - Better Auth: passwordless magic-link for everyone, plus email+password + the username plugin so
@@ -53,7 +53,7 @@ covered by `bun test` (see media/test). The media worker has 8 unit tests for it
 ## Auth (Better Auth)
 - Built per-request from the Cloudflare context (`web/src/lib/auth.ts` `getAuth(env)` /
   `authFromContext()`), because the D1 binding and secrets only exist per-request.
-- D1 is passed straight to `database` — Better Auth auto-detects D1 and builds its own
+- D1 is passed straight to `database`; Better Auth auto-detects D1 and builds its own
   `D1SqliteDialect` (no kysely-d1). Magic-link email via Resend.
 - `emailAndPassword` is enabled + the `username` plugin: `/login` has a magic-link form and an
   "Owner / admin sign-in" toggle (username + password). The owner `mad.tinker` is a seeded admin.
@@ -95,7 +95,7 @@ Phase 1 + the media layer are OPERATIONAL on prod (2026-06-29): owner/admin pass
 signup + dossiers, photo upload, media streaming (gateway + R2 cache, verified 206 end-to-end),
 bookings, reviews, and a built-out admin console (users + role control, stats, waitlist + CSV,
 artist suspend/feature/delete). Running against PROD D1 on the preview URL. The main thread left is
-the **public-domain cutover** — cerberuslive.studio still serves the Phase 0 waitlist (operator
+the **public-domain cutover**: cerberuslive.studio still serves the Phase 0 waitlist (operator
 decision; decide the waitlist story, then DNS-flip). 122.0h logged. Authoritative hours log + task
 status live in the WBS (docs/PMP/CLS-PMD-003-WBS.md); cross-workshop threads in Q:\MTW\Docs\OPEN-LOOPS.md
 (L-030/L-044/L-045).
