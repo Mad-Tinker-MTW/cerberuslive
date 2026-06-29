@@ -1,5 +1,6 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { magicLink } from "better-auth/plugins/magic-link";
+import { username } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { D1Database } from "@cloudflare/workers-types";
@@ -55,7 +56,9 @@ export function getAuth(env: AuthEnv) {
     database: env.DB as unknown as BetterAuthOptions["database"],
     secret: env.BETTER_AUTH_SECRET,
     baseURL: env.BETTER_AUTH_URL, // undefined => inferred from the request origin
-    emailAndPassword: { enabled: false }, // passwordless: magic link only
+    // Magic-link is the default path; email+password is enabled so the seeded owner account
+    // (username mad.tinker) can sign in with a password. Open signup matches the magic-link model.
+    emailAndPassword: { enabled: true },
     user: {
       additionalFields: {
         role: {
@@ -67,6 +70,7 @@ export function getAuth(env: AuthEnv) {
       },
     },
     plugins: [
+      username(), // owner/admin sign-in by username + password
       magicLink({
         sendMagicLink: async ({ email, url }) => {
           await sendMagicLinkEmail(env, email, url);
