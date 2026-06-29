@@ -65,15 +65,19 @@ Project Manager: Francisco De La Paz
 
 | ID | Task | Status |
 |---|---|---|
-| 1.3.1 | Artist agent app (Electron, Windows first): branded setup wizard + must-stay-running disclaimer | Pending |
-| 1.3.2 | Agent: bundle cloudflared and local Express server | Pending |
-| 1.3.3 | Agent: one-click serve, publish-to-Cerberus, tunnel URL auto-registration | Pending |
+| 1.3.1 | Artist agent app (Tauri v2, Windows first): branded setup wizard + must-stay-running disclaimer | Complete |
+| 1.3.2 | Agent: bundle cloudflared and local Range server | Complete |
+| 1.3.3 | Agent: one-click serve, publish-to-Cerberus, tunnel URL auto-registration | Complete |
 | 1.3.4 | Track upload UI on artist dashboard (admin-hosted R2 tier, separate paid option) | Pending |
-| 1.3.5 | Public media player on artist profile | Pending |
-| 1.3.6 | Featured track on profile card | Pending |
+| 1.3.5 | Public media player on artist profile | Complete |
+| 1.3.6 | Featured track on profile card | Complete |
 | 1.3.7 | Play count tracking | Complete |
 | 1.3.8 | R2 admin-hosted always-on storage tier | Pending |
 | 1.3.9 | Phase 2 validation: acceptance criteria verified | Pending |
+| 1.3.10 | Media Gateway worker (cerberus-media): R2 read-through cache over hidden 2-level per-artist tunnel origins, Range-aware | Complete |
+| 1.3.11 | Self-serve named-tunnel provisioning (cf-tunnel CF API, /api/agent/provision, /account "Set up streaming") | Complete |
+| 1.3.12 | Agent named token-mode: cloudflared tunnel run --token (Bun engine + Tauri desktop) | Complete |
+| 1.3.13 | Gateway deploy + live media verification | Pending |
 
 ---
 
@@ -239,4 +243,17 @@ Seeded from docs/HOURS.md, extended at checkpoint. 83.5 hours to date at $85/hr 
 | 2026-06-28 | Profile editor: performance profile + availability (self-serve nested fields) | Lead Developer | 1.5 |
 | 2026-06-28 | Negative-review escalation + booking-gate enforcement | Lead Developer | 1.0 |
 | 2026-06-28 | Play-count tracking (migration 0007, /api/tracks/play, display) | Lead Developer | 0.5 |
-| **Total** | | | **83.5** |
+| 2026-06-29 | Named-tunnel PoC (origin server, token run, openssl TLS diagnosis) | Deployment Engineer | 1.5 |
+| 2026-06-29 | Root-cause + Media Gateway architecture (R2 read-through, hidden 2-level origins, host-pattern decision) | Solutions Architect | 2.5 |
+| 2026-06-29 | Gateway worker cerberus-media (D1 lookup, R2 Range cache, size-gate stream-through) | Lead Developer | 3.0 |
+| 2026-06-29 | Migration 0008 schema design | Solutions Architect | 0.5 |
+| 2026-06-29 | Gateway tests + wrangler-dev environment triage (8 bun tests) | QA Engineer | 1.5 |
+| 2026-06-29 | Frontend cutover (trackUrl/MediaCtx refactor, callers, scrub) | Lead Developer | 1.5 |
+| 2026-06-29 | SSR verification + RSC origin-leak detection and fix | QA Engineer | 1.0 |
+| 2026-06-29 | Provisioning: cf-tunnel.ts (CF API), /api/agent/provision, /account UI | Lead Developer | 3.0 |
+| 2026-06-29 | Provisioning flow + idempotency design | Solutions Architect | 0.5 |
+| 2026-06-29 | Agent named token-mode (register named-mode + Bun engine + Tauri Rust + React) | Lead Developer | 2.5 |
+| 2026-06-29 | Cross-repo build verification (cargo check, tsc, bun-build) | QA Engineer | 0.5 |
+| 2026-06-29 | Docs (MEDIA-GATEWAY-PLAN, media README, config, CHANGELOG) | Technical Writer | 1.5 |
+| 2026-06-29 | Operator deploy sequencing + ledger steps | Deployment Engineer | 0.5 |
+| **Total** | | | **103.5** |

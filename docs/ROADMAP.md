@@ -35,8 +35,11 @@ Goal: artist profiles live, shareable, discoverable.
 Goal: artists can share music.
 
 - [x] Artist agent app (Tauri v2, Windows first) — see Q:\MTW\CerberusAgent
+- [x] Media Gateway: media.cerberuslive.studio edge worker + R2 read-through cache over hidden per-artist tunnels (built; deploy pending)
+- [x] Self-serve streaming provisioning (one-click named tunnel, artist never touches Cloudflare)
+- [x] Agent named token-mode (stable named tunnel, not ephemeral quick tunnel)
 - [ ] Track upload UI on artist dashboard (admin-hosted R2 tier)
-- [x] Public media player on artist profile (first-party tunnel streaming)
+- [x] Public media player on artist profile (first-party, gateway-served)
 - [x] Featured track on profile card
 - [x] Play count tracking
 - [ ] R2 admin-hosted tier for always-on storage

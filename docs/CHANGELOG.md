@@ -1,5 +1,24 @@
 # Changelog — Cerberus Live Studio
 
+## [0.6.0] — 2026-06-29
+
+The Media Gateway: media now streams through a Cerberus-controlled edge with an R2 cache, instead of pointing the browser at each artist's raw tunnel. Built but not yet deployed (operator deploy steps pending).
+
+### Added
+- **Media Gateway worker** (`media/`, `cerberus-media`): public `GET media.cerberuslive.studio/<slug>/<file>` resolves the artist's hidden tunnel origin from D1 and serves through an R2 read-through cache (Range-aware 200/206). Hot tracks survive the artist's machine being offline. Objects over 100 MB stream through uncached (long live sets); origin-offline-and-uncached degrades to a graceful 502. Migration 0008 (`media_origin`, `tunnel_id`, `tunnel_token`). 8 bun tests.
+- **Self-serve streaming provisioning**: `lib/cf-tunnel.ts` creates a named Cloudflare tunnel per artist (ingress + proxied CNAME) and hands back a run token; `POST /api/agent/provision` (session-authed, idempotent) stores it; /account gains a "Set up streaming" button + token reveal. Artists never touch Cloudflare.
+- **Agent named token-mode** (CerberusAgent): with a streaming token the agent runs a stable `cloudflared tunnel run --token` named tunnel instead of an ephemeral quick tunnel, and registers `{ named: true }`. Bun engine + Tauri desktop (new Streaming-token field).
+
+### Changed
+- **Media URLs route through the gateway**: `trackUrl()` now builds `media.cerberuslive.studio/<slug>/<file>`. Per-artist tunnels terminate at hidden two-level origins `t-<slug>.cerberuslive.studio` (Universal SSL covers two levels, not three, the reason the old `<slug>.media.*` host had no edge cert).
+- `MediaCtx` carries only the public slug + a `hasMedia` boolean; the dossier page scrubs `media_origin`/`tunnel_url` before render so the hidden origin never reaches the client RSC payload.
+
+### Fixed
+- **RSC origin-host leak**: the hidden tunnel origin was serializing into the public dossier's client payload (via `ProfileTabs` props). Closed and verified absent in SSR output.
+
+### Infrastructure
+- Repo is now three workers on one D1 (waitlist, web, media). `docs/MEDIA-GATEWAY-PLAN.md` records the architecture and the TLS root cause (OPEN-LOOPS L-045).
+
 ## [0.5.1] — 2026-06-28
 
 Discovery, self-serve dossier completeness, and trust-model enforcement.
