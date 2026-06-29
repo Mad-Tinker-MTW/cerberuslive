@@ -55,7 +55,7 @@ export default async function ArtistPage({
 }) {
   const { slug } = await params;
   const artist = await getArtistDossier(slug);
-  if (!artist) notFound();
+  if (!artist || artist.suspended === 1) notFound();
 
   const socials = parseJson<Socials>(artist.social_links, {});
   const profile = parseJson<DossierProfile>(artist.profile_json, {});

@@ -52,6 +52,7 @@ export type ArtistDossier = Artist & {
   profile_json: string | null;
   tunnel_url: string | null;
   media_origin: string | null;
+  suspended: number;
 };
 
 export type Track = {
@@ -190,7 +191,7 @@ const DOSSIER_COLUMNS =
   "subtitle, dossier_id, artist_class, performance_type, set_length, travel_range, " +
   "availability_status, response_time, member_since, verified, booking_range, clearance, " +
   "signal_status, gate_status, sound_style, booking_email, social_links, profile_json, " +
-  "tunnel_url, media_origin";
+  "tunnel_url, media_origin, suspended";
 
 export async function getArtistDossier(
   slug: string

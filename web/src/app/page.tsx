@@ -14,7 +14,7 @@ export default async function Home() {
   const db = getDb();
   const { results } = await db
     .prepare(
-      "SELECT slug, display_name, bio, city, genre_tags, photo_url, tier FROM artist_profiles ORDER BY display_name"
+      "SELECT slug, display_name, bio, city, genre_tags, photo_url, tier FROM artist_profiles WHERE suspended = 0 ORDER BY featured DESC, display_name"
     )
     .all<Artist>();
   const artists = results ?? [];

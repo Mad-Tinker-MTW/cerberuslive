@@ -57,10 +57,11 @@ export default {
     if (!slug || !filename || filename.includes("..")) return new Response("bad request", { status: 400 });
 
     const row = await env.DB
-      .prepare("SELECT media_origin, gate_status FROM artist_profiles WHERE slug = ? LIMIT 1")
+      .prepare("SELECT media_origin, gate_status, suspended FROM artist_profiles WHERE slug = ? LIMIT 1")
       .bind(slug)
-      .first<{ media_origin: string | null; gate_status: string | null }>();
+      .first<{ media_origin: string | null; gate_status: string | null; suspended: number | null }>();
     if (!row) return new Response("unknown artist", { status: 404 });
+    if (row.suspended === 1) return new Response("artist suspended", { status: 403 });
     if (row.gate_status === "gated") return new Response("artist gated", { status: 403 });
 
     const key = `${slug}/${filename}`;

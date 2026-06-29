@@ -12,6 +12,9 @@ type Body = {
   signal_status?: string | null;
   gate_status?: string | null;
   tier?: string;
+  suspended?: boolean;
+  featured?: boolean;
+  delete?: boolean;
 };
 
 export async function POST(req: Request) {
@@ -32,6 +35,17 @@ export async function POST(req: Request) {
   const slug = (body.slug ?? "").trim();
   if (!slug) return json(400, { error: "slug required" });
 
+  const db = getDb();
+
+  // Delete the dossier and its dependent rows (no FK cascade across these tables).
+  if (body.delete === true) {
+    for (const t of ["tracks", "reviews", "follows", "bookings"]) {
+      await db.prepare(`DELETE FROM ${t} WHERE artist_slug = ?`).bind(slug).run();
+    }
+    await db.prepare("DELETE FROM artist_profiles WHERE slug = ?").bind(slug).run();
+    return json(200, { ok: true, deleted: slug });
+  }
+
   const sets: string[] = [];
   const vals: (string | number | null)[] = [];
   if (typeof body.verified === "boolean") {
@@ -46,12 +60,13 @@ export async function POST(req: Request) {
   if (body.signal_status !== undefined) { sets.push("signal_status = ?"); vals.push(body.signal_status); }
   if (body.gate_status !== undefined) { sets.push("gate_status = ?"); vals.push(body.gate_status); }
   if (body.tier !== undefined) { sets.push("tier = ?"); vals.push(body.tier); }
+  if (typeof body.suspended === "boolean") { sets.push("suspended = ?"); vals.push(body.suspended ? 1 : 0); }
+  if (typeof body.featured === "boolean") { sets.push("featured = ?"); vals.push(body.featured ? 1 : 0); }
   if (sets.length === 0) return json(400, { error: "Nothing to update" });
 
   sets.push("updated_at = ?");
   vals.push(new Date().toISOString());
 
-  const db = getDb();
   await db.prepare(`UPDATE artist_profiles SET ${sets.join(", ")} WHERE slug = ?`).bind(...vals, slug).run();
 
   return json(200, { ok: true });
