@@ -34,7 +34,7 @@ Goal: artist profiles live, shareable, discoverable.
 ## Phase 2: Media Vault
 Goal: artists can share music.
 
-- [x] Artist agent app (Tauri v2, Windows first) — see Q:\MTW\CerberusAgent
+- [x] Artist agent app (Tauri v2, Windows first), see Q:\MTW\CerberusAgent
 - [x] Media Gateway: media.cerberuslive.studio edge worker + R2 read-through cache over hidden per-artist tunnels (built; deploy pending)
 - [x] Self-serve streaming provisioning (one-click named tunnel, artist never touches Cloudflare)
 - [x] Agent named token-mode (stable named tunnel, not ephemeral quick tunnel)

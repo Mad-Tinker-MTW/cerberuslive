@@ -44,7 +44,7 @@ Media, bookings, follows, and the reviews/verification trust model.
 - Media is first-party only (off-platform Spotify/YouTube/SoundCloud buttons removed); social links reframed as "Follow".
 
 ### Companion
-- New **Cerberus Agent** desktop app (Tauri v2) + Bun CLI engine at `Q:\MTW\CerberusAgent` — the artist self-host media tool.
+- New **Cerberus Agent** desktop app (Tauri v2) + Bun CLI engine at `Q:\MTW\CerberusAgent`, the artist self-host media tool.
 
 ## [0.4.0] — 2026-06-28
 

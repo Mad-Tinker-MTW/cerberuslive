@@ -7,7 +7,7 @@ R2 cache bucket. Unlike the OpenNext Next worker, a plain Worker builds and depl
 `GET media.cerberuslive.studio/<slug>/<filename>`:
 1. Resolves the artist's hidden tunnel origin (`artist_profiles.media_origin`) from D1; 404 if
    unknown, 403 if gated.
-2. Serves from the R2 cache (`MEDIA`) if present — Range-aware (200 / 206), so audio scrubs.
+2. Serves from the R2 cache (`MEDIA`) if present, Range-aware (200 / 206), so audio scrubs.
 3. On a cache miss, fetches from the origin (`https://<media_origin>/<filename>`), fills R2, and
    serves the requested range. Objects over 100 MB stream through with Range pass-through, uncached
    (covers long live sets). Origin offline + not cached → 502 (graceful: the player degrades).
