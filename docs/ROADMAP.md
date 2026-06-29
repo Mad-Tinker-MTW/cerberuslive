@@ -38,7 +38,7 @@ Goal: artists can share music.
 - [ ] Track upload UI on artist dashboard (admin-hosted R2 tier)
 - [x] Public media player on artist profile (first-party tunnel streaming)
 - [x] Featured track on profile card
-- [ ] Play count tracking
+- [x] Play count tracking
 - [ ] R2 admin-hosted tier for always-on storage
 
 ---

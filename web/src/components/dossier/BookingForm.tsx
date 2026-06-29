@@ -8,11 +8,13 @@ import { useState } from "react";
 export function BookingForm({
   slug,
   artistName,
+  bookingsOpen = true,
 }: {
   slug: string;
   artistName: string;
+  bookingsOpen?: boolean;
 }) {
-  const [kind, setKind] = useState<"booking" | "message">("booking");
+  const [kind, setKind] = useState<"booking" | "message">(bookingsOpen ? "booking" : "message");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [eventDate, setEventDate] = useState("");
@@ -63,19 +65,28 @@ export function BookingForm({
 
   return (
     <form onSubmit={submit} className="rounded-xl border border-border bg-panel-soft p-5">
+      {!bookingsOpen && (
+        <p className="mb-4 rounded-md border border-border bg-panel px-3 py-2 text-xs text-muted">
+          {artistName} is not currently accepting bookings. You can still send a message.
+        </p>
+      )}
       <div className="mb-4 flex gap-2">
-        {(["booking", "message"] as const).map((k) => (
-          <button
-            key={k}
-            type="button"
-            onClick={() => setKind(k)}
-            className={`rounded-md border px-3 py-1.5 text-xs transition ${
-              kind === k ? "border-red bg-red/10 text-red" : "border-border text-muted hover:border-red"
-            }`}
-          >
-            {k === "booking" ? "Request Booking" : "Message"}
-          </button>
-        ))}
+        {(["booking", "message"] as const).map((k) => {
+          const disabled = k === "booking" && !bookingsOpen;
+          return (
+            <button
+              key={k}
+              type="button"
+              disabled={disabled}
+              onClick={() => setKind(k)}
+              className={`rounded-md border px-3 py-1.5 text-xs transition disabled:cursor-not-allowed disabled:opacity-40 ${
+                kind === k ? "border-red bg-red/10 text-red" : "border-border text-muted hover:border-red"
+              }`}
+            >
+              {k === "booking" ? "Request Booking" : "Message"}
+            </button>
+          );
+        })}
       </div>
 
       <div className="flex flex-col gap-3">

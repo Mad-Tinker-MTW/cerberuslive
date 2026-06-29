@@ -28,6 +28,7 @@ type ArtistRow = {
   contact_email: string | null;
   booking_email: string | null;
   user_id: string | null;
+  gate_status: string | null;
 };
 
 export async function POST(req: Request) {
@@ -54,11 +55,16 @@ export async function POST(req: Request) {
   const db = getDb();
   const artist = await db
     .prepare(
-      "SELECT slug, display_name, tier, contact_email, booking_email, user_id FROM artist_profiles WHERE slug = ? LIMIT 1"
+      "SELECT slug, display_name, tier, contact_email, booking_email, user_id, gate_status FROM artist_profiles WHERE slug = ? LIMIT 1"
     )
     .bind(slug)
     .first<ArtistRow>();
   if (!artist) return json(404, { error: "Artist not found" });
+
+  // Booking ability removed when the gate is closed (escalation outcome). Messages still allowed.
+  if (kind === "booking" && (artist.gate_status ?? "").toLowerCase() === "closed") {
+    return json(403, { error: "This artist is not currently accepting bookings." });
+  }
 
   // Resolve the notification recipient.
   const managed = artist.tier === "managed";

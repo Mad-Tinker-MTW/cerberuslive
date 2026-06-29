@@ -25,10 +25,31 @@ export async function POST(req: Request) {
 
   const status = action === "approve" ? "approved" : "rejected";
   const db = getDb();
+  const now = new Date().toISOString();
+  const review = await db
+    .prepare("SELECT artist_slug, sentiment FROM reviews WHERE id = ? LIMIT 1")
+    .bind(id)
+    .first<{ artist_slug: string; sentiment: string | null }>();
   await db
     .prepare("UPDATE reviews SET status = ?, moderated_at = ? WHERE id = ?")
-    .bind(status, new Date().toISOString(), id)
+    .bind(status, now, id)
     .run();
 
-  return json(200, { ok: true, status });
+  // Escalation: approving a negative review may auto-close the booking gate.
+  let escalated = false;
+  if (action === "approve" && review?.sentiment === "negative") {
+    const c = await db
+      .prepare("SELECT COUNT(*) AS n FROM reviews WHERE artist_slug = ? AND status = 'approved' AND sentiment = 'negative'")
+      .bind(review.artist_slug)
+      .first<{ n: number }>();
+    if ((c?.n ?? 0) >= 3) {
+      await db
+        .prepare("UPDATE artist_profiles SET gate_status = 'Closed', updated_at = ? WHERE slug = ?")
+        .bind(now, review.artist_slug)
+        .run();
+      escalated = true;
+    }
+  }
+
+  return json(200, { ok: true, status, escalated });
 }

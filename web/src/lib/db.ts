@@ -61,6 +61,7 @@ export type Track = {
   is_featured: number;
   sort: number;
   source: string;
+  play_count: number;
 };
 
 /** Public media URL for a track served through the artist's self-host tunnel. */
@@ -122,7 +123,7 @@ export async function getTracks(slug: string): Promise<Track[]> {
   const db = getDb();
   const { results } = await db
     .prepare(
-      "SELECT id, title, filename, duration, is_featured, sort, source FROM tracks WHERE artist_slug = ? ORDER BY is_featured DESC, sort, id"
+      "SELECT id, title, filename, duration, is_featured, sort, source, play_count FROM tracks WHERE artist_slug = ? ORDER BY is_featured DESC, sort, id"
     )
     .bind(slug)
     .all<Track>();

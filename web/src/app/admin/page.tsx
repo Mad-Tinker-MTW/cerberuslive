@@ -36,7 +36,7 @@ export default async function AdminPage() {
   const artists = (
     await db
       .prepare(
-        "SELECT slug, display_name, tier, verified, gate_status, tunnel_url FROM artist_profiles ORDER BY display_name"
+        "SELECT a.slug, a.display_name, a.tier, a.verified, a.gate_status, a.tunnel_url, (SELECT COUNT(*) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved' AND r.sentiment = 'negative') AS neg FROM artist_profiles a ORDER BY a.display_name"
       )
       .all<AdminArtist>()
   ).results ?? [];

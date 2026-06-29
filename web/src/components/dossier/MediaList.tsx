@@ -29,7 +29,10 @@ export function MediaList({
     <div className="flex flex-col gap-3">
       {playable.map(({ t, src }) => (
         <div key={t.id} className="rounded-xl border border-border bg-panel p-4">
-          <AudioPlayer src={src} title={t.title} duration={t.duration ?? undefined} />
+          <AudioPlayer src={src} title={t.title} duration={t.duration ?? undefined} trackId={t.id} />
+          {t.play_count > 0 && (
+            <p className="mt-2 text-xs text-muted">{t.play_count.toLocaleString()} plays</p>
+          )}
         </div>
       ))}
     </div>

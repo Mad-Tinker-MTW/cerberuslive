@@ -18,6 +18,7 @@ export type AdminArtist = {
   verified: number;
   gate_status: string | null;
   tunnel_url: string | null;
+  neg: number;
 };
 export type AdminBooking = {
   artist_slug: string;
@@ -125,6 +126,11 @@ export function AdminConsole({
                   <div className="min-w-0">
                     <span className="font-semibold">{a.display_name}</span>
                     <span className="ml-2 text-xs text-muted">{a.tier}</span>
+                    {a.neg >= 2 && (
+                      <span className="ml-2 rounded-full border border-red/40 bg-red/10 px-2 py-0.5 text-[10px] text-red">
+                        ⚠ {a.neg} negative{a.neg === 1 ? "" : "s"}{gateOpen ? " — review" : " — gate closed"}
+                      </span>
+                    )}
                     <div className="mt-1 flex items-center gap-1.5 text-xs">
                       <span className={`inline-block h-1.5 w-1.5 rounded-full ${a.tunnel_url ? "bg-green" : "bg-muted/40"}`} />
                       <span className="break-all text-muted">{a.tunnel_url ?? "no agent connected"}</span>

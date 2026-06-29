@@ -94,7 +94,7 @@ export default async function ArtistPage({
               signedIn={!!session}
             />
             {featuredTrack && (
-              <FeaturedTrackCard track={featuredTrack} src={featuredSrc} />
+              <FeaturedTrackCard track={featuredTrack} src={featuredSrc} trackId={featuredRow?.id} />
             )}
             <ProfileTabs
               overview={
@@ -122,6 +122,7 @@ export default async function ArtistPage({
               slug={artist.slug}
               name={artist.display_name}
               availability={profile.availability}
+              bookingsOpen={(artist.gate_status ?? "").toLowerCase() !== "closed"}
             />
           </div>
         </div>

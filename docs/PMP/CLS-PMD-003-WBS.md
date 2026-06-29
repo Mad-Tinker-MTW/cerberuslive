@@ -53,6 +53,8 @@ Project Manager: Francisco De La Paz
 | 1.2.17 | Bookings backend (in-platform request/message, managed->admin else artist email) | Complete |
 | 1.2.18 | Reviews + earned verification (admin-moderated, completed-booking + approved-review) | Complete |
 | 1.2.19 | Agent-key UI + tunnel status in /account | Complete |
+| 1.2.20 | Profile editor: performance profile + availability (nested self-serve fields) | Complete |
+| 1.2.21 | Negative-review escalation + booking-gate enforcement (warn -> remove booking) | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -69,7 +71,7 @@ Project Manager: Francisco De La Paz
 | 1.3.4 | Track upload UI on artist dashboard (admin-hosted R2 tier, separate paid option) | Pending |
 | 1.3.5 | Public media player on artist profile | Pending |
 | 1.3.6 | Featured track on profile card | Pending |
-| 1.3.7 | Play count tracking | Pending |
+| 1.3.7 | Play count tracking | Complete |
 | 1.3.8 | R2 admin-hosted always-on storage tier | Pending |
 | 1.3.9 | Phase 2 validation: acceptance criteria verified | Pending |
 
@@ -175,7 +177,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 82.0 hours to date at $85/hr (approximately $6,970).
+Seeded from docs/HOURS.md, extended at checkpoint. 83.5 hours to date at $85/hr (approximately $7,097.50).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -235,4 +237,6 @@ Seeded from docs/HOURS.md, extended at checkpoint. 82.0 hours to date at $85/hr 
 | 2026-06-28 | CHANGELOG + checkpoint docs | Technical Writer | 0.5 |
 | 2026-06-28 | Discovery search + genre filter (DiscoveryGrid, home) | Lead Developer | 1.0 |
 | 2026-06-28 | Profile editor: performance profile + availability (self-serve nested fields) | Lead Developer | 1.5 |
-| **Total** | | | **82.0** |
+| 2026-06-28 | Negative-review escalation + booking-gate enforcement | Lead Developer | 1.0 |
+| 2026-06-28 | Play-count tracking (migration 0007, /api/tracks/play, display) | Lead Developer | 0.5 |
+| **Total** | | | **83.5** |

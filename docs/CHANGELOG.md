@@ -1,5 +1,15 @@
 # Changelog — Cerberus Live Studio
 
+## [0.5.1] — 2026-06-28
+
+Discovery, self-serve dossier completeness, and trust-model enforcement.
+
+### Added
+- **Discovery**: search (name/city/genre) + genre-chip browse with live count on the home.
+- **Profile editor** gains performance-profile (crowd fit, clean set, languages, energy, equipment, stage-presence) + a 7-day availability toggle; the dossier perf card falls back to Quick-Info scalars.
+- **Negative-review escalation**: a 3rd approved negative review auto-closes the booking gate; admin sees a warning badge at 2+. Closed-gate artists no longer accept bookings (server-enforced; dossier shows "not accepting bookings"; messages still allowed).
+- **Play-count tracking**: migration 0007 + `POST /api/tracks/play`; counts shown on the Media tab.
+
 ## [0.5.0] — 2026-06-28
 
 Media, bookings, follows, and the reviews/verification trust model.

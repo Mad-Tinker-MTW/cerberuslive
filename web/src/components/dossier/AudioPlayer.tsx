@@ -21,13 +21,16 @@ export function AudioPlayer({
   title,
   artist,
   duration,
+  trackId,
 }: {
   src: string;
   title: string;
   artist?: string;
   duration?: string;
+  trackId?: number;
 }) {
   const ref = useRef<HTMLAudioElement>(null);
+  const pinged = useRef(false);
   const [playing, setPlaying] = useState(false);
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(0);
@@ -58,7 +61,13 @@ export function AudioPlayer({
     if (a.paused) {
       // play() rejects (NotSupportedError, autoplay block) — must be caught so a
       // dead source degrades instead of throwing.
-      a.play().then(() => setPlaying(true)).catch(() => { setFailed(true); setPlaying(false); });
+      a.play().then(() => {
+        setPlaying(true);
+        if (trackId && !pinged.current) {
+          pinged.current = true;
+          fetch("/api/tracks/play", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: trackId }) }).catch(() => {});
+        }
+      }).catch(() => { setFailed(true); setPlaying(false); });
     } else {
       a.pause();
       setPlaying(false);

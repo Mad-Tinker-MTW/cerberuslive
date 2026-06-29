@@ -24,9 +24,11 @@ function Waveform() {
 export function FeaturedTrackCard({
   track,
   src,
+  trackId,
 }: {
   track: FeaturedTrack;
   src?: string | null;
+  trackId?: number;
 }) {
   return (
     <div className="rounded-xl border border-border bg-panel p-5">
@@ -41,6 +43,7 @@ export function FeaturedTrackCard({
           title={track.title}
           artist={track.artist}
           duration={track.duration}
+          trackId={trackId}
         />
       ) : (
         <>

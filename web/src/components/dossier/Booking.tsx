@@ -47,10 +47,12 @@ export function BookingPanel({
   slug,
   name,
   availability,
+  bookingsOpen = true,
 }: {
   slug: string;
   name: string;
   availability?: AvailabilityDay[];
+  bookingsOpen?: boolean;
 }) {
   const hasAvailability = availability && availability.length > 0;
 
@@ -58,7 +60,7 @@ export function BookingPanel({
     <section id="booking" className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       {hasAvailability && <AvailabilityCard days={availability} />}
       <div className={hasAvailability ? "" : "lg:col-span-2"}>
-        <BookingForm slug={slug} artistName={name} />
+        <BookingForm slug={slug} artistName={name} bookingsOpen={bookingsOpen} />
       </div>
     </section>
   );
