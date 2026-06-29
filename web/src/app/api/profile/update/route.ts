@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { authFromContext } from "@/lib/auth";
-import { getDb, parseJson, type Socials, type DossierProfile } from "@/lib/db";
+import { getDb, parseJson, type Socials, type DossierProfile, type PerformanceProfile, type AvailabilityDay } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +29,8 @@ type Body = Partial<Record<(typeof SCALAR_FIELDS)[number], string>> & {
   socials?: Socials;
   bestFor?: string[];
   featuredTrack?: { title?: string; duration?: string };
+  performanceProfile?: PerformanceProfile;
+  availability?: AvailabilityDay[];
 };
 
 export async function POST(req: Request) {
@@ -78,8 +80,8 @@ export async function POST(req: Request) {
     vals.push(Object.keys(cleaned).length ? JSON.stringify(cleaned) : null);
   }
 
-  // bestFor / featuredTrack merge into the existing profile_json blob.
-  if (body.bestFor || body.featuredTrack) {
+  // Nested fields merge into the existing profile_json blob.
+  if (body.bestFor || body.featuredTrack || body.performanceProfile || body.availability) {
     const profileJson = parseJson<DossierProfile>(profile.profile_json, {});
     if (Array.isArray(body.bestFor)) {
       profileJson.bestFor = body.bestFor.filter((x) => typeof x === "string" && x.trim());
@@ -90,6 +92,24 @@ export async function POST(req: Request) {
         artist: (body.display_name ?? "").trim() || undefined,
         duration: (body.featuredTrack.duration ?? "").trim() || undefined,
       };
+    }
+    if (body.performanceProfile && typeof body.performanceProfile === "object") {
+      // Keep only non-empty fields so the card hides blanks.
+      const pp: PerformanceProfile = {};
+      for (const [k, v] of Object.entries(body.performanceProfile)) {
+        if (k === "stagePresence") {
+          const n = Number(v);
+          if (n >= 1 && n <= 5) pp.stagePresence = n;
+        } else if (typeof v === "string" && v.trim()) {
+          (pp as Record<string, unknown>)[k] = v.trim();
+        }
+      }
+      profileJson.performanceProfile = pp;
+    }
+    if (Array.isArray(body.availability)) {
+      profileJson.availability = body.availability
+        .filter((d) => d && typeof d.day === "string")
+        .map((d) => ({ day: d.day, state: d.state === "booked" ? "booked" : "available" }));
     }
     sets.push("profile_json = ?");
     vals.push(JSON.stringify(profileJson));

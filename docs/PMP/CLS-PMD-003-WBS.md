@@ -175,7 +175,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 80.5 hours to date at $85/hr (approximately $6,842.50).
+Seeded from docs/HOURS.md, extended at checkpoint. 82.0 hours to date at $85/hr (approximately $6,970).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -234,4 +234,5 @@ Seeded from docs/HOURS.md, extended at checkpoint. 80.5 hours to date at $85/hr 
 | 2026-06-28 | End-to-end QA (media, bookings, follow, reviews, admin, routing) | QA Engineer | 1.5 |
 | 2026-06-28 | CHANGELOG + checkpoint docs | Technical Writer | 0.5 |
 | 2026-06-28 | Discovery search + genre filter (DiscoveryGrid, home) | Lead Developer | 1.0 |
-| **Total** | | | **80.5** |
+| 2026-06-28 | Profile editor: performance profile + availability (self-serve nested fields) | Lead Developer | 1.5 |
+| **Total** | | | **82.0** |

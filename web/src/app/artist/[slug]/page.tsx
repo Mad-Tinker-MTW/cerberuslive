@@ -100,7 +100,13 @@ export default async function ArtistPage({
               overview={
                 <OverviewPanel
                   artist={artist}
-                  performanceProfile={profile.performanceProfile}
+                  performanceProfile={{
+                    // Scalar Quick-Info fields fall through so the card stays complete.
+                    setLength: profile.performanceProfile?.setLength ?? artist.set_length ?? undefined,
+                    type: profile.performanceProfile?.type ?? artist.performance_type ?? undefined,
+                    travel: profile.performanceProfile?.travel ?? artist.travel_range ?? undefined,
+                    ...profile.performanceProfile,
+                  }}
                   bestFor={profile.bestFor}
                   media={profile.media}
                 />

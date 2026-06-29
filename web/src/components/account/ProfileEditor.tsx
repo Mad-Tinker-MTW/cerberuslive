@@ -24,7 +24,17 @@ export type EditorValues = {
   bestFor: string[];
   featuredTitle: string;
   featuredDuration: string;
+  // Performance profile (nested) + availability week
+  ppCrowdFit: string;
+  ppCleanSet: string;
+  ppLanguages: string;
+  ppEnergy: string;
+  ppEquipment: string;
+  ppStagePresence: number;
+  availability: { day: string; state: "available" | "booked" }[];
 };
+
+export const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const BEST_FOR_OPTIONS = [
   "Club Shows",
@@ -102,6 +112,14 @@ export function ProfileEditor({
         ? p.bestFor.filter((x) => x !== item)
         : [...p.bestFor, item],
     }));
+  const toggleDay = (day: string) =>
+    setV((p) => {
+      const cur = p.availability.find((d) => d.day === day);
+      const others = p.availability.filter((d) => d.day !== day);
+      const next = { day, state: (cur?.state === "available" ? "booked" : "available") as "available" | "booked" };
+      return { ...p, availability: [...others, next].sort((a, b) => WEEK.indexOf(a.day) - WEEK.indexOf(b.day)) };
+    });
+  const dayState = (day: string) => v.availability.find((d) => d.day === day)?.state ?? "available";
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
@@ -133,6 +151,15 @@ export function ProfileEditor({
         socials: v.socials,
         bestFor: v.bestFor,
         featuredTrack: { title: v.featuredTitle, duration: v.featuredDuration },
+        performanceProfile: {
+          crowdFit: v.ppCrowdFit,
+          cleanSet: v.ppCleanSet,
+          languages: v.ppLanguages,
+          energy: v.ppEnergy,
+          equipment: v.ppEquipment,
+          stagePresence: v.ppStagePresence,
+        },
+        availability: v.availability,
       }),
     });
     if (res.ok) {
@@ -186,6 +213,40 @@ export function ProfileEditor({
               {item}
             </button>
           ))}
+        </div>
+      </section>
+
+      <section>
+        <span className="text-xs uppercase tracking-widest text-muted">Performance profile</span>
+        <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field label="Crowd fit" value={v.ppCrowdFit} onChange={(x) => set("ppCrowdFit", x)} placeholder="Clubs, Colleges, Festivals" />
+          <Field label="Clean set" value={v.ppCleanSet} onChange={(x) => set("ppCleanSet", x)} placeholder="Available on request" />
+          <Field label="Languages" value={v.ppLanguages} onChange={(x) => set("ppLanguages", x)} placeholder="English" />
+          <Field label="Energy" value={v.ppEnergy} onChange={(x) => set("ppEnergy", x)} placeholder="High" />
+          <Field label="Equipment" value={v.ppEquipment} onChange={(x) => set("ppEquipment", x)} placeholder="Brings own mic + IEMs" />
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs uppercase tracking-widest text-muted">Stage presence</span>
+            <div className="flex h-11 items-center gap-1">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button key={n} type="button" onClick={() => setV((p) => ({ ...p, ppStagePresence: n === p.ppStagePresence ? 0 : n }))} aria-label={`${n} stars`} className={`text-xl ${n <= v.ppStagePresence ? "text-red" : "text-foreground/20"}`}>★</button>
+              ))}
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <section>
+        <span className="text-xs uppercase tracking-widest text-muted">Availability this week</span>
+        <div className="mt-2 grid grid-cols-7 gap-2">
+          {WEEK.map((day) => {
+            const booked = dayState(day) === "booked";
+            return (
+              <button key={day} type="button" onClick={() => toggleDay(day)} className={`flex flex-col items-center gap-1 rounded-lg border px-1 py-2 text-center text-xs ${booked ? "border-red/30 bg-red/10 text-red" : "border-green/30 bg-green/10 text-green"}`}>
+                <span className="text-muted">{day}</span>
+                <span className="text-[10px] font-medium">{booked ? "Booked" : "Open"}</span>
+              </button>
+            );
+          })}
         </div>
       </section>
 

@@ -12,7 +12,7 @@ import {
   type DossierProfile,
 } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
-import { ProfileEditor, type EditorValues } from "@/components/account/ProfileEditor";
+import { ProfileEditor, WEEK, type EditorValues } from "@/components/account/ProfileEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +57,16 @@ export default async function EditProfilePage() {
     bestFor: profile.bestFor ?? [],
     featuredTitle: profile.featuredTrack?.title ?? "",
     featuredDuration: profile.featuredTrack?.duration ?? "",
+    ppCrowdFit: profile.performanceProfile?.crowdFit ?? "",
+    ppCleanSet: profile.performanceProfile?.cleanSet ?? "",
+    ppLanguages: profile.performanceProfile?.languages ?? "",
+    ppEnergy: profile.performanceProfile?.energy ?? "",
+    ppEquipment: profile.performanceProfile?.equipment ?? "",
+    ppStagePresence: profile.performanceProfile?.stagePresence ?? 0,
+    availability:
+      profile.availability && profile.availability.length > 0
+        ? profile.availability
+        : WEEK.map((day) => ({ day, state: "available" as const })),
   };
 
   return (
