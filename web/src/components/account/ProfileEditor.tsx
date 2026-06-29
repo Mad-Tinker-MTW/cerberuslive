@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Socials } from "@/lib/db";
+import { WEEK } from "./availability";
 
 export type EditorValues = {
   photoUrl: string;
@@ -34,8 +35,6 @@ export type EditorValues = {
   ppStagePresence: number;
   availability: { day: string; state: "available" | "booked" }[];
 };
-
-export const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const BEST_FOR_OPTIONS = [
   "Club Shows",

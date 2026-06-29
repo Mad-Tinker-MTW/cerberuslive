@@ -12,7 +12,8 @@ import {
   type DossierProfile,
 } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
-import { ProfileEditor, WEEK, type EditorValues } from "@/components/account/ProfileEditor";
+import { ProfileEditor, type EditorValues } from "@/components/account/ProfileEditor";
+import { WEEK } from "@/components/account/availability";
 
 export const dynamic = "force-dynamic";
 
