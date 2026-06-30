@@ -393,6 +393,29 @@ export async function getWeeklyLiveMinutes(slug: string): Promise<number> {
   return mins;
 }
 
+/** How long a viewer heartbeat stays valid. The client beats every ~10s, so 30s tolerates two
+ *  missed beats before a viewer's slot is reclaimed. Used by the concurrent-viewer cap (A.6). */
+export const VIEWER_STALE_MS = 30_000;
+
+/** Count viewers currently holding a slot on a live session (last_seen within the stale window).
+ *  Pass excludeToken on a join check so a viewer re-joining does not count against their own slot. */
+export async function countActiveViewers(sessionId: number, excludeToken?: string): Promise<number> {
+  const db = getDb();
+  const cutoff = new Date(Date.now() - VIEWER_STALE_MS).toISOString();
+  const row = excludeToken
+    ? await db
+        .prepare(
+          "SELECT COUNT(*) AS n FROM live_viewers WHERE session_id = ? AND last_seen > ? AND viewer_token != ?"
+        )
+        .bind(sessionId, cutoff, excludeToken)
+        .first<{ n: number }>()
+    : await db
+        .prepare("SELECT COUNT(*) AS n FROM live_viewers WHERE session_id = ? AND last_seen > ?")
+        .bind(sessionId, cutoff)
+        .first<{ n: number }>();
+  return row?.n ?? 0;
+}
+
 export type LiveSession = {
   id: number;
   artist_slug: string;

@@ -3,11 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { watchWindow } from "@/lib/realtime-client";
 
-type ViewState = "connecting" | "live" | "ended" | "error";
+type ViewState = "connecting" | "live" | "ended" | "error" | "full";
+
+const BEAT_MS = 10_000;
 
 // Viewer for a free WebRTC window. Watching needs no sign-in (going on camera does).
 // Shows a "connecting" state until the first frame, and "stream ended" when the publisher
-// stops, instead of a broken-image flash or a frozen last frame.
+// stops, instead of a broken-image flash or a frozen last frame. Holds a concurrent-viewer
+// slot via /api/live/viewer (A.6): joins before connecting (showing "full" if the tier cap is
+// reached), heartbeats it, and releases it on unmount so a closed tab frees the slot.
 export function LiveViewer({ slug, publisherSessionId }: { slug: string; publisherSessionId: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
@@ -16,7 +20,36 @@ export function LiveViewer({ slug, publisherSessionId }: { slug: string; publish
 
   useEffect(() => {
     let cancelled = false;
+    const token =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    let beat: ReturnType<typeof setInterval> | undefined;
+
+    const ping = (op: "join" | "beat" | "leave", keepalive = false) =>
+      fetch("/api/live/viewer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug, token, op }),
+        keepalive,
+      });
+
     (async () => {
+      // Claim a viewer slot first. A 403 means the tier's concurrent-viewer cap is reached —
+      // show "full" instead of connecting. Any other join hiccup is non-fatal (cap is best-effort).
+      try {
+        const res = await ping("join");
+        if (cancelled) return;
+        if (res.status === 403) {
+          setState("full");
+          return;
+        }
+      } catch {
+        /* network blip on the slot check — fall through and try to watch anyway */
+      }
+      if (cancelled) return;
+      beat = setInterval(() => void ping("beat").catch(() => {}), BEAT_MS);
+
       try {
         const { pc, stream } = await watchWindow(slug, publisherSessionId);
         if (cancelled) {
@@ -44,6 +77,8 @@ export function LiveViewer({ slug, publisherSessionId }: { slug: string; publish
     })();
     return () => {
       cancelled = true;
+      if (beat) clearInterval(beat);
+      void ping("leave", true).catch(() => {});
       pcRef.current?.close();
       pcRef.current = null;
     };
@@ -69,6 +104,13 @@ export function LiveViewer({ slug, publisherSessionId }: { slug: string; publish
       {state === "ended" && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/80">
           <span className="text-sm text-foreground/80">Stream ended</span>
+        </div>
+      )}
+      {state === "full" && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/85 px-4 text-center">
+          <span className="text-sm text-foreground/80">
+            This live window is full right now. Try again in a moment.
+          </span>
         </div>
       )}
       {state === "error" && (
