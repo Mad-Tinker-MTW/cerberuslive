@@ -4,6 +4,7 @@ import { useState } from "react";
 
 const TABS = [
   "Overview",
+  "Feed",
   "Discography",
   "Media",
   "Live Sets",
@@ -30,21 +31,24 @@ function ComingSoon({ label }: { label: string }) {
  */
 export function ProfileTabs({
   overview,
+  feed,
   discography,
   media,
   liveSets,
   reviews,
 }: {
   overview: React.ReactNode;
+  feed?: React.ReactNode;
   discography?: React.ReactNode;
   media?: React.ReactNode;
   liveSets?: React.ReactNode;
   reviews?: React.ReactNode;
 }) {
   const [active, setActive] = useState<Tab>("Overview");
-  // Hide the Discography / Live Sets tabs entirely when there is no content for them.
+  // Hide the Feed / Discography / Live Sets tabs entirely when there is no content for them.
   const visibleTabs = TABS.filter(
     (t) =>
+      (t !== "Feed" || Boolean(feed)) &&
       (t !== "Discography" || Boolean(discography)) &&
       (t !== "Live Sets" || Boolean(liveSets))
   );
@@ -71,7 +75,9 @@ export function ProfileTabs({
       <div className="mt-5">
         {active === "Overview"
           ? overview
-          : active === "Discography" && discography
+          : active === "Feed" && feed
+            ? feed
+            : active === "Discography" && discography
             ? discography
             : active === "Media" && media
               ? media

@@ -38,17 +38,41 @@ function iceComplete(pc: RTCPeerConnection): Promise<void> {
   });
 }
 
+export type PublishOpts = {
+  maxBitrateKbps?: number; // video ceiling
+  maxAudioKbps?: number; // audio ceiling (Stage ~128, Mic ~64)
+  stereo?: boolean; // Stage mode: stereo Opus
+};
+
+/** Set Opus fmtp params (stereo + max average bitrate) on the offer SDP. Best-effort: returns the
+ *  sdp unchanged if no opus line is found, so a browser quirk can never break going live. */
+function tuneOpus(sdp: string, opts: PublishOpts): string {
+  const m = sdp.match(/a=rtpmap:(\d+) opus\/48000/i);
+  if (!m) return sdp;
+  const pt = m[1];
+  const params: string[] = [];
+  if (opts.stereo) params.push("stereo=1", "sprop-stereo=1");
+  if (opts.maxAudioKbps) params.push(`maxaveragebitrate=${opts.maxAudioKbps * 1000}`);
+  if (params.length === 0) return sdp;
+  const fmtp = new RegExp(`a=fmtp:${pt} ([^\\r\\n]*)`);
+  if (fmtp.test(sdp)) return sdp.replace(fmtp, (_f, existing) => `a=fmtp:${pt} ${existing};${params.join(";")}`);
+  return sdp.replace(new RegExp(`(a=rtpmap:${pt} opus/48000[^\\r\\n]*)`), `$1\r\na=fmtp:${pt} ${params.join(";")}`);
+}
+
 /** Publish a local camera/mic stream into the artist's window session. Tracks are named by
  *  kind ('video'/'audio') so viewers can pull them. Returns the peer connection. */
 export async function publishWindow(
   slug: string,
   sessionId: string,
   stream: MediaStream,
-  maxBitrateKbps?: number
+  opts: PublishOpts = {}
 ): Promise<RTCPeerConnection> {
+  const { maxBitrateKbps, maxAudioKbps, stereo } = opts;
   const pc = new RTCPeerConnection(ICE);
   stream.getTracks().forEach((t) => pc.addTrack(t, stream));
-  await pc.setLocalDescription(await pc.createOffer());
+  const offer = await pc.createOffer();
+  if ((stereo || maxAudioKbps) && offer.sdp) offer.sdp = tuneOpus(offer.sdp, opts);
+  await pc.setLocalDescription(offer);
   await iceComplete(pc);
   const senders = pc.getTransceivers().filter((tr) => tr.sender.track);
   const tracks = senders.map((tr) => ({ location: "local", mid: tr.mid, trackName: tr.sender.track!.kind }));
@@ -57,20 +81,21 @@ export async function publishWindow(
     tracks,
   });
   if (ans.sessionDescription) await pc.setRemoteDescription(ans.sessionDescription as RTCSessionDescriptionInit);
-  // Cap the outbound video bitrate to the tier ceiling (best-effort; applied post-negotiation).
-  if (maxBitrateKbps) {
-    const vSender = pc.getSenders().find((s) => s.track?.kind === "video");
-    if (vSender) {
-      const params = vSender.getParameters();
-      if (!params.encodings || params.encodings.length === 0) params.encodings = [{}];
-      params.encodings[0].maxBitrate = maxBitrateKbps * 1000;
-      try {
-        await vSender.setParameters(params);
-      } catch {
-        /* some browsers reject mid-call; non-fatal */
-      }
+  // Cap outbound bitrates to the tier/mode ceilings (best-effort; applied post-negotiation).
+  const capSender = async (kind: "video" | "audio", kbps: number) => {
+    const sender = pc.getSenders().find((s) => s.track?.kind === kind);
+    if (!sender) return;
+    const params = sender.getParameters();
+    if (!params.encodings || params.encodings.length === 0) params.encodings = [{}];
+    params.encodings[0].maxBitrate = kbps * 1000;
+    try {
+      await sender.setParameters(params);
+    } catch {
+      /* some browsers reject mid-call; non-fatal */
     }
-  }
+  };
+  if (maxBitrateKbps) await capSender("video", maxBitrateKbps);
+  if (maxAudioKbps) await capSender("audio", maxAudioKbps);
   return pc;
 }
 

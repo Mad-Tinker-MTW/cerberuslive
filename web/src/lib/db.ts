@@ -30,6 +30,20 @@ export function rolesList(roles: string | null): string[] {
   return genreList(roles);
 }
 
+/** Spoken-word roles, for which the live "Mic mode" audio profile fits better than "Stage mode". */
+const SPOKEN_ROLES = new Set(["comedian", "host", "poet", "mc", "speaker", "storyteller", "podcaster"]);
+
+/**
+ * Live performance mode from an artist's roles (L-048 Phase B). 'mic' (spoken: mono, light noise
+ * suppression) only when EVERY role is spoken-word; any musical role falls to 'stage' (stereo, voice
+ * DSP off so music isn't pumped/ducked), the safer default for a music platform.
+ */
+export function performanceMode(roles: string | null): "stage" | "mic" {
+  const list = rolesList(roles).map((r) => r.toLowerCase());
+  if (list.length > 0 && list.every((r) => SPOKEN_ROLES.has(r))) return "mic";
+  return "stage";
+}
+
 /**
  * The rich artist dossier. Every field beyond the core identity is nullable: the
  * page is built to render a 30%-complete profile, hiding any card, row, or badge
@@ -169,6 +183,38 @@ export async function purgeExpiredFollowIntents(): Promise<void> {
     .prepare("DELETE FROM follow_intents WHERE status = 'pending' AND created_at < ?")
     .bind(cutoff)
     .run();
+}
+
+/** True when the signed-in user owns this artist profile (used to let an artist preview their own
+ *  followers-only content and to authorize post create/delete). */
+export async function ownsProfile(slug: string, userId: string): Promise<boolean> {
+  const db = getDb();
+  const r = await db
+    .prepare("SELECT 1 AS x FROM artist_profiles WHERE slug = ? AND user_id = ? LIMIT 1")
+    .bind(slug, userId)
+    .first<{ x: number }>();
+  return !!r;
+}
+
+// --- Profile feed (L-048 Phase B) ----------------------------------------------------
+
+export type Post = {
+  id: number;
+  body: string;
+  media_url: string | null;
+  visibility: "public" | "followers";
+  created_at: string;
+};
+
+/** Posts for an artist's feed. Public posts are always returned; followers-only posts are included
+ *  only when the viewer is a follower or the artist themselves (decided by the caller). */
+export async function getPosts(slug: string, includeFollowersOnly: boolean): Promise<Post[]> {
+  const db = getDb();
+  const sql = includeFollowersOnly
+    ? "SELECT id, body, media_url, visibility, created_at FROM posts WHERE artist_slug = ? ORDER BY created_at DESC LIMIT 50"
+    : "SELECT id, body, media_url, visibility, created_at FROM posts WHERE artist_slug = ? AND visibility = 'public' ORDER BY created_at DESC LIMIT 50";
+  const { results } = await db.prepare(sql).bind(slug).all<Post>();
+  return results ?? [];
 }
 
 export async function isFollowing(slug: string, userId: string): Promise<boolean> {

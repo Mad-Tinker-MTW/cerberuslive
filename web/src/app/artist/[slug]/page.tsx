@@ -9,6 +9,8 @@ import {
   getActiveLive,
   getFollowerCount,
   isFollowing,
+  ownsProfile,
+  getPosts,
   getApprovedReviews,
   trackUrl,
   mediaCtx as makeMediaCtx,
@@ -24,6 +26,7 @@ import { ArtistSidebar } from "@/components/dossier/Sidebar";
 import { DossierHero, FeaturedTrackCard } from "@/components/dossier/Hero";
 import { ProfileTabs } from "@/components/dossier/Tabs";
 import { OverviewPanel } from "@/components/dossier/Overview";
+import { FeedPanel } from "@/components/dossier/FeedPanel";
 import { DiscographyPanel } from "@/components/dossier/Discography";
 import { MediaList } from "@/components/dossier/MediaList";
 import { VideoList } from "@/components/dossier/VideoList";
@@ -86,6 +89,9 @@ export default async function ArtistPage({
   const session = await authFromContext().api.getSession({ headers: await headers() });
   const followerCount = await getFollowerCount(slug);
   const following = session ? await isFollowing(slug, session.user.id) : false;
+  // Followers-only posts show to followers and to the artist viewing their own dossier.
+  const isOwnerViewing = session ? await ownsProfile(slug, session.user.id) : false;
+  const posts = await getPosts(slug, following || isOwnerViewing);
   const reviews = await getApprovedReviews(slug);
   const live = await getActiveLive(slug);
 
@@ -142,6 +148,7 @@ export default async function ArtistPage({
                   artistDna={profile.artistDna}
                 />
               }
+              feed={posts.length > 0 ? <FeedPanel posts={posts} /> : undefined}
               discography={
                 discography.hasAny ? (
                   <DiscographyPanel discography={discography} mediaCtx={mediaCtx} />

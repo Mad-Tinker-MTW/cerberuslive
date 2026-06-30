@@ -2,11 +2,14 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { authFromContext } from "@/lib/auth";
-import { getDb, getActiveLive } from "@/lib/db";
+import { getDb, getActiveLive, liveCaps, getWeeklyLiveMinutes, getPosts, performanceMode } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { AccountActions } from "@/components/account/AccountActions";
 import { AgentConnect } from "@/components/account/AgentConnect";
 import { LiveControl } from "@/components/account/LiveControl";
+import { PostComposer } from "@/components/account/PostComposer";
+import { BillingCard } from "@/components/account/BillingCard";
+import { billingConfigured } from "@/lib/billing";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +19,9 @@ type ProfileRow = {
   tunnel_url: string | null;
   media_origin: string | null;
   tier: string;
+  roles: string | null;
+  subscription_status: string | null;
+  stripe_customer_id: string | null;
 };
 
 export default async function AccountPage() {
@@ -27,11 +33,15 @@ export default async function AccountPage() {
   const db = getDb();
   const profile = await db
     .prepare(
-      "SELECT slug, display_name, tunnel_url, media_origin, tier FROM artist_profiles WHERE user_id = ? LIMIT 1"
+      "SELECT slug, display_name, tunnel_url, media_origin, tier, roles, subscription_status, stripe_customer_id FROM artist_profiles WHERE user_id = ? LIMIT 1"
     )
     .bind(user.id)
     .first<ProfileRow>();
   const live = profile ? await getActiveLive(profile.slug) : null;
+  const caps = profile ? liveCaps(profile.tier) : null;
+  const usedLiveMinutes = profile && caps?.weeklyMinutes != null ? await getWeeklyLiveMinutes(profile.slug) : 0;
+  // Owner sees all their own posts (public + followers-only) for management.
+  const ownPosts = profile ? await getPosts(profile.slug, true) : [];
 
   // role is an additionalField on the Better Auth user
   const role = (user as { role?: string }).role ?? "fan";
@@ -122,7 +132,29 @@ export default async function AccountPage() {
               slug={profile.slug}
               tier={profile.tier}
               initialKind={live ? (live.kind as "window" | "event") : null}
+              weeklyMinutes={caps?.weeklyMinutes ?? null}
+              usedMinutes={Math.round(usedLiveMinutes)}
+              viewerCap={caps?.viewerCap ?? 0}
+              sessionMaxMinutes={caps?.sessionMaxMinutes ?? 0}
+              mode={performanceMode(profile.roles)}
             />
+          </div>
+        )}
+
+        {profile && (
+          <div className="mt-6">
+            <BillingCard
+              tier={profile.tier}
+              status={profile.subscription_status}
+              configured={billingConfigured()}
+              hasCustomer={!!profile.stripe_customer_id}
+            />
+          </div>
+        )}
+
+        {profile && (
+          <div className="mt-6">
+            <PostComposer initialPosts={ownPosts} />
           </div>
         )}
 
