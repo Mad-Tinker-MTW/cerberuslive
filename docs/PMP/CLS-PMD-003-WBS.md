@@ -111,6 +111,11 @@ Project Manager: Francisco De La Paz
 | 1.4.9 | Territory claim system (Booking Ready tier) | Pending |
 | 1.4.10 | Geographic discovery feed | Pending |
 | 1.4.12 | Live lane (migration 0016 live_sessions): go-live/end with caps, LIVE badge + /live/[slug] watch page, free WebRTC window (Cloudflare Realtime via the token-hiding /api/live/rtc proxy) + managed Stream Live event (input creation + HLS iframe). Presence / watch / caps done + verified; the WebRTC + Stream media path is operator-gated (CF_REALTIME_APP_ID/TOKEN, CF Stream creds) and not yet live-verified (L-048 Phase 6) | Open |
+| 1.4.13 | Live watch-page UX: viewer connecting/ended/error states + Report button -> support inbox (/api/report) (L-048 Phase A) | Complete |
+| 1.4.14 | Admin live moderation: control-deck Live-now panel + force-end (/api/admin/live) (L-048 Phase A) | Complete |
+| 1.4.15 | Live tier caps + weekly-minute budget + bitrate cap (LIVE_TIERS at /api/live start; plus-tier config) (L-048 Phase A) | Complete |
+| 1.4.16 | Deferred-follow: capture email mid-show -> confirm link -> email-only follower (migration 0017, /api/follow/intent + /confirm) (L-048 Phase A) | Complete |
+| 1.4.17 | Anonymous live reactions (migration 0018, /api/live/react + /reactions, floating ReactionBar via D1 poll) (L-048 Phase A) | Complete |
 | 1.4.11 | Phase 3 validation: acceptance criteria verified | Pending |
 
 ---
@@ -197,7 +202,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 197.0 hours to date at $85/hr (approximately $16,745.00).
+Seeded from docs/HOURS.md, extended at checkpoint. 211.0 hours to date at $85/hr (approximately $17,935.00).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -324,4 +329,9 @@ Seeded from docs/HOURS.md, extended at checkpoint. 197.0 hours to date at $85/hr
 | 2026-06-30 | LIVE-TIERS-AND-PRICING + BUSINESS-MODEL doc authoring | Technical Writer | 1.5 |
 | 2026-06-30 | Live SFU path verification (app + secrets, server checks, live camera + phone-viewer test) | QA Engineer | 1.0 |
 | 2026-06-30 | SFU app/secrets setup + go-live verification | Deployment Engineer | 0.5 |
-| **Total** | | | **197.0** |
+| 2026-06-30 | Live Phase A build: watch UX + report, admin Live-now + force-end, tier caps + weekly budget + bitrate, deferred-follow, reactions (5 increments) | Lead Developer | 9.0 |
+| 2026-06-30 | Live/social implementation design (deferred-follow model, reactions via D1 poll vs DO, cap mechanics) | Solutions Architect | 1.0 |
+| 2026-06-30 | Live Phase A verification (report inbox, force-end SQL, weekly-minute math, deferred-follow flow, reactions data flow, tsc/eslint x5) | QA Engineer | 2.5 |
+| 2026-06-30 | Live Phase A deploy (prod migrations 0017-0018, commit, push, CI, prod verification) | Deployment Engineer | 1.0 |
+| 2026-06-30 | Checkpoint docs (CHANGELOG, ledger, registry) | Technical Writer | 0.5 |
+| **Total** | | | **211.0** |

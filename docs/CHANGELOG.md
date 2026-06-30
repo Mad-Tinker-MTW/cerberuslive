@@ -1,5 +1,27 @@
 # Changelog — Cerberus Live Studio
 
+## [0.10.0] — 2026-06-30
+
+Live Phase A: the free WebRTC window goes from "it streams" to a usable live experience, plus
+moderation and the deferred-follow conversion. Built, verified, and deployed to prod.
+
+### Added
+- **Viewer states + Report**: the watch page shows connecting / stream-ended states (no more
+  broken-icon flash or frozen frame) and a one-tap Report that lands in the control-deck inbox.
+- **Admin live moderation**: a control-deck "Live now" panel lists active streams with Watch +
+  force-end (kill), reachable only on the control-deck host.
+- **Tier caps + weekly-minute budget**: `LIVE_TIERS` (free = 10 min/wk, 25 viewers, 0.7 Mbps;
+  managed generous) enforced at go-live via a rolling 7-day budget, with a per-tier bitrate cap.
+  The paid self-managed+ tier (90 min/wk, 50, 1 Mbps) is config-wired pending billing.
+- **Deferred-follow** (migration 0017): an anonymous viewer leaves an email mid-show and keeps
+  watching; a confirm link makes them an email-only follower (feeds managed blasts). Unconfirmed
+  intents purge after 7 days.
+- **Anonymous live reactions** (migration 0018): tap an emoji, it floats for everyone via a light
+  D1 + short-poll (no Durable Object), purged after ~2 minutes.
+
+### Infrastructure
+- Migrations 0017 (`follow_intents`) + 0018 (`live_reactions`) applied to prod D1; deployed via CI.
+
 ## [0.9.0] — 2026-06-29
 
 Artist types and media model (L-048): the catalog gains structure (personas, releases,

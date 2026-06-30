@@ -73,7 +73,12 @@ Goal: artists can go live, venues can list.
 - [ ] Central live feed (who is live now, by genre)
 - [ ] 10-minute cap on free tier, extended via paid
 - [ ] Manual Live Room approval flow
-- [ ] Report button on every stream
+- [x] Report button on every stream (lands in control-deck inbox) (L-048 Phase A)
+- [x] Live moderation: admin Live-now panel + force-end (L-048 Phase A)
+- [x] Live tier caps + weekly-minute budget + bitrate cap (L-048 Phase A)
+- [x] Deferred-follow (capture email mid-show -> confirm -> follower) (L-048 Phase A)
+- [x] Anonymous live reactions (floating emojis) (L-048 Phase A)
+- [ ] Concurrent-viewer cap enforcement (needs viewer-heartbeat) (L-048 A.6)
 - [ ] Venue profiles (list space, capacity, dates, genres)
 - [ ] Territory claim system (Booking Ready tier)
 - [ ] Geographic discovery feed
