@@ -93,11 +93,17 @@ follows, reviews, play_count, media_gateway (media_origin/tunnel_id/tunnel_token
 - `web/AGENTS.md` warns this Next version has breaking changes; follow existing code patterns.
 
 ## Status
-Phase 1 + the media layer are OPERATIONAL on prod (2026-06-29): owner/admin password login, artist
-signup + dossiers, photo upload, media streaming (gateway + R2 cache, verified 206 end-to-end),
-bookings, reviews, and a built-out admin console (users + role control, stats, waitlist + CSV,
-artist suspend/feature/delete). Running against PROD D1 on the preview URL. The main thread left is
-the **public-domain cutover**: cerberuslive.studio still serves the Phase 0 waitlist (operator
-decision; decide the waitlist story, then DNS-flip). 122.0h logged. Authoritative hours log + task
-status live in the WBS (docs/PMP/CLS-PMD-003-WBS.md); cross-workshop threads in Q:\MTW\Docs\OPEN-LOOPS.md
-(L-030/L-044/L-045).
+Phase 1 + the media layer are LIVE on prod at cerberuslive.studio (apex cut over from the Phase 0
+waitlist 2026-06-29, L-030; the waitlist worker is retired, its table preserved in D1 and surfaced
+in the admin). Live: owner/admin password login + authenticator TOTP behind the controldeck
+subdomain (Cloudflare Access), artist signup + dossiers (Artist DNA radar + enrichment), photo
+upload, media streaming (gateway + R2 cache, 206 verified end-to-end), bookings, reviews, and the
+tabbed admin control deck. 187.5h logged.
+
+NOT YET DEPLOYED (local only, committed but not pushed, L-048 v0.9.0): artist-types + media model
+across all 6 phases (personas/releases discography + per-release dedication, video lane, agent
+recursive/persona-aware rework, installable PWA, gateway free-vs-managed tiering, live window/event
+lane). Deploy gate: apply D1 migrations 0013-0016 to prod BEFORE pushing (push CI-deploys, and the
+new dossier queries need those columns), deploy the media worker, then for live set the CF Realtime
++ Stream secrets and verify on devices. Authoritative hours log + task status live in the WBS
+(docs/PMP/CLS-PMD-003-WBS.md); cross-workshop threads in Q:\MTW\Docs\OPEN-LOOPS.md (L-031/L-044/L-048).
