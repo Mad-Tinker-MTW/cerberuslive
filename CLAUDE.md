@@ -98,7 +98,7 @@ waitlist 2026-06-29, L-030; the waitlist worker is retired, its table preserved 
 in the admin). Live: owner/admin password login + authenticator TOTP behind the controldeck
 subdomain (Cloudflare Access), artist signup + dossiers (Artist DNA radar + enrichment), photo
 upload, media streaming (gateway + R2 cache, 206 verified end-to-end), bookings, reviews, and the
-tabbed admin control deck. 216.5h logged.
+tabbed admin control deck. 230.0h logged.
 
 DEPLOYED 2026-06-29 (L-048 v0.9.0): artist-types + media model across all 6 phases
 (personas/releases discography + per-release dedication, video lane, agent recursive/persona-aware
@@ -111,8 +111,16 @@ owner's real per-persona library. Live Phase A SHIPPED 2026-06-30 (v0.10.0, migr
 viewer states + report, admin Live-now/force-end, tier caps + weekly budget, deferred-follow,
 reactions. Phase A.6 SHIPPED 2026-06-30 (v0.10.1, migration 0019 live_viewers, commit e92abd2):
 concurrent-viewer cap via viewer-heartbeat (/api/live/viewer join/beat/leave, stale-reclaim,
-admin/owner uncapped bypass, "full" state); deployed + prod-verified. NEXT BUILD: paid self-managed+
-tier billing (Stripe, Phase 6) to sell the $29.99 tier; spec in docs/LIVE-TIERS-AND-PRICING.md +
-docs/BUSINESS-MODEL.md. Authoritative hours log + task status
+admin/owner uncapped bypass, "full" state); deployed + prod-verified. Live Phase B + self-managed+
+billing SHIPPED 2026-06-30 (v0.11.0, migrations 0020 posts + 0021 billing, commit dbc8d82,
+prod-verified): remaining-minutes UX (weekly live-budget bar in /account); performance modes
+(Stage/Mic audio from roles + audio-device picker + 480/720 toggle + Opus tuning; live media path
+still operator-gated on CF_REALTIME); profile feed (public + followers-only posts, /api/posts,
+dossier Feed tab, followers-only gated server-side, composer in /account); self-managed+ Stripe
+billing ($29.99/mo: /api/billing checkout + portal + signature-verified webhook flipping tier
+free<->plus, BillingCard) -- code live, gates to 503 until the OPERATOR sets STRIPE_SECRET_KEY /
+STRIPE_PRICE_PLUS / STRIPE_WEBHOOK_SECRET and registers /api/billing/webhook. NEXT (operator):
+activate Stripe; verify managed Stream event (Stream creds + RTMP/HLS); run the agent live scan;
+enter profile content + persona dedications. Authoritative hours log + task status
 live in the WBS (docs/PMP/CLS-PMD-003-WBS.md); cross-workshop threads in Q:\MTW\Docs\OPEN-LOOPS.md
 (L-031/L-044/L-048).

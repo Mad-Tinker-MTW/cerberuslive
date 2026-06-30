@@ -1,5 +1,34 @@
 # Changelog — Cerberus Live Studio
 
+## [0.11.0] — 2026-06-30
+
+Live Phase B (social + performance) plus the self-managed+ billing path. Four builds, all
+deployed to prod (migrations 0020-0021) and verified.
+
+### Added
+- **Profile feed** (migration 0020 `posts`): artists post updates to their dossier, **public** or
+  **followers-only**. A Feed tab appears when there are posts; followers-only posts are gated
+  server-side (never sent to a non-follower, not even in the RSC payload). Create/delete from
+  `/account`; `/api/posts` is ownership-scoped.
+- **Performance modes**: live audio auto-profiles from the artist's roles — **Stage** (music: stereo
+  Opus, voice DSP off so music isn't pumped/ducked) vs **Mic** (spoken: mono, light noise
+  suppression). Adds an audio-input-device picker (capture your mixer, not a room mic) and a
+  480p/720p toggle. Opus stereo/bitrate tuning + an audio bitrate cap in the publish path.
+- **Remaining-minutes UX**: `/account` shows your weekly live budget (used/remaining, viewer +
+  session caps) with a bar; managed shows "unmetered".
+- **Self-managed+ billing** (migration 0021): upgrade to the $29.99/mo tier via Stripe Checkout;
+  manage/cancel via the Billing Portal; a signature-verified webhook flips tier `free`<->`plus` on
+  the subscription lifecycle (managed/admin never touched). A thin fetch-based Stripe client (no
+  SDK) keeps the Worker bundle lean. The `BillingCard` shows upgrade / manage / managed states.
+
+### Infrastructure
+- Migrations 0020 (`posts`) + 0021 (`stripe_*` columns on `artist_profiles`) applied to prod D1;
+  deployed via CI.
+- **Operator to activate billing**: set `STRIPE_SECRET_KEY`, `STRIPE_PRICE_PLUS`,
+  `STRIPE_WEBHOOK_SECRET` on the web worker and register the webhook endpoint
+  (`/api/billing/webhook`) for `checkout.session.completed` + `customer.subscription.updated/deleted`.
+  Until then the billing routes gate to 503 and the upgrade button shows "not enabled yet".
+
 ## [0.10.1] — 2026-06-30
 
 Live Phase A.6: the free WebRTC window now enforces its per-tier concurrent-viewer cap.

@@ -79,6 +79,9 @@ Goal: artists can go live, venues can list.
 - [x] Deferred-follow (capture email mid-show -> confirm -> follower) (L-048 Phase A)
 - [x] Anonymous live reactions (floating emojis) (L-048 Phase A)
 - [x] Concurrent-viewer cap enforcement (viewer-heartbeat, admin/owner bypass) (L-048 A.6)
+- [x] Remaining-minutes UX in /account (weekly live-budget bar) (L-048 Phase B)
+- [x] Performance modes (Stage/Mic from roles) + audio-device picker + 480/720 toggle (L-048 Phase B)
+- [x] Profile feed: posts public + followers-only (L-048 Phase B)
 - [ ] Venue profiles (list space, capacity, dates, genres)
 - [ ] Territory claim system (Booking Ready tier)
 - [ ] Geographic discovery feed
@@ -117,7 +120,7 @@ Goal: MTW as booking agent.
 ## Phase 6: Monetization and Growth
 Goal: revenue on, acquisition-ready.
 
-- [ ] Stripe integration for paid tiers
+- [x] Stripe integration for paid tiers: self-managed+ $29.99/mo (checkout + portal + webhook tier-flip); code live, operator wires STRIPE_* secrets to activate (L-048 Phase 6)
 - [ ] R2 storage billing
 - [ ] Live time extension purchases
 - [ ] Artist analytics dashboard

@@ -117,6 +117,9 @@ Project Manager: Francisco De La Paz
 | 1.4.16 | Deferred-follow: capture email mid-show -> confirm link -> email-only follower (migration 0017, /api/follow/intent + /confirm) (L-048 Phase A) | Complete |
 | 1.4.17 | Anonymous live reactions (migration 0018, /api/live/react + /reactions, floating ReactionBar via D1 poll) (L-048 Phase A) | Complete |
 | 1.4.18 | Concurrent-viewer cap via viewer-heartbeat (migration 0019 live_viewers): /api/live/viewer join/beat/leave enforcing live_sessions.viewer_cap with stale-row purge, admin/owner uncapped bypass; LiveViewer claims a slot before connecting, heartbeats every 10s, releases on unmount, shows a "full" state (L-048 Phase A.6) | Complete |
+| 1.4.19 | Remaining-minutes UX in /account: weekly live-budget bar (used/remaining, viewer + session caps) from liveCaps + getWeeklyLiveMinutes; "unmetered" for managed (L-048 Phase B) | Complete |
+| 1.4.20 | Performance modes: Stage (music: stereo, voice DSP off) vs Mic (spoken: mono, light NS) from roles; audio-input-device picker + 480p/720p toggle; Opus stereo/bitrate tuning + audio bitrate cap in publishWindow (media path operator-gated) (L-048 Phase B) | Complete |
+| 1.4.21 | Profile feed (migration 0020 posts): public + followers-only posts; /api/posts create/delete (ownership-scoped); dossier Feed tab (hidden when empty, followers-only gated server-side); composer + delete in /account (L-048 Phase B) | Complete |
 | 1.4.11 | Phase 3 validation: acceptance criteria verified | Pending |
 
 ---
@@ -158,7 +161,7 @@ Project Manager: Francisco De La Paz
 
 | ID | Task | Status |
 |---|---|---|
-| 1.7.1 | Stripe integration for paid tiers | Pending |
+| 1.7.1 | Stripe integration for paid tiers: self-managed+ ($29.99/mo) billing (migration 0021) — thin fetch-based Stripe client, /api/billing checkout + portal + signature-verified webhook flipping tier free<->plus, BillingCard upgrade/manage UI. Code complete + deployed; operator wires STRIPE_* secrets + webhook to activate (L-048 Phase 6) | Complete |
 | 1.7.2 | R2 storage billing | Pending |
 | 1.7.3 | Live time extension purchases | Pending |
 | 1.7.4 | Artist analytics dashboard | Pending |
@@ -203,7 +206,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 216.5 hours to date at $85/hr (approximately $18,402.50).
+Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr (approximately $19,550.00).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -340,4 +343,14 @@ Seeded from docs/HOURS.md, extended at checkpoint. 216.5 hours to date at $85/hr
 | 2026-06-30 | Phase A.6 verification (local D1: cap fill->403, leave frees slot, stale reclaim, not-live 409; tsc + eslint) | QA Engineer | 1.0 |
 | 2026-06-30 | Phase A.6 deploy (prod D1 migration 0019 --remote, commit e92abd2, push, CI run 28429229700 success, prod smoke) | Deployment Engineer | 0.5 |
 | 2026-06-30 | Checkpoint docs round 2 (WBS, CHANGELOG, ROADMAP, ledger, registry, mirror) | Technical Writer | 0.5 |
-| **Total** | | | **216.5** |
+| 2026-06-30 | Remaining-minutes UX (weekly live-budget bar in /account) | Lead Developer | 0.5 |
+| 2026-06-30 | Profile feed (migration 0020 posts + /api/posts + dossier Feed tab + composer + followers-only gating) | Lead Developer | 2.5 |
+| 2026-06-30 | Followers-only privacy + feed data model design | Solutions Architect | 0.5 |
+| 2026-06-30 | Performance modes (Stage/Mic from roles, device picker, 480/720, Opus tuning + audio cap) | Lead Developer | 2.0 |
+| 2026-06-30 | Stage/Mic audio-profile design (DSP off for music, stereo/bitrate) | Solutions Architect | 0.5 |
+| 2026-06-30 | Self-managed+ Stripe billing (migration 0021, fetch-based Stripe client, checkout/portal/webhook, BillingCard) | Lead Developer | 3.5 |
+| 2026-06-30 | Billing + webhook-signature verification design (tier-flip rules, replay guard) | Solutions Architect | 0.5 |
+| 2026-06-30 | Phase B + billing verification (local D1: posts auth-gate + followers-only privacy, billing 503/400 gating, account + dossier render) | QA Engineer | 2.0 |
+| 2026-06-30 | Phase B + billing deploy (prod migrations 0020-0021, commit, push, CI, prod smoke) | Deployment Engineer | 1.0 |
+| 2026-06-30 | Checkpoint docs round 3 (WBS, CHANGELOG, ROADMAP, ledger, registry, CLAUDE.md, mirror) | Technical Writer | 0.5 |
+| **Total** | | | **230.0** |
