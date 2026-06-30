@@ -98,14 +98,17 @@ waitlist 2026-06-29, L-030; the waitlist worker is retired, its table preserved 
 in the admin). Live: owner/admin password login + authenticator TOTP behind the controldeck
 subdomain (Cloudflare Access), artist signup + dossiers (Artist DNA radar + enrichment), photo
 upload, media streaming (gateway + R2 cache, 206 verified end-to-end), bookings, reviews, and the
-tabbed admin control deck. 187.5h logged.
+tabbed admin control deck. 197.0h logged.
 
 DEPLOYED 2026-06-29 (L-048 v0.9.0): artist-types + media model across all 6 phases
 (personas/releases discography + per-release dedication, video lane, agent recursive/persona-aware
 rework, installable PWA, gateway free-vs-managed tiering, live window/event lane). Prod D1 migrations
 0013-0016 applied, media worker deployed, web CI-deployed; prod verified (home, dossier, live page,
-manifest all 200). REMAINING (operator): set the CF Realtime + Stream secrets to turn on live video
-(free window + managed event), then verify on devices; and run the reworked agent against the owner's
-real per-persona library to populate the new discography model. Authoritative hours log + task status
+manifest all 200). The free WebRTC live window is VERIFIED on prod 2026-06-30 (CF Realtime SFU
+secrets set; camera publish + signed-out phone viewer saw video). REMAINING (operator): the managed
+Stream Live event path (Stream-scoped creds + RTMP/HLS test); run the reworked agent against the
+owner's real per-persona library. NEXT BUILD: Phase A of the live/social roadmap (deferred-follow,
+reactions, admin moderation, tier caps) per docs/LIVE-TIERS-AND-PRICING.md + docs/BUSINESS-MODEL.md.
+Authoritative hours log + task status
 live in the WBS (docs/PMP/CLS-PMD-003-WBS.md); cross-workshop threads in Q:\MTW\Docs\OPEN-LOOPS.md
 (L-031/L-044/L-048).

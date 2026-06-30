@@ -65,7 +65,8 @@ Goal: artists can share music.
 Goal: artists can go live, venues can list.
 
 - [x] Live lane scaffold: go-live/end, LIVE badge, /live/[slug] watch page, free-window caps (L-048; local)
-- [ ] Live video verified end-to-end (free WebRTC window + managed Stream event; needs CF Realtime/Stream creds + devices) (L-048)
+- [x] Live video verified: free WebRTC window proven on prod (camera publish + signed-out viewer saw video) (L-048, 2026-06-30)
+- [ ] Managed Stream Live event verified (needs Stream-scoped creds + RTMP/HLS test) (L-048)
 - [ ] Live stream window on artist profile
 - [ ] Artist agent updated with stream output
 - [ ] Event scheduling

@@ -197,7 +197,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 187.5 hours to date at $85/hr (approximately $15,937.50).
+Seeded from docs/HOURS.md, extended at checkpoint. 197.0 hours to date at $85/hr (approximately $16,745.00).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -317,4 +317,11 @@ Seeded from docs/HOURS.md, extended at checkpoint. 187.5 hours to date at $85/hr
 | 2026-06-29 | L-048 verification (discography live + CRUD-vs-D1, video, agent reconcile end-to-end + idempotency, PWA, media tests, live surface, full sweep) | QA Engineer | 6.0 |
 | 2026-06-29 | Build-status doc + checkpoint docs (round 6) | Technical Writer | 1.0 |
 | 2026-06-29 | L-048 phase scoping, dependency sequencing, full-CRUD scope decision | Project Manager | 1.0 |
-| **Total** | | | **187.5** |
+| 2026-06-29 | L-048 prod deploy (D1 migrations 0013-0016 --remote, tier-aware media worker deploy, web + agent push, CI watch) | Deployment Engineer | 1.0 |
+| 2026-06-29 | L-048 prod deploy verification (remote schema check + home/dossier/live/manifest 200) | QA Engineer | 0.5 |
+| 2026-06-30 | Live + social + events systems design (tiers, caps, cost model, performance modes, deferred-follow, reactions, moderation, follower-comms, audition funnel) | Solutions Architect | 2.5 |
+| 2026-06-30 | Pricing + business model (hybrid managed fee, commission, promote menu, showcase economics, tier value) | Project Manager | 2.5 |
+| 2026-06-30 | LIVE-TIERS-AND-PRICING + BUSINESS-MODEL doc authoring | Technical Writer | 1.5 |
+| 2026-06-30 | Live SFU path verification (app + secrets, server checks, live camera + phone-viewer test) | QA Engineer | 1.0 |
+| 2026-06-30 | SFU app/secrets setup + go-live verification | Deployment Engineer | 0.5 |
+| **Total** | | | **197.0** |
