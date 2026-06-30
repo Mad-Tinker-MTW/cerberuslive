@@ -78,7 +78,7 @@ Goal: artists can go live, venues can list.
 - [x] Live tier caps + weekly-minute budget + bitrate cap (L-048 Phase A)
 - [x] Deferred-follow (capture email mid-show -> confirm -> follower) (L-048 Phase A)
 - [x] Anonymous live reactions (floating emojis) (L-048 Phase A)
-- [ ] Concurrent-viewer cap enforcement (needs viewer-heartbeat) (L-048 A.6)
+- [x] Concurrent-viewer cap enforcement (viewer-heartbeat, admin/owner bypass) (L-048 A.6)
 - [ ] Venue profiles (list space, capacity, dates, genres)
 - [ ] Territory claim system (Booking Ready tier)
 - [ ] Geographic discovery feed

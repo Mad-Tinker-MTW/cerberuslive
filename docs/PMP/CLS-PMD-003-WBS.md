@@ -116,6 +116,7 @@ Project Manager: Francisco De La Paz
 | 1.4.15 | Live tier caps + weekly-minute budget + bitrate cap (LIVE_TIERS at /api/live start; plus-tier config) (L-048 Phase A) | Complete |
 | 1.4.16 | Deferred-follow: capture email mid-show -> confirm link -> email-only follower (migration 0017, /api/follow/intent + /confirm) (L-048 Phase A) | Complete |
 | 1.4.17 | Anonymous live reactions (migration 0018, /api/live/react + /reactions, floating ReactionBar via D1 poll) (L-048 Phase A) | Complete |
+| 1.4.18 | Concurrent-viewer cap via viewer-heartbeat (migration 0019 live_viewers): /api/live/viewer join/beat/leave enforcing live_sessions.viewer_cap with stale-row purge, admin/owner uncapped bypass; LiveViewer claims a slot before connecting, heartbeats every 10s, releases on unmount, shows a "full" state (L-048 Phase A.6) | Complete |
 | 1.4.11 | Phase 3 validation: acceptance criteria verified | Pending |
 
 ---
@@ -202,7 +203,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 211.0 hours to date at $85/hr (approximately $17,935.00).
+Seeded from docs/HOURS.md, extended at checkpoint. 216.5 hours to date at $85/hr (approximately $18,402.50).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -334,4 +335,9 @@ Seeded from docs/HOURS.md, extended at checkpoint. 211.0 hours to date at $85/hr
 | 2026-06-30 | Live Phase A verification (report inbox, force-end SQL, weekly-minute math, deferred-follow flow, reactions data flow, tsc/eslint x5) | QA Engineer | 2.5 |
 | 2026-06-30 | Live Phase A deploy (prod migrations 0017-0018, commit, push, CI, prod verification) | Deployment Engineer | 1.0 |
 | 2026-06-30 | Checkpoint docs (CHANGELOG, ledger, registry) | Technical Writer | 0.5 |
-| **Total** | | | **211.0** |
+| 2026-06-30 | Live Phase A.6 build: migration 0019 live_viewers + countActiveViewers helper + /api/live/viewer (join/beat/leave) + LiveViewer heartbeat/full-state wiring | Lead Developer | 3.0 |
+| 2026-06-30 | Concurrent-viewer cap + heartbeat mechanics design (stale-reclaim window, admin/owner uncapped bypass) | Solutions Architect | 0.5 |
+| 2026-06-30 | Phase A.6 verification (local D1: cap fill->403, leave frees slot, stale reclaim, not-live 409; tsc + eslint) | QA Engineer | 1.0 |
+| 2026-06-30 | Phase A.6 deploy (prod D1 migration 0019 --remote, commit e92abd2, push, CI run 28429229700 success, prod smoke) | Deployment Engineer | 0.5 |
+| 2026-06-30 | Checkpoint docs round 2 (WBS, CHANGELOG, ROADMAP, ledger, registry, mirror) | Technical Writer | 0.5 |
+| **Total** | | | **216.5** |

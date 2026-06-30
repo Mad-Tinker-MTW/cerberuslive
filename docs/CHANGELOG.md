@@ -1,5 +1,20 @@
 # Changelog — Cerberus Live Studio
 
+## [0.10.1] — 2026-06-30
+
+Live Phase A.6: the free WebRTC window now enforces its per-tier concurrent-viewer cap.
+
+### Added
+- **Concurrent-viewer cap** (migration 0019 `live_viewers`): each viewer claims a slot at
+  `/api/live/viewer` (join), heartbeats it every ~10s, and releases it on unmount; a stale row (a
+  missed beat or a closed tab) is purged on write so the slot frees. Joins past the tier's
+  `viewer_cap` are refused and the watch page shows a "full" state instead of connecting. Admins
+  and the artist themselves bypass the cap and never occupy a counted slot. D1-backed (no Durable
+  Object), the same MVP pattern as live reactions.
+
+### Infrastructure
+- Migration 0019 (`live_viewers`) applied to local + prod D1; deployed via CI (commit e92abd2).
+
 ## [0.10.0] — 2026-06-30
 
 Live Phase A: the free WebRTC window goes from "it streams" to a usable live experience, plus

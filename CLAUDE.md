@@ -98,7 +98,7 @@ waitlist 2026-06-29, L-030; the waitlist worker is retired, its table preserved 
 in the admin). Live: owner/admin password login + authenticator TOTP behind the controldeck
 subdomain (Cloudflare Access), artist signup + dossiers (Artist DNA radar + enrichment), photo
 upload, media streaming (gateway + R2 cache, 206 verified end-to-end), bookings, reviews, and the
-tabbed admin control deck. 197.0h logged.
+tabbed admin control deck. 216.5h logged.
 
 DEPLOYED 2026-06-29 (L-048 v0.9.0): artist-types + media model across all 6 phases
 (personas/releases discography + per-release dedication, video lane, agent recursive/persona-aware
@@ -107,8 +107,12 @@ rework, installable PWA, gateway free-vs-managed tiering, live window/event lane
 manifest all 200). The free WebRTC live window is VERIFIED on prod 2026-06-30 (CF Realtime SFU
 secrets set; camera publish + signed-out phone viewer saw video). REMAINING (operator): the managed
 Stream Live event path (Stream-scoped creds + RTMP/HLS test); run the reworked agent against the
-owner's real per-persona library. NEXT BUILD: Phase A of the live/social roadmap (deferred-follow,
-reactions, admin moderation, tier caps) per docs/LIVE-TIERS-AND-PRICING.md + docs/BUSINESS-MODEL.md.
-Authoritative hours log + task status
+owner's real per-persona library. Live Phase A SHIPPED 2026-06-30 (v0.10.0, migrations 0017-0018):
+viewer states + report, admin Live-now/force-end, tier caps + weekly budget, deferred-follow,
+reactions. Phase A.6 SHIPPED 2026-06-30 (v0.10.1, migration 0019 live_viewers, commit e92abd2):
+concurrent-viewer cap via viewer-heartbeat (/api/live/viewer join/beat/leave, stale-reclaim,
+admin/owner uncapped bypass, "full" state); deployed + prod-verified. NEXT BUILD: paid self-managed+
+tier billing (Stripe, Phase 6) to sell the $29.99 tier; spec in docs/LIVE-TIERS-AND-PRICING.md +
+docs/BUSINESS-MODEL.md. Authoritative hours log + task status
 live in the WBS (docs/PMP/CLS-PMD-003-WBS.md); cross-workshop threads in Q:\MTW\Docs\OPEN-LOOPS.md
 (L-031/L-044/L-048).
