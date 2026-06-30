@@ -36,6 +36,8 @@ Goal: artist profiles live, shareable, discoverable.
 - [x] Booking activity metrics + owner BCC on non-managed bookings
 - [x] Status-field consolidation (verified trio -> single source; "Gate Status" -> "Booking")
 - [x] Controldeck subdomain + Cloudflare Access + TOTP 2FA (LIVE on prod: admin controldeck-only behind Access email-PIN + owner password + authenticator TOTP)
+- [x] Artist types: personas/releases discography + per-release dedication, type-aware dossier, full CRUD editor + roles (L-048; local, deploy gated)
+- [x] Installable PWA (manifest + service worker + offline fallback) (L-048; local)
 - [ ] Migrate waitlist emails to user invites
 - [ ] Resend confirmation emails on waitlist signup
 
@@ -52,6 +54,9 @@ Goal: artists can share music.
 - [x] Public media player on artist profile (first-party, gateway-served)
 - [x] Featured track on profile card
 - [x] Play count tracking
+- [x] Video lane (video tracks via the gateway, Live Sets tab) (L-048; local)
+- [x] Agent recursive/persona-aware scan + ffprobe tag auto-import + file watcher (L-048; local)
+- [x] Gateway tier-realignment: free = tunnel pass-through, managed = R2 cache (L-048; local)
 - [ ] R2 admin-hosted tier for always-on storage
 
 ---
@@ -59,6 +64,8 @@ Goal: artists can share music.
 ## Phase 3: Live Room + Venues
 Goal: artists can go live, venues can list.
 
+- [x] Live lane scaffold: go-live/end, LIVE badge, /live/[slug] watch page, free-window caps (L-048; local)
+- [ ] Live video verified end-to-end (free WebRTC window + managed Stream event; needs CF Realtime/Stream creds + devices) (L-048)
 - [ ] Live stream window on artist profile
 - [ ] Artist agent updated with stream output
 - [ ] Event scheduling

@@ -6,6 +6,12 @@
       "runtimeExecutable": "cmd",
       "runtimeArgs": ["/c", "cd web && bun run dev -- -p 4321"],
       "port": 4321
+    },
+    {
+      "name": "web-l048",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "cd web && bun run dev -- -p 4322"],
+      "port": 4322
     }
   ]
 }

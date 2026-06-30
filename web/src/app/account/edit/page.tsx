@@ -7,6 +7,7 @@ import {
 import {
   getDb,
   parseJson,
+  rolesList,
   type ArtistDossier,
   type Socials,
   type DossierProfile,
@@ -21,7 +22,7 @@ const COLS =
   "slug, display_name, bio, city, genre_tags, photo_url, tier, subtitle, dossier_id, " +
   "artist_class, performance_type, set_length, travel_range, availability_status, " +
   "response_time, member_since, verified, booking_range, clearance, signal_status, " +
-  "gate_status, sound_style, booking_email, social_links, profile_json";
+  "gate_status, sound_style, booking_email, roles, social_links, profile_json";
 
 export default async function EditProfilePage() {
   const auth = authFromContext();
@@ -75,6 +76,7 @@ export default async function EditProfilePage() {
     signatureSounds: profile.signatureSounds ?? [],
     influences: profile.influences ?? [],
     dna: { ...(profile.artistDna ?? {}) },
+    roles: rolesList(p.roles),
   };
 
   return (

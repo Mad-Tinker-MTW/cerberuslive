@@ -5,6 +5,9 @@
 const MIME: Record<string, string> = {
   mp3: "audio/mpeg", wav: "audio/wav", flac: "audio/flac",
   m4a: "audio/mp4", ogg: "audio/ogg", aac: "audio/aac",
+  // Video lane (L-048): DJ sets and performance clips stream through the same gateway.
+  mp4: "video/mp4", webm: "video/webm", mov: "video/quicktime",
+  m4v: "video/x-m4v", mkv: "video/x-matroska",
 };
 
 export function guessType(name: string): string {

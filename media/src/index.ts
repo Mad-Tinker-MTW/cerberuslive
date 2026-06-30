@@ -57,26 +57,61 @@ export default {
     if (!slug || !filename || filename.includes("..")) return new Response("bad request", { status: 400 });
 
     const row = await env.DB
-      .prepare("SELECT media_origin, gate_status, suspended FROM artist_profiles WHERE slug = ? LIMIT 1")
+      .prepare("SELECT media_origin, gate_status, suspended, tier FROM artist_profiles WHERE slug = ? LIMIT 1")
       .bind(slug)
-      .first<{ media_origin: string | null; gate_status: string | null; suspended: number | null }>();
+      .first<{ media_origin: string | null; gate_status: string | null; suspended: number | null; tier: string | null }>();
     if (!row) return new Response("unknown artist", { status: 404 });
     if (row.suspended === 1) return new Response("artist suspended", { status: 403 });
     if (row.gate_status === "gated") return new Response("artist gated", { status: 403 });
 
+    // L-048 tier model: free = the window (pure tunnel pass-through, Cerberus stores nothing,
+    // online only when the artist's PC is on); managed = the service (R2 read-through cache, so
+    // hot tracks survive an offline artist). Keeping free out of R2 preserves the free allowance
+    // for paying artists and keeps Cerberus a conduit, not a host, for free media.
+    const isManaged = (row.tier ?? "free") === "managed";
     const key = `${slug}/${filename}`;
     const range = parseRange(req.headers.get("range"));
 
-    // 1) R2 cache.
-    const cached = await serveFromR2(env, key, range, isHead);
-    if (cached) return cached;
+    // Range pass-through straight from origin, no R2 write. Used for free media (always) and
+    // for managed large objects (live sets above the cache ceiling).
+    const proxyThrough = async (originUrl: string): Promise<Response> => {
+      const passHeaders = new Headers();
+      const rangeHeader = req.headers.get("range");
+      if (rangeHeader) passHeaders.set("Range", rangeHeader);
+      let r: Response;
+      try {
+        r = await fetch(originUrl, { method: req.method, headers: passHeaders });
+      } catch {
+        return new Response("artist offline and not cached", { status: 502 });
+      }
+      if (!r.ok) return new Response("origin error", { status: 502 });
+      const headers = baseHeaders(r.headers.get("content-type") || guessType(filename));
+      for (const h of ["Content-Range", "Content-Length"]) {
+        const v = r.headers.get(h);
+        if (v) headers.set(h, v);
+      }
+      return new Response(isHead ? null : r.body, { status: r.status, headers });
+    };
 
-    // 2) Cache miss -> origin. No origin host means the artist has never provisioned / is offline.
+    // 1) R2 cache — managed only (free media is never stored).
+    if (isManaged) {
+      const cached = await serveFromR2(env, key, range, isHead);
+      if (cached) return cached;
+    }
+
+    // 2) Origin. No origin host means the artist has never provisioned / is offline.
     const origin = row.media_origin;
-    if (!origin) return new Response("media not yet cached and artist offline", { status: 502 });
+    if (!origin)
+      return new Response(
+        isManaged ? "media not yet cached and artist offline" : "artist offline",
+        { status: 502 },
+      );
     const originUrl = `https://${origin}/${encodeURIComponent(filename)}`;
 
-    // Size gate: large objects (live sets) stream through with Range pass-through, uncached.
+    // Free tier: pure pass-through, nothing cached.
+    if (!isManaged) return proxyThrough(originUrl);
+
+    // Managed: size gate. Large objects (live sets) stream through uncached.
     let size = 0;
     try {
       const head = await fetch(originUrl, { method: "HEAD" });
@@ -85,21 +120,9 @@ export default {
     } catch {
       return new Response("artist offline and not cached", { status: 502 });
     }
+    if (size > CACHE_MAX_BYTES) return proxyThrough(originUrl);
 
-    if (size > CACHE_MAX_BYTES) {
-      const passHeaders = new Headers();
-      const rangeHeader = req.headers.get("range");
-      if (rangeHeader) passHeaders.set("Range", rangeHeader);
-      const r = await fetch(originUrl, { method: req.method, headers: passHeaders });
-      const headers = baseHeaders(r.headers.get("content-type") || guessType(filename));
-      for (const h of ["Content-Range", "Content-Length"]) {
-        const v = r.headers.get(h);
-        if (v) headers.set(h, v);
-      }
-      return new Response(isHead ? null : r.body, { status: r.status, headers });
-    }
-
-    // Small object: fetch full, fill R2, serve the requested range from the buffer.
+    // Managed small object: fetch full, fill R2, serve the requested range from the buffer.
     let originRes: Response;
     try {
       originRes = await fetch(originUrl);

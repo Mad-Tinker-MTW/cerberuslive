@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Cerberus Live">
+  <rect width="512" height="512" fill="#050505"/>
+  <!-- Gate / three-headed mark, kept inside the maskable safe zone (~80% center). -->
+  <g fill="none" stroke="#d71920" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M256 120 L150 175 L150 300 Q150 372 256 408 Q362 372 362 300 L362 175 Z"/>
+    <path d="M256 120 L256 408"/>
+    <path d="M150 235 L362 235"/>
+  </g>
+</svg>

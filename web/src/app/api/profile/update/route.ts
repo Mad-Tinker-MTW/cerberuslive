@@ -23,6 +23,7 @@ const SCALAR_FIELDS = [
   "sound_style",
   "dossier_id",
   "bio",
+  "roles",
 ] as const;
 
 type Body = Partial<Record<(typeof SCALAR_FIELDS)[number], string>> & {

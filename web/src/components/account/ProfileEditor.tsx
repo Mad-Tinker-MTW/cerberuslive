@@ -39,6 +39,8 @@ export type EditorValues = {
   signatureSounds: string[];
   influences: string[];
   dna: Record<string, number>;
+  // L-048 artist types: roles drive type-aware section composition on the dossier.
+  roles: string[];
 };
 
 const BEST_FOR_OPTIONS = [
@@ -92,6 +94,17 @@ const DNA_AXIS_FIELDS: { key: string; label: string }[] = [
   { key: "originality", label: "Originality" },
   { key: "versatility", label: "Versatility" },
   { key: "improvisation", label: "Improvisation" },
+];
+
+const ROLE_OPTIONS = [
+  "Singer",
+  "Songwriter",
+  "Producer",
+  "DJ",
+  "Rapper",
+  "Instrumentalist",
+  "Live Performer",
+  "Beatmaker",
 ];
 
 const SOCIAL_KEYS: (keyof Socials)[] = [
@@ -192,6 +205,13 @@ export function ProfileEditor({
       const cur = p.traitRatings[name] ?? 0;
       return { ...p, traitRatings: { ...p.traitRatings, [name]: cur === rating ? 0 : rating } };
     });
+  const toggleRole = (item: string) =>
+    setV((p) => ({
+      ...p,
+      roles: p.roles.includes(item)
+        ? p.roles.filter((x) => x !== item)
+        : [...p.roles, item],
+    }));
   const toggleIn = (key: "signatureSounds" | "influences", item: string) =>
     setV((p) => ({
       ...p,
@@ -225,6 +245,7 @@ export function ProfileEditor({
         artist_class: v.artist_class,
         city: v.city,
         genre_tags: v.genre_tags,
+        roles: v.roles.join(","),
         bio: v.bio,
         sound_style: v.sound_style,
         performance_type: v.performance_type,
@@ -304,6 +325,30 @@ export function ProfileEditor({
 
       <Field label="Bio" value={v.bio} onChange={(x) => set("bio", x)} textarea />
       <Field label="Sound & Style" value={v.sound_style} onChange={(x) => set("sound_style", x)} textarea />
+
+      <section>
+        <span className="text-xs uppercase tracking-widest text-muted">Roles</span>
+        <p className="mt-1 text-xs text-muted">
+          What you do. Shapes which sections your dossier shows. Manage your catalog under{" "}
+          <a href="/account/discography" className="text-red hover:underline">Discography</a>.
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {ROLE_OPTIONS.map((item) => (
+            <button
+              type="button"
+              key={item}
+              onClick={() => toggleRole(item)}
+              className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                v.roles.includes(item)
+                  ? "border-red bg-red/10 text-red"
+                  : "border-border text-muted hover:border-red"
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </section>
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Performance type" value={v.performance_type} onChange={(x) => set("performance_type", x)} />

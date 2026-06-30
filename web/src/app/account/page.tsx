@@ -2,10 +2,11 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { authFromContext } from "@/lib/auth";
-import { getDb } from "@/lib/db";
+import { getDb, getActiveLive } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { AccountActions } from "@/components/account/AccountActions";
 import { AgentConnect } from "@/components/account/AgentConnect";
+import { LiveControl } from "@/components/account/LiveControl";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,7 @@ type ProfileRow = {
   display_name: string;
   tunnel_url: string | null;
   media_origin: string | null;
+  tier: string;
 };
 
 export default async function AccountPage() {
@@ -25,10 +27,11 @@ export default async function AccountPage() {
   const db = getDb();
   const profile = await db
     .prepare(
-      "SELECT slug, display_name, tunnel_url, media_origin FROM artist_profiles WHERE user_id = ? LIMIT 1"
+      "SELECT slug, display_name, tunnel_url, media_origin, tier FROM artist_profiles WHERE user_id = ? LIMIT 1"
     )
     .bind(user.id)
     .first<ProfileRow>();
+  const live = profile ? await getActiveLive(profile.slug) : null;
 
   // role is an additionalField on the Better Auth user
   const role = (user as { role?: string }).role ?? "fan";
@@ -80,12 +83,20 @@ export default async function AccountPage() {
                   {profile.display_name}
                 </Link>
               </p>
-              <Link
-                href="/account/edit"
-                className="rounded-md border border-border px-3 py-1.5 text-xs text-muted transition hover:border-red hover:text-foreground"
-              >
-                Edit dossier
-              </Link>
+              <div className="flex gap-2">
+                <Link
+                  href="/account/discography"
+                  className="rounded-md border border-border px-3 py-1.5 text-xs text-muted transition hover:border-red hover:text-foreground"
+                >
+                  Discography
+                </Link>
+                <Link
+                  href="/account/edit"
+                  className="rounded-md border border-border px-3 py-1.5 text-xs text-muted transition hover:border-red hover:text-foreground"
+                >
+                  Edit dossier
+                </Link>
+              </div>
             </div>
           ) : (
             <p className="text-sm text-muted">
@@ -101,6 +112,16 @@ export default async function AccountPage() {
               slug={profile.slug}
               tunnelUrl={profile.tunnel_url}
               mediaOrigin={profile.media_origin}
+            />
+          </div>
+        )}
+
+        {profile && (
+          <div className="mt-6">
+            <LiveControl
+              slug={profile.slug}
+              tier={profile.tier}
+              initialKind={live ? (live.kind as "window" | "event") : null}
             />
           </div>
         )}

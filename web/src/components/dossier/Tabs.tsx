@@ -4,6 +4,7 @@ import { useState } from "react";
 
 const TABS = [
   "Overview",
+  "Discography",
   "Media",
   "Live Sets",
   "Booking & Availability",
@@ -22,25 +23,36 @@ function ComingSoon({ label }: { label: string }) {
 }
 
 /**
- * Tab bar for the dossier. v1 wires Overview to real content (passed in from the
- * server component, preserving SSR); the rest are UI-only placeholders. Booking
- * lives in its own always-visible section below the tabs.
+ * Tab bar for the dossier. v1 wires Overview + Discography to real content (passed in
+ * from the server component, preserving SSR); the rest are UI-only placeholders. The
+ * Discography tab only appears when the artist has a catalog. Booking lives in its own
+ * always-visible section below the tabs.
  */
 export function ProfileTabs({
   overview,
+  discography,
   media,
+  liveSets,
   reviews,
 }: {
   overview: React.ReactNode;
+  discography?: React.ReactNode;
   media?: React.ReactNode;
+  liveSets?: React.ReactNode;
   reviews?: React.ReactNode;
 }) {
   const [active, setActive] = useState<Tab>("Overview");
+  // Hide the Discography / Live Sets tabs entirely when there is no content for them.
+  const visibleTabs = TABS.filter(
+    (t) =>
+      (t !== "Discography" || Boolean(discography)) &&
+      (t !== "Live Sets" || Boolean(liveSets))
+  );
 
   return (
     <div>
       <div className="-mx-1 flex gap-1 overflow-x-auto border-b border-border pb-px">
-        {TABS.map((t) => (
+        {visibleTabs.map((t) => (
           <button
             key={t}
             type="button"
@@ -59,11 +71,15 @@ export function ProfileTabs({
       <div className="mt-5">
         {active === "Overview"
           ? overview
-          : active === "Media" && media
-            ? media
-            : active === "Reviews" && reviews
-              ? reviews
-              : <ComingSoon label={active} />}
+          : active === "Discography" && discography
+            ? discography
+            : active === "Media" && media
+              ? media
+              : active === "Live Sets" && liveSets
+                ? liveSets
+                : active === "Reviews" && reviews
+                  ? reviews
+                  : <ComingSoon label={active} />}
       </div>
     </div>
   );

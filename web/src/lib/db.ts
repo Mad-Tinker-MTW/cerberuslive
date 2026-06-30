@@ -24,6 +24,12 @@ export function genreList(tags: string | null): string[] {
     .filter(Boolean);
 }
 
+/** Roles an artist performs (songwriter, producer, dj, singer...), stored comma-separated
+ *  like genre_tags. Drives type-aware section composition on the dossier. */
+export function rolesList(roles: string | null): string[] {
+  return genreList(roles);
+}
+
 /**
  * The rich artist dossier. Every field beyond the core identity is nullable: the
  * page is built to render a 30%-complete profile, hiding any card, row, or badge
@@ -48,6 +54,7 @@ export type ArtistDossier = Artist & {
   gate_status: string | null;
   sound_style: string | null;
   booking_email: string | null;
+  roles: string | null;
   social_links: string | null;
   profile_json: string | null;
   tunnel_url: string | null;
@@ -64,7 +71,20 @@ export type Track = {
   sort: number;
   source: string;
   play_count: number;
+  // L-048 discography columns (all nullable; a track with no release_id and no
+  // persona_id is a "direct single" in the artist's own lane).
+  release_id: number | null;
+  persona_id: number | null;
+  version_label: string | null;
+  performer: string | null;
+  composer: string | null;
+  track_no: number | null;
+  media_kind: string; // 'audio' | 'video'
 };
+
+const TRACK_COLUMNS =
+  "id, title, filename, duration, is_featured, sort, source, play_count, " +
+  "release_id, persona_id, version_label, performer, composer, track_no, media_kind";
 
 /** Where the media gateway lives. The gateway resolves the artist's hidden tunnel origin
  *  and R2-caches, so the public URL is path-based and never exposes the tunnel host. */
@@ -143,11 +163,208 @@ export async function getTracks(slug: string): Promise<Track[]> {
   const db = getDb();
   const { results } = await db
     .prepare(
-      "SELECT id, title, filename, duration, is_featured, sort, source, play_count FROM tracks WHERE artist_slug = ? ORDER BY is_featured DESC, sort, id"
+      `SELECT ${TRACK_COLUMNS} FROM tracks WHERE artist_slug = ? ORDER BY is_featured DESC, sort, id`
     )
     .bind(slug)
     .all<Track>();
   return results ?? [];
+}
+
+// --- Discography (L-048): Artist -> personas -> releases -> tracks --------------------
+
+export type PersonaMember = { name: string; role?: string };
+
+export type Persona = {
+  id: number;
+  slug: string;
+  name: string;
+  kind: "solo" | "group";
+  members: PersonaMember[];
+  bio: string | null;
+  dedication: string | null;
+  sort: number;
+};
+
+export type Release = {
+  id: number;
+  persona_id: number | null;
+  title: string;
+  kind: "album" | "ep" | "single";
+  year: string | null;
+  cover_url: string | null;
+  dedication: string | null;
+  sort: number;
+};
+
+export type ReleaseWithTracks = Release & { tracks: Track[] };
+export type PersonaWithReleases = Persona & {
+  releases: ReleaseWithTracks[];
+  singles: Track[]; // persona-level tracks with no release
+};
+
+/** The full discography for a dossier. `directReleases` are releases with no persona
+ *  (the artist's own lane); `directSingles` are tracks with no release and no persona.
+ *  `hasAny` lets the dossier compose the Discography section only when there is content. */
+export type Discography = {
+  personas: PersonaWithReleases[];
+  directReleases: ReleaseWithTracks[];
+  directSingles: Track[];
+  hasAny: boolean;
+};
+
+type PersonaRow = {
+  id: number;
+  slug: string;
+  name: string;
+  kind: string;
+  members: string | null;
+  bio: string | null;
+  dedication: string | null;
+  sort: number;
+};
+
+type ReleaseRow = {
+  id: number;
+  persona_id: number | null;
+  title: string;
+  kind: string;
+  year: string | null;
+  cover_url: string | null;
+  dedication: string | null;
+  sort: number;
+};
+
+/**
+ * Assemble the artist's discography from three flat reads (personas, releases, tracks)
+ * grouped in JS — cheaper and clearer than nested SQL on D1. Tracks attach to their
+ * release; releases attach to their persona; everything left over is a direct single.
+ */
+export async function getDiscography(slug: string): Promise<Discography> {
+  const db = getDb();
+  const [personaRes, releaseRes, trackRes] = await Promise.all([
+    db
+      .prepare(
+        "SELECT id, slug, name, kind, members, bio, dedication, sort FROM personas WHERE artist_slug = ? ORDER BY sort, id"
+      )
+      .bind(slug)
+      .all<PersonaRow>(),
+    db
+      .prepare(
+        "SELECT id, persona_id, title, kind, year, cover_url, dedication, sort FROM releases WHERE artist_slug = ? ORDER BY sort, id"
+      )
+      .bind(slug)
+      .all<ReleaseRow>(),
+    db
+      .prepare(
+        `SELECT ${TRACK_COLUMNS} FROM tracks WHERE artist_slug = ? ORDER BY track_no, sort, id`
+      )
+      .bind(slug)
+      .all<Track>(),
+  ]);
+
+  const tracks = trackRes.results ?? [];
+
+  // Bucket tracks: by release, persona-loose singles, else direct singles.
+  const tracksByRelease = new Map<number, Track[]>();
+  const singlesByPersona = new Map<number, Track[]>();
+  const directSingles: Track[] = [];
+  for (const t of tracks) {
+    if (t.release_id != null) {
+      const arr = tracksByRelease.get(t.release_id) ?? [];
+      arr.push(t);
+      tracksByRelease.set(t.release_id, arr);
+    } else if (t.persona_id != null) {
+      const arr = singlesByPersona.get(t.persona_id) ?? [];
+      arr.push(t);
+      singlesByPersona.set(t.persona_id, arr);
+    } else {
+      directSingles.push(t);
+    }
+  }
+
+  const toRelease = (r: ReleaseRow): ReleaseWithTracks => ({
+    id: r.id,
+    persona_id: r.persona_id,
+    title: r.title,
+    kind: (["album", "ep", "single"].includes(r.kind) ? r.kind : "single") as Release["kind"],
+    year: r.year,
+    cover_url: r.cover_url,
+    dedication: r.dedication,
+    sort: r.sort,
+    tracks: tracksByRelease.get(r.id) ?? [],
+  });
+
+  const releases = (releaseRes.results ?? []).map(toRelease);
+  const releasesByPersona = new Map<number, ReleaseWithTracks[]>();
+  const directReleases: ReleaseWithTracks[] = [];
+  for (const r of releases) {
+    if (r.persona_id != null) {
+      const arr = releasesByPersona.get(r.persona_id) ?? [];
+      arr.push(r);
+      releasesByPersona.set(r.persona_id, arr);
+    } else {
+      directReleases.push(r);
+    }
+  }
+
+  const personas: PersonaWithReleases[] = (personaRes.results ?? []).map((p) => ({
+    id: p.id,
+    slug: p.slug,
+    name: p.name,
+    kind: p.kind === "group" ? "group" : "solo",
+    members: parseJson<PersonaMember[]>(p.members, []),
+    bio: p.bio,
+    dedication: p.dedication,
+    sort: p.sort,
+    releases: releasesByPersona.get(p.id) ?? [],
+    singles: singlesByPersona.get(p.id) ?? [],
+  }));
+
+  const hasAny =
+    personas.some((p) => p.releases.length > 0 || p.singles.length > 0) ||
+    directReleases.length > 0 ||
+    directSingles.length > 0;
+
+  return { personas, directReleases, directSingles, hasAny };
+}
+
+// --- Live sessions (L-048, Phase 6) -------------------------------------------------
+
+/** Free "window" caps. Live is the one real cost center (R2 egress is free, the SFU is not),
+ *  so the free WebRTC window stays intimate by design. Managed "event" tier is uncapped here
+ *  (metered through Cloudflare Stream, covered by the management fee). */
+export const FREE_WINDOW = { viewerCap: 25, minutesCap: 60 } as const;
+
+export type LiveSession = {
+  id: number;
+  artist_slug: string;
+  kind: "window" | "event";
+  status: "live" | "ended";
+  title: string | null;
+  provider_id: string | null;
+  playback_id: string | null;
+  viewer_cap: number | null;
+  minutes_cap: number | null;
+  started_at: string;
+  ended_at: string | null;
+};
+
+/** The artist's currently-active live session, or null. A free window past its minutes cap
+ *  is treated as no-longer-active (the client also auto-ends; this is the server-side guard). */
+export async function getActiveLive(slug: string): Promise<LiveSession | null> {
+  const db = getDb();
+  const s = await db
+    .prepare(
+      "SELECT id, artist_slug, kind, status, title, provider_id, playback_id, viewer_cap, minutes_cap, started_at, ended_at FROM live_sessions WHERE artist_slug = ? AND status = 'live' ORDER BY id DESC LIMIT 1"
+    )
+    .bind(slug)
+    .first<LiveSession>();
+  if (!s) return null;
+  if (s.minutes_cap && s.started_at) {
+    const elapsedMin = (Date.now() - Date.parse(s.started_at)) / 60000;
+    if (Number.isFinite(elapsedMin) && elapsedMin > s.minutes_cap) return null;
+  }
+  return s;
 }
 
 export type Socials = Partial<
@@ -215,7 +432,7 @@ const DOSSIER_COLUMNS =
   "slug, display_name, bio, city, genre_tags, photo_url, tier, " +
   "subtitle, dossier_id, artist_class, performance_type, set_length, travel_range, " +
   "availability_status, response_time, member_since, verified, booking_range, clearance, " +
-  "signal_status, gate_status, sound_style, booking_email, social_links, profile_json, " +
+  "signal_status, gate_status, sound_style, booking_email, roles, social_links, profile_json, " +
   "tunnel_url, media_origin, suspended";
 
 export async function getArtistDossier(

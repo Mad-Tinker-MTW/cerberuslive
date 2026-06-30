@@ -1,5 +1,49 @@
 # Changelog — Cerberus Live Studio
 
+## [0.9.0] — 2026-06-29
+
+Artist types and media model (L-048): the catalog gains structure (personas, releases,
+discography, dedications), video and live lanes land, and the gateway splits free from paid.
+Built + verified locally; prod deploy (migrations 0013-0016, push, secrets) is operator-gated.
+
+### Added
+- **Discography model** (migration 0013): Artist -> personas (solo/group) -> releases
+  (album/EP/single) -> tracks, plus a direct/self lane and persona singles. A **dedication /
+  story** field on personas and releases (the differentiator). Type-aware Discography tab on the
+  dossier; group EPs show per-member version credits.
+- **Discography editor**: `/account/discography` full CRUD (personas/releases/tracks) via the
+  ownership-checked `/api/discography`; deletes reassign child tracks to the direct lane rather
+  than destroying them. Plus **roles** chips in the profile editor.
+- **Video lane** (migration 0014 `media_kind`): video tracks stream through the gateway and
+  render in the Live Sets tab + inline in the discography.
+- **Installable PWA**: web manifest (standalone), maskable icon, service worker (offline
+  fallback, never caches media/API).
+- **Live lane** (migration 0016 `live_sessions`): go-live / end-live with caps, a LIVE badge on
+  the dossier, and a `/live/[slug]` watch page. Free WebRTC "window" (Cloudflare Realtime via a
+  token-hiding `/api/live/rtc` proxy) + managed Stream Live "event" (live-input creation + HLS
+  iframe embed).
+
+### Changed
+- **Agent rework** (CerberusAgent, migration 0015 `managed_by`): the self-host agent now scans
+  recursively (folder = persona, subfolder = release), auto-imports embedded tags via ffprobe
+  (Album Artist / Album / Track / Composer / Title), handles video, and re-syncs on a file
+  watcher. `/api/agent/register` reconciles instead of blunt-wiping: it replaces only the agent's
+  own tracks and find-or-creates personas/releases by name, so web-curated tracks and
+  artist-edited dedications survive a re-sync.
+- **Media gateway is tier-aware**: free / self-host = pure tunnel pass-through (nothing stored in
+  R2, online only when the artist's PC is on); managed = R2 read-through cache. Stops the gateway
+  from durably caching free artists, which was giving away the paid product.
+
+### Infrastructure
+- Migrations 0013-0016 applied to LOCAL D1 only. Prod is gated: apply 0013-0016 to prod D1,
+  deploy the media worker, push web (CI), and for live set `CF_REALTIME_APP_ID`/`CF_REALTIME_APP_TOKEN`
+  + CF Stream creds, then verify the media + live paths.
+
+### Notes
+- The live WebRTC camera/viewer media path is implemented against the Cloudflare Calls REST flow
+  but is NOT yet verified end-to-end (needs the secrets above + two real devices). The live
+  presence / watch / caps surface and the Stream HLS embed are verified.
+
 ## [0.8.1] — 2026-06-29
 
 Secure control deck shipped to prod. Admin now lives on its own host behind three layers,

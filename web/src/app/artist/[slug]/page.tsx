@@ -5,6 +5,8 @@ import { authFromContext } from "@/lib/auth";
 import {
   getArtistDossier,
   getTracks,
+  getDiscography,
+  getActiveLive,
   getFollowerCount,
   isFollowing,
   getApprovedReviews,
@@ -22,7 +24,9 @@ import { ArtistSidebar } from "@/components/dossier/Sidebar";
 import { DossierHero, FeaturedTrackCard } from "@/components/dossier/Hero";
 import { ProfileTabs } from "@/components/dossier/Tabs";
 import { OverviewPanel } from "@/components/dossier/Overview";
+import { DiscographyPanel } from "@/components/dossier/Discography";
 import { MediaList } from "@/components/dossier/MediaList";
+import { VideoList } from "@/components/dossier/VideoList";
 import { BookingPanel } from "@/components/dossier/Booking";
 
 export const dynamic = "force-dynamic";
@@ -63,7 +67,11 @@ export default async function ArtistPage({
   // Real self-hosted tracks (if the artist's agent is connected) take precedence
   // over the static profile_json featured track.
   const tracks = await getTracks(slug);
-  const featuredRow = tracks.find((t) => t.is_featured === 1) ?? tracks[0];
+  const discography = await getDiscography(slug);
+  const audioTracks = tracks.filter((t) => t.media_kind !== "video");
+  const videoTracks = tracks.filter((t) => t.media_kind === "video");
+  // Featured hero is an audio track; video lives in its own tab.
+  const featuredRow = audioTracks.find((t) => t.is_featured === 1) ?? audioTracks[0];
   const mediaCtx = makeMediaCtx(artist);
   const featuredSrc = featuredRow ? trackUrl(mediaCtx, featuredRow) : null;
   // The hidden tunnel origin must never reach the client RSC payload. Scrub it now that the
@@ -79,6 +87,7 @@ export default async function ArtistPage({
   const followerCount = await getFollowerCount(slug);
   const following = session ? await isFollowing(slug, session.user.id) : false;
   const reviews = await getApprovedReviews(slug);
+  const live = await getActiveLive(slug);
 
   return (
     <>
@@ -93,6 +102,18 @@ export default async function ArtistPage({
           {/* Main content */}
           <div className="flex flex-col gap-6">
             <DossierHero artist={artist} />
+            {live && (
+              <a
+                href={`/live/${artist.slug}`}
+                className="flex items-center justify-between gap-3 rounded-xl border border-red/50 bg-red/10 px-4 py-3 transition hover:bg-red/15"
+              >
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-red">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-red" />
+                  Live now{live.kind === "event" ? " — event" : ""}
+                </span>
+                <span className="text-xs uppercase tracking-widest text-red">Watch →</span>
+              </a>
+            )}
             <FollowButton
               slug={artist.slug}
               initialFollowing={following}
@@ -121,9 +142,19 @@ export default async function ArtistPage({
                   artistDna={profile.artistDna}
                 />
               }
+              discography={
+                discography.hasAny ? (
+                  <DiscographyPanel discography={discography} mediaCtx={mediaCtx} />
+                ) : undefined
+              }
               media={
-                tracks.length > 0 ? (
-                  <MediaList tracks={tracks} mediaCtx={mediaCtx} />
+                audioTracks.length > 0 ? (
+                  <MediaList tracks={audioTracks} mediaCtx={mediaCtx} />
+                ) : undefined
+              }
+              liveSets={
+                videoTracks.length > 0 ? (
+                  <VideoList videos={videoTracks} mediaCtx={mediaCtx} />
                 ) : undefined
               }
               reviews={<ReviewsPanel slug={artist.slug} reviews={reviews} />}

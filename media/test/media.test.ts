@@ -74,3 +74,9 @@ test("serveBuffer HEAD -> headers without a body", async () => {
   expect(res.headers.get("Content-Length")).toBe("100");
   expect(new Uint8Array(await res.arrayBuffer()).length).toBe(0);
 });
+
+test("guessType maps video extensions (L-048 video lane)", () => {
+  expect(guessType("set.mp4")).toBe("video/mp4");
+  expect(guessType("clip.WEBM")).toBe("video/webm");
+  expect(guessType("a.mov")).toBe("video/quicktime");
+});

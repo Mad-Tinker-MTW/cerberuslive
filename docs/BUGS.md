@@ -16,6 +16,9 @@ The registry tags deployment as `cloudflare-pages`, but the real target is Cloud
 **`wrangler dev` / workerd unusable on this Windows box**
 Local `wrangler dev` accepts the TCP connection but never returns a response (even a hello-world worker hangs; connections sit in CLOSE_WAIT). Same class of limitation as OpenNext not building on Windows. The media gateway's binding-bound paths (D1, R2) therefore verify at deploy, not locally; pure logic is covered by bun tests. Environmental, not a code bug.
 
+**Live WebRTC / Stream media path unverified (operator-gated, L-048)**
+The free live "window" (Cloudflare Realtime) and managed "event" (Stream Live) are implemented but need operator secrets (`CF_REALTIME_APP_ID`/`CF_REALTIME_APP_TOKEN`; a Stream-enabled `CF_API_TOKEN` + `CF_ACCOUNT_ID`) plus real-device testing. Without them the LIVE status / watch surface still works and shows a clear "not configured" notice (verified); the Stream HLS iframe renders when a `playback_id` is present (verified). The agent's new recursive/tag scan is verified against D1 via the register reconcile, but the live filesystem scan + watcher has not yet been run against a real library. Not a code defect; pending operator provisioning + a live run-through.
+
 ---
 
 ## Closed

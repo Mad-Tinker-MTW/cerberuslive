@@ -64,6 +64,9 @@ Project Manager: Francisco De La Paz
 | 1.2.28 | Controldeck auth: host-gating (lib/host.ts) + relocated owner login (/admin/login) + in-app TOTP 2FA (better-auth two-factor, migration 0012, enrollment at /admin/security, login challenge) | Complete |
 | 1.2.29 | Status-field consolidation (verified trio -> single source) + booking activity metrics + admin BCC on non-managed bookings | Complete |
 | 1.2.30 | Secure controldeck go-live: custom domain via CF API, prod D1 migrations 0011+0012, Cloudflare Access (email-PIN, owner-only), final lockdown (public /login magic-link only + /admin* controldeck-only). Admin is controldeck-only behind 3 layers | Complete |
+| 1.2.31 | Personas/releases data model + type-aware dossier (migration 0013): Artist -> personas (solo/group) -> releases (album/EP/single) -> tracks + direct lane, persona/release dedication, getDiscography assembler, conditional Discography tab render (L-048 Phase 1) | Complete |
+| 1.2.32 | Discography full CRUD editor (/account/discography + /api/discography, ownership-checked, deletes orphan child tracks to the direct lane) + roles chips (L-048 Phase 1) | Complete |
+| 1.2.33 | Installable PWA: app/manifest.ts (standalone), maskable icon, service worker (network-first nav + offline fallback, no media/API cache), SW registration (L-048 Phase 4) | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -87,6 +90,9 @@ Project Manager: Francisco De La Paz
 | 1.3.11 | Self-serve named-tunnel provisioning (cf-tunnel CF API, /api/agent/provision, /account "Set up streaming") | Complete |
 | 1.3.12 | Agent named token-mode: cloudflared tunnel run --token (Bun engine + Tauri desktop) | Complete |
 | 1.3.13 | Gateway deploy + live media verification (deployed; provision + 206 stream + R2 cache verified on prod) | Complete |
+| 1.3.14 | Video lane (migration 0014 media_kind): video tracks stream through the gateway, render in the Live Sets tab + inline in discography, editor media-kind control, gateway + agent video MIME (L-048 Phase 2) | Complete |
+| 1.3.15 | Agent rework (migration 0015 managed_by): recursive/persona-aware scan (folder=persona, ffprobe tag auto-import, video, debounced fs.watch re-sync) + register reconcile (replace only agent tracks, find-or-create personas/releases preserving artist-edited dedications) (L-048 Phase 3) | Complete |
+| 1.3.16 | Media gateway tier-realignment: free/self = pure tunnel pass-through (no R2 put), managed = R2 read-through cache; video MIME; +1 test (L-048 Phase 5) | Complete |
 
 ---
 
@@ -104,6 +110,7 @@ Project Manager: Francisco De La Paz
 | 1.4.8 | Venue profiles (space, capacity, dates, genres) | Pending |
 | 1.4.9 | Territory claim system (Booking Ready tier) | Pending |
 | 1.4.10 | Geographic discovery feed | Pending |
+| 1.4.12 | Live lane (migration 0016 live_sessions): go-live/end with caps, LIVE badge + /live/[slug] watch page, free WebRTC window (Cloudflare Realtime via the token-hiding /api/live/rtc proxy) + managed Stream Live event (input creation + HLS iframe). Presence / watch / caps done + verified; the WebRTC + Stream media path is operator-gated (CF_REALTIME_APP_ID/TOKEN, CF Stream creds) and not yet live-verified (L-048 Phase 6) | Open |
 | 1.4.11 | Phase 3 validation: acceptance criteria verified | Pending |
 
 ---
@@ -190,7 +197,7 @@ Phase 0 is recorded at its actual 36.5 hours. Phases 1 through 6 and ongoing pro
 
 ## Actual Hours Log
 
-Seeded from docs/HOURS.md, extended at checkpoint. 156.5 hours to date at $85/hr (approximately $13,302.50).
+Seeded from docs/HOURS.md, extended at checkpoint. 187.5 hours to date at $85/hr (approximately $15,937.50).
 
 | Date | Work Package | Role | Hours |
 |---|---|---|---|
@@ -298,4 +305,16 @@ Seeded from docs/HOURS.md, extended at checkpoint. 156.5 hours to date at $85/hr
 | 2026-06-29 | Final lockdown code (strip apex owner login + /admin* host-gating across 5 routes) | Lead Developer | 0.5 |
 | 2026-06-29 | Prod verification (apex lockdown, Access edge gate, owner+2FA D1 state, host-isolation) | QA Engineer | 1.0 |
 | 2026-06-29 | Ledger + registry + checkpoint docs (round 5) | Technical Writer | 0.5 |
-| **Total** | | | **156.5** |
+| 2026-06-29 | L-048 discography data model + hierarchy design (personas/releases/tracks, dedication) | Solutions Architect | 1.5 |
+| 2026-06-29 | L-048 agent-reconcile + gateway-tier + live architecture (managed_by, find-or-create, free vs R2, token-hiding proxy) | Solutions Architect | 3.0 |
+| 2026-06-29 | Personas/releases data model + type-aware dossier (migration 0013, getDiscography, Discography render + tab) (1.2.31) | Lead Developer | 3.0 |
+| 2026-06-29 | Discography full CRUD editor + /api/discography + roles (1.2.32) | Lead Developer | 3.5 |
+| 2026-06-29 | Video lane (migration 0014, VideoList, render, editor media-kind, MIME) (1.3.14) | Lead Developer | 1.5 |
+| 2026-06-29 | Agent rework + register reconcile (migration 0015, recursive scan + ffprobe tags + watcher) (1.3.15) | Lead Developer | 3.5 |
+| 2026-06-29 | Installable PWA (manifest, service worker, offline, icon, registration) (1.2.33) | Lead Developer | 1.5 |
+| 2026-06-29 | Gateway tier-realignment (free pass-through vs managed R2) (1.3.16) | Lead Developer | 1.0 |
+| 2026-06-29 | Live lane (migration 0016, /api/live + rtc proxy, realtime-client, LiveControl, LiveViewer, watch page, dossier badge) (1.4.12) | Lead Developer | 4.5 |
+| 2026-06-29 | L-048 verification (discography live + CRUD-vs-D1, video, agent reconcile end-to-end + idempotency, PWA, media tests, live surface, full sweep) | QA Engineer | 6.0 |
+| 2026-06-29 | Build-status doc + checkpoint docs (round 6) | Technical Writer | 1.0 |
+| 2026-06-29 | L-048 phase scoping, dependency sequencing, full-CRUD scope decision | Project Manager | 1.0 |
+| **Total** | | | **187.5** |
