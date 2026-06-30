@@ -4,9 +4,6 @@
 
 ## Open
 
-**Test waitlist row in production D1**
-The live waitlist D1 holds a test row (`mad.tinker@outlook.com`) from end-to-end verification. Clear it before public launch so the first real signup count is clean.
-
 **Resend confirmation emails not wired**
 `emailConfirmations` is false in `features.config.ts`. Waitlist signups land in D1 but no confirmation email goes out. Needs Resend account setup and a Worker send step on `POST /api/waitlist`.
 
@@ -23,6 +20,7 @@ The free live "window" (Cloudflare Realtime SFU) is VERIFIED on prod (2026-06-30
 
 ## Closed
 
+- Test waitlist row in production D1: the prod `waitlist` table held a single test row (`mad.tinker@outlook.com`, artist, 2026-06-28) from end-to-end verification. Resolved 2026-06-30 (L-031): row deleted via `wrangler d1 execute --remote`, table verified empty (COUNT = 0). The Phase 0 waitlist worker is retired, so the table stays empty; it is preserved only as a historical record surfaced in /admin.
 - /account/edit 500 on sparse dossiers: `WEEK` was a non-component export from the `"use client"` ProfileEditor, which Next resolves to `undefined` when imported by a server component, so the edit page crashed for any profile with no availability data (every freshly-claimed dossier). Resolved 2026-06-29: moved `WEEK` to a shared non-client module (`availability.ts`). Reproduced (500 -> 200) before/after.
 - RSC origin-host leak (media gateway): the hidden tunnel origin (`media_origin`/`tunnel_url`) serialized into the public dossier's client RSC payload via `ProfileTabs` props. Resolved 2026-06-29: `MediaCtx` reduced to slug + `hasMedia` boolean, and the dossier page scrubs both fields before render. Verified absent in SSR output.
 - Media host had no edge cert: `<slug>.media.cerberuslive.studio` (three-level) is not covered by Universal SSL (`cerberuslive.studio` + `*.cerberuslive.studio` only), so media TLS failed with handshake_failure. Resolved 2026-06-29 by moving hidden origins to two-level `t-<slug>.cerberuslive.studio` and fronting media with the gateway worker (OPEN-LOOPS L-045).
