@@ -1,4 +1,6 @@
+import { redirect } from "next/navigation";
 import { getDb, type Artist } from "@/lib/db";
+import { isControlDeckRequest } from "@/lib/host";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { DiscoveryGrid } from "@/components/DiscoveryGrid";
 
@@ -11,6 +13,10 @@ const PILLARS = [
 ];
 
 export default async function Home() {
+  // The control deck is an admin-only host: its root goes straight to the owner login,
+  // not the public marketing home (which only renders on the public origin).
+  if (await isControlDeckRequest()) redirect("/admin/login");
+
   const db = getDb();
   const { results } = await db
     .prepare(
