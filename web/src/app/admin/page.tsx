@@ -134,9 +134,14 @@ export default async function AdminPage() {
       <main className="mx-auto w-full max-w-5xl px-6 py-12">
         <div className="mb-8 flex items-center justify-between gap-3">
           <h1 className="text-2xl font-bold tracking-tight">Cerberus Control Deck</h1>
-          <Link href="/admin/security" className="text-sm text-muted transition hover:text-foreground">
-            Security
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/admin/live" className="text-sm text-muted transition hover:text-foreground">
+              Live now
+            </Link>
+            <Link href="/admin/security" className="text-sm text-muted transition hover:text-foreground">
+              Security
+            </Link>
+          </div>
         </div>
         <AdminConsole
           reviews={reviews}

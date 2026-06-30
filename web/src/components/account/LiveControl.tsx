@@ -16,6 +16,7 @@ type StartResp = {
   realtimeConfigured?: boolean;
   viewerCap?: number;
   minutesCap?: number;
+  maxBitrateKbps?: number;
   rtmpUrl?: string;
   streamKey?: string;
   playbackId?: string;
@@ -80,7 +81,7 @@ export function LiveControl({
           const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
           streamRef.current = stream;
           if (videoRef.current) videoRef.current.srcObject = stream;
-          pcRef.current = await publishWindow(slug, data.sessionId, stream);
+          pcRef.current = await publishWindow(slug, data.sessionId, stream, data.maxBitrateKbps);
         } catch (e) {
           setError("Camera/publish error: " + (e as Error).message);
         }

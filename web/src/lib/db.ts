@@ -147,7 +147,28 @@ export async function getFollowerCount(slug: string): Promise<number> {
     .prepare("SELECT COUNT(*) AS n FROM follows WHERE artist_slug = ?")
     .bind(slug)
     .first<{ n: number }>();
-  return r?.n ?? 0;
+  let intents = 0;
+  try {
+    // Confirmed deferred-follows (email-only followers) count too.
+    const i = await db
+      .prepare("SELECT COUNT(*) AS n FROM follow_intents WHERE artist_slug = ? AND status = 'confirmed'")
+      .bind(slug)
+      .first<{ n: number }>();
+    intents = i?.n ?? 0;
+  } catch {
+    intents = 0;
+  }
+  return (r?.n ?? 0) + intents;
+}
+
+/** Delete unconfirmed follow intents older than 7 days (lazy cleanup, called on intent submit). */
+export async function purgeExpiredFollowIntents(): Promise<void> {
+  const db = getDb();
+  const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  await db
+    .prepare("DELETE FROM follow_intents WHERE status = 'pending' AND created_at < ?")
+    .bind(cutoff)
+    .run();
 }
 
 export async function isFollowing(slug: string, userId: string): Promise<boolean> {
@@ -330,10 +351,47 @@ export async function getDiscography(slug: string): Promise<Discography> {
 
 // --- Live sessions (L-048, Phase 6) -------------------------------------------------
 
-/** Free "window" caps. Live is the one real cost center (R2 egress is free, the SFU is not),
- *  so the free WebRTC window stays intimate by design. Managed "event" tier is uncapped here
- *  (metered through Cloudflare Stream, covered by the management fee). */
-export const FREE_WINDOW = { viewerCap: 25, minutesCap: 60 } as const;
+/** Live caps by artist tier. Live is the one real cost center (R2 egress is free, the SFU is not),
+ *  so the free window stays intimate by design; managed is generous (covered by the fee). A future
+ *  paid self-managed+ tier (needs billing) slots between them (~90 min/week, 50 viewers, 1 Mbps). */
+export type LiveTierCaps = {
+  weeklyMinutes: number | null; // null = unlimited
+  sessionMaxMinutes: number;
+  viewerCap: number;
+  maxBitrateKbps: number;
+};
+export const LIVE_TIERS: Record<string, LiveTierCaps> = {
+  free: { weeklyMinutes: 10, sessionMaxMinutes: 10, viewerCap: 25, maxBitrateKbps: 700 },
+  // Self-managed+ ($29.99) — config wired; selling it needs billing (Stripe, Phase 6).
+  plus: { weeklyMinutes: 90, sessionMaxMinutes: 60, viewerCap: 50, maxBitrateKbps: 1000 },
+  managed: { weeklyMinutes: null, sessionMaxMinutes: 120, viewerCap: 200, maxBitrateKbps: 2500 },
+};
+export function liveCaps(tier: string | null | undefined): LiveTierCaps {
+  return LIVE_TIERS[tier ?? "free"] ?? LIVE_TIERS.free;
+}
+
+/** Window-live minutes this artist has used in the last rolling 7 days. Sums each window
+ *  session's elapsed time (ended sessions, or up to now if still live). Used to enforce the
+ *  free weekly budget at session start. */
+export async function getWeeklyLiveMinutes(slug: string): Promise<number> {
+  const db = getDb();
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { results } = await db
+    .prepare(
+      "SELECT started_at, ended_at FROM live_sessions WHERE artist_slug = ? AND kind = 'window' AND started_at >= ?"
+    )
+    .bind(slug, weekAgo)
+    .all<{ started_at: string; ended_at: string | null }>();
+  let mins = 0;
+  for (const r of results ?? []) {
+    const start = Date.parse(r.started_at);
+    const end = r.ended_at ? Date.parse(r.ended_at) : Date.now();
+    if (Number.isFinite(start) && Number.isFinite(end) && end > start) {
+      mins += (end - start) / 60000;
+    }
+  }
+  return mins;
+}
 
 export type LiveSession = {
   id: number;

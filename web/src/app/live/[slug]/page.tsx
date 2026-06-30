@@ -4,6 +4,9 @@ import type { Metadata } from "next";
 import { getArtistDossier, getActiveLive } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { LiveViewer } from "@/components/live/LiveViewer";
+import { ReportButton } from "@/components/live/ReportButton";
+import { FollowCapture } from "@/components/live/FollowCapture";
+import { ReactionBar } from "@/components/live/ReactionBar";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +66,19 @@ export default async function WatchPage({ params }: { params: Promise<{ slug: st
         )}
 
         {live?.title && <p className="mt-4 text-sm text-foreground/80">{live.title}</p>}
+        {live && (
+          <div className="mt-4">
+            <ReactionBar slug={slug} />
+          </div>
+        )}
+        <div className="mt-6">
+          <FollowCapture slug={slug} name={artist.display_name} />
+        </div>
+        {live && (
+          <div className="mt-4">
+            <ReportButton slug={slug} />
+          </div>
+        )}
       </main>
     </>
   );

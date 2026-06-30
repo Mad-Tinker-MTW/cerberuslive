@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { authFromContext } from "@/lib/auth";
-import { getDb, FREE_WINDOW } from "@/lib/db";
+import { getDb, liveCaps, getWeeklyLiveMinutes } from "@/lib/db";
 import {
   realtimeConfigured,
   streamConfigured,
@@ -81,7 +81,20 @@ export async function POST(req: Request) {
     });
   }
 
-  // Free window.
+  // Window: tier-aware caps + weekly-minute budget.
+  const caps = liveCaps(artist.tier);
+  let minutesCap = caps.sessionMaxMinutes;
+  if (caps.weeklyMinutes != null) {
+    const used = await getWeeklyLiveMinutes(slug);
+    const remaining = caps.weeklyMinutes - used;
+    if (remaining <= 0) {
+      return json(403, {
+        error: `Weekly live limit reached (${caps.weeklyMinutes} min/week on your tier). It resets within a week, or upgrade for more.`,
+      });
+    }
+    minutesCap = Math.max(1, Math.min(caps.sessionMaxMinutes, Math.ceil(remaining)));
+  }
+
   let providerId: string | null = null;
   let configured = false;
   if (realtimeConfigured()) {
@@ -96,7 +109,7 @@ export async function POST(req: Request) {
     .prepare(
       "INSERT INTO live_sessions (artist_slug, kind, status, title, provider_id, viewer_cap, minutes_cap, started_at) VALUES (?, 'window', 'live', ?, ?, ?, ?, ?)"
     )
-    .bind(slug, title, providerId, FREE_WINDOW.viewerCap, FREE_WINDOW.minutesCap, now)
+    .bind(slug, title, providerId, caps.viewerCap, minutesCap, now)
     .run();
   return json(200, {
     ok: true,
@@ -104,7 +117,8 @@ export async function POST(req: Request) {
     kind,
     sessionId: providerId,
     realtimeConfigured: configured,
-    viewerCap: FREE_WINDOW.viewerCap,
-    minutesCap: FREE_WINDOW.minutesCap,
+    viewerCap: caps.viewerCap,
+    minutesCap,
+    maxBitrateKbps: caps.maxBitrateKbps,
   });
 }

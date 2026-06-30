@@ -40,22 +40,37 @@ function iceComplete(pc: RTCPeerConnection): Promise<void> {
 
 /** Publish a local camera/mic stream into the artist's window session. Tracks are named by
  *  kind ('video'/'audio') so viewers can pull them. Returns the peer connection. */
-export async function publishWindow(slug: string, sessionId: string, stream: MediaStream): Promise<RTCPeerConnection> {
+export async function publishWindow(
+  slug: string,
+  sessionId: string,
+  stream: MediaStream,
+  maxBitrateKbps?: number
+): Promise<RTCPeerConnection> {
   const pc = new RTCPeerConnection(ICE);
-  const transceivers = stream.getTracks().map((t) => {
-    pc.addTrack(t, stream);
-    return t;
-  });
+  stream.getTracks().forEach((t) => pc.addTrack(t, stream));
   await pc.setLocalDescription(await pc.createOffer());
   await iceComplete(pc);
   const senders = pc.getTransceivers().filter((tr) => tr.sender.track);
   const tracks = senders.map((tr) => ({ location: "local", mid: tr.mid, trackName: tr.sender.track!.kind }));
-  void transceivers;
   const ans = await rtc(slug, "tracks", sessionId, {
     sessionDescription: { type: "offer", sdp: pc.localDescription!.sdp },
     tracks,
   });
   if (ans.sessionDescription) await pc.setRemoteDescription(ans.sessionDescription as RTCSessionDescriptionInit);
+  // Cap the outbound video bitrate to the tier ceiling (best-effort; applied post-negotiation).
+  if (maxBitrateKbps) {
+    const vSender = pc.getSenders().find((s) => s.track?.kind === "video");
+    if (vSender) {
+      const params = vSender.getParameters();
+      if (!params.encodings || params.encodings.length === 0) params.encodings = [{}];
+      params.encodings[0].maxBitrate = maxBitrateKbps * 1000;
+      try {
+        await vSender.setParameters(params);
+      } catch {
+        /* some browsers reject mid-call; non-fatal */
+      }
+    }
+  }
   return pc;
 }
 
