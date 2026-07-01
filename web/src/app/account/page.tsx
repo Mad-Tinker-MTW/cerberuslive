@@ -6,6 +6,7 @@ import { getDb, getActiveLive, liveCaps, getWeeklyLiveMinutes, getPosts, perform
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { AccountActions } from "@/components/account/AccountActions";
 import { AgentConnect } from "@/components/account/AgentConnect";
+import { AgentInstall } from "@/components/account/AgentInstall";
 import { LiveControl } from "@/components/account/LiveControl";
 import { PostComposer } from "@/components/account/PostComposer";
 import { BillingCard } from "@/components/account/BillingCard";
@@ -123,6 +124,12 @@ export default async function AccountPage() {
               tunnelUrl={profile.tunnel_url}
               mediaOrigin={profile.media_origin}
             />
+          </div>
+        )}
+
+        {profile && (
+          <div className="mt-6">
+            <AgentInstall />
           </div>
         )}
 

@@ -266,12 +266,23 @@ Goal: MTW as booking agent
 - Express.js local server for audio files
 - WebSocket to platform API for status sync
 
-### Install Flow
-1. Download CerberusAgent.exe
-2. Run installer (no admin required)
-3. Log in with Cerberus account
-4. Pick music folder
-5. Click Start, tunnel activates, URL registers to profile
+### Install Flow (revised 2026-07-01 — device authorization)
+1. Download CerberusAgent.exe from cerberuslive.studio (`/api/agent/installer`).
+2. Run installer (no admin required).
+3. On first launch the agent starts a device-authorization grant (RFC 8628 adapted): it calls
+   `POST /api/auth/device`, shows a short user code (XXXX-XXXX), and polls
+   `POST /api/auth/device/token` every 5s.
+4. The artist opens `cerberuslive.studio/device` in any browser, signs in with magic-link,
+   and if they lack a dossier or streaming provisioning the page walks them through those
+   inline. They enter the user code and click Approve.
+5. On the next poll the agent gets `{ slug, agentKey, tunnelToken, mediaOrigin, platformUrl }`
+   and writes them to `%APPDATA%\Cerberus\agent.json`.
+6. Artist picks music folder in the agent.
+7. Click Go live; tunnel activates, catalog registers to the artist's dossier.
+
+The revision replaces the original "Log in with Cerberus account" step 3. The device flow
+avoids embedding an email input in the desktop wizard and lets the artist approve from any
+device (including their phone), matching how GitHub CLI / Anthropic CLI onboard.
 
 ---
 
