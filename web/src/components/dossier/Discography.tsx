@@ -1,159 +1,389 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import type {
   Discography,
   ReleaseWithTracks,
-  PersonaWithReleases,
-  PersonaMember,
   MediaCtx,
-  Track,
 } from "@/lib/db";
 import { trackUrl } from "@/lib/db";
 import { AudioPlayer } from "./AudioPlayer";
+import {
+  flattenDiscography,
+  filterCounts,
+  matchesFilter,
+  totalDuration,
+  kindLabel,
+  FILTER_LABELS,
+  type ReleaseCard,
+  type FilterId,
+} from "./discographyModel";
 
-const KIND_LABEL: Record<string, string> = {
-  album: "Album",
-  ep: "EP",
-  single: "Single",
-};
+type SortId = "newest" | "oldest";
 
-/** The dedication / story field — the differentiator. Shown as an accented callout
- *  next to the music so a release means something instead of being a catalog row. */
+/** Placeholder cover tile for a release with no cover_url. Never blocks the card;
+ *  a tasteful monogram-on-panel stand-in keeps the grid rhythm intact. */
+function CoverArt({
+  release,
+  className,
+}: {
+  release: ReleaseWithTracks;
+  className: string;
+}) {
+  if (release.cover_url) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={release.cover_url}
+        alt={`${release.title} cover`}
+        className={`${className} object-cover`}
+      />
+    );
+  }
+  const initial = release.title.trim().charAt(0).toUpperCase() || "?";
+  return (
+    <div
+      className={`${className} flex items-center justify-center bg-gradient-to-br from-panel-soft to-panel text-foreground/25`}
+      aria-hidden
+    >
+      <span className="text-2xl font-bold tracking-tight">{initial}</span>
+    </div>
+  );
+}
+
+/** The dedication / story field — the differentiator. Shown as an accented callout so a
+ *  release means something instead of being a catalog row. */
 function Dedication({ text }: { text: string }) {
   return (
-    <blockquote className="mt-3 border-l-2 border-red/60 pl-4 text-sm italic leading-relaxed text-foreground/75">
+    <blockquote className="border-l-2 border-red/60 pl-4 text-sm italic leading-relaxed text-foreground/75">
       {text}
     </blockquote>
   );
 }
 
-function TrackRow({ t, src }: { t: Track; src: string | null }) {
-  // Group "versions" credit + composer credit, when present.
-  const credit = [t.version_label, t.performer].filter(Boolean).join(" · ");
-  if (src && t.media_kind === "video") {
-    return (
-      <div className="rounded-lg border border-border bg-panel-soft p-3">
-        <p className="mb-2 text-sm font-medium text-foreground">{t.title}</p>
-        <video src={src} controls preload="metadata" className="w-full rounded-md border border-border bg-black" />
-        {(credit || t.composer) && (
-          <p className="mt-1.5 text-[11px] text-muted">
-            {credit}
-            {credit && t.composer ? " · " : ""}
-            {t.composer ? `Composed by ${t.composer}` : ""}
-          </p>
-        )}
-      </div>
-    );
-  }
-  if (src) {
-    return (
-      <div className="rounded-lg border border-border bg-panel-soft p-3">
-        <AudioPlayer src={src} title={t.title} duration={t.duration ?? undefined} trackId={t.id} />
-        {(credit || t.composer) && (
-          <p className="mt-1.5 text-[11px] text-muted">
-            {credit}
-            {credit && t.composer ? " · " : ""}
-            {t.composer ? `Composed by ${t.composer}` : ""}
-          </p>
-        )}
-      </div>
-    );
-  }
-  // Catalog-only row (media offline / not connected): show the entry, no player.
+/** "N Tracks · duration · year" meta line shared by the hero, cards, and detail panel. */
+function metaBits(card: ReleaseCard): string[] {
+  const r = card.release;
+  const bits: string[] = [];
+  bits.push(`${r.tracks.length} ${r.tracks.length === 1 ? "Track" : "Tracks"}`);
+  const dur = totalDuration(r);
+  if (dur !== "0:00") bits.push(dur);
+  if (r.year) bits.push(r.year);
+  return bits;
+}
+
+function PlayIcon() {
+  return <span aria-hidden>▶</span>;
+}
+
+/** The featured-release hero: large cover, label, title, persona, description, a metadata
+ *  row, and Play Album + View Details actions. */
+function FeaturedHero({
+  card,
+  onPlay,
+  onDetails,
+}: {
+  card: ReleaseCard;
+  onPlay: (card: ReleaseCard) => void;
+  onDetails: (card: ReleaseCard) => void;
+}) {
+  const r = card.release;
   return (
-    <div className="flex items-baseline justify-between gap-3 rounded-lg border border-border bg-panel-soft px-3 py-2.5 text-sm">
-      <span className="min-w-0">
-        {t.track_no != null && <span className="mr-2 text-muted">{t.track_no}.</span>}
-        <span className="text-foreground/90">{t.title}</span>
-        {credit && <span className="ml-2 text-[11px] text-muted">{credit}</span>}
-      </span>
-      {t.duration && <span className="shrink-0 text-xs text-muted">{t.duration}</span>}
+    <div className="rounded-xl border border-border bg-panel p-4 sm:p-5">
+      <div className="flex flex-col gap-5 sm:flex-row">
+        <CoverArt
+          release={r}
+          className="h-48 w-full shrink-0 rounded-lg border border-border sm:h-56 sm:w-56"
+        />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex items-start justify-between gap-3">
+            <span className="text-xs font-semibold uppercase tracking-widest text-red">
+              Featured Release
+            </span>
+            <span className="rounded-full border border-border px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-muted">
+              Latest
+            </span>
+          </div>
+          <h3 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            {r.title}
+          </h3>
+          {card.personaName && (
+            <p className="mt-1 text-sm text-muted">
+              {card.personaName}
+              {card.hasPersona ? " (Persona)" : ""}
+            </p>
+          )}
+          {card.dedication && (
+            <p className="mt-3 text-sm leading-relaxed text-foreground/70">
+              {card.dedication}
+            </p>
+          )}
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs uppercase tracking-widest text-muted">
+            <span>{kindLabel(r.kind)}</span>
+            {metaBits(card).map((b) => (
+              <span key={b}>{b}</span>
+            ))}
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => onPlay(card)}
+              className="inline-flex items-center gap-2 rounded-md bg-red px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-red-dark"
+            >
+              <PlayIcon /> Play Album
+            </button>
+            <button
+              type="button"
+              onClick={() => onDetails(card)}
+              className="inline-flex items-center gap-2 rounded-md border border-border bg-panel-soft px-4 py-2 text-sm text-foreground transition hover:border-red"
+            >
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function ReleaseBlock({ r, mediaCtx }: { r: ReleaseWithTracks; mediaCtx: MediaCtx }) {
+/** A single release card in the grid: cover, title, persona, meta, Play + View Tracks. */
+function ReleaseGridCard({
+  card,
+  onPlay,
+  onDetails,
+}: {
+  card: ReleaseCard;
+  onPlay: (card: ReleaseCard) => void;
+  onDetails: (card: ReleaseCard) => void;
+}) {
+  const r = card.release;
   return (
-    <div className="rounded-xl border border-border bg-panel p-4">
-      <div className="flex items-start gap-4">
-        {r.cover_url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={r.cover_url}
-            alt={`${r.title} cover`}
-            className="h-16 w-16 shrink-0 rounded-md border border-border object-cover"
-          />
+    <div className="flex flex-col rounded-xl border border-border bg-panel transition hover:border-red/50">
+      <CoverArt
+        release={r}
+        className="aspect-video w-full rounded-t-xl border-b border-border"
+      />
+      <div className="flex min-w-0 flex-1 flex-col p-4">
+        <h4 className="truncate text-base font-semibold text-foreground">{r.title}</h4>
+        {card.personaName && (
+          <p className="truncate text-sm text-muted">{card.personaName}</p>
         )}
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <h4 className="text-base font-semibold text-foreground">{r.title}</h4>
-            <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted">
-              {KIND_LABEL[r.kind] ?? "Release"}
-            </span>
-            {r.year && <span className="text-xs text-muted">{r.year}</span>}
-          </div>
-          {r.dedication && <Dedication text={r.dedication} />}
+        <p className="mt-1 text-xs text-muted">{metaBits(card).join(" · ")}</p>
+        <div className="mt-3 flex gap-2">
+          <button
+            type="button"
+            onClick={() => onPlay(card)}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-md border border-border bg-panel-soft px-3 py-1.5 text-xs text-foreground transition hover:border-red"
+          >
+            <PlayIcon /> Play
+          </button>
+          <button
+            type="button"
+            onClick={() => onDetails(card)}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-md border border-border bg-panel-soft px-3 py-1.5 text-xs text-foreground transition hover:border-red"
+          >
+            View Tracks
+          </button>
         </div>
       </div>
-      {r.tracks.length > 0 && (
-        <div className="mt-4 flex flex-col gap-2">
-          {r.tracks.map((t) => (
-            <TrackRow key={t.id} t={t} src={trackUrl(mediaCtx, t)} />
+    </div>
+  );
+}
+
+/** The release detail side panel: cover, meta, About This Release (dedication), a numbered
+ *  tracklist with per-track durations, Play Album + Save. */
+function DetailPanel({
+  card,
+  onClose,
+  onPlay,
+  onPlayTrack,
+  mediaCtx,
+}: {
+  card: ReleaseCard;
+  onClose: () => void;
+  onPlay: (card: ReleaseCard) => void;
+  onPlayTrack: (card: ReleaseCard, index: number) => void;
+  mediaCtx: MediaCtx;
+}) {
+  const r = card.release;
+  return (
+    <aside className="flex flex-col gap-5 rounded-xl border border-border bg-panel p-4 sm:p-5">
+      <div className="flex items-start justify-between gap-3">
+        <CoverArt
+          release={r}
+          className="h-40 w-40 shrink-0 rounded-lg border border-border"
+        />
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close details"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border text-muted transition hover:border-red hover:text-foreground"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-bold tracking-tight text-foreground">{r.title}</h3>
+        {card.personaName && (
+          <p className="mt-1 text-sm text-muted">
+            {card.personaName}
+            {card.hasPersona ? " (Persona)" : ""}
+          </p>
+        )}
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs uppercase tracking-widest text-muted">
+          <span>{kindLabel(r.kind)}</span>
+          {metaBits(card).map((b) => (
+            <span key={b}>{b}</span>
           ))}
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => onPlay(card)}
+          className="inline-flex items-center gap-2 rounded-md bg-red px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-red-dark"
+        >
+          <PlayIcon /> Play Album
+        </button>
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-md border border-border bg-panel-soft px-4 py-2 text-sm text-foreground transition hover:border-red"
+        >
+          ♥ Save
+        </button>
+      </div>
+
+      {card.dedication && (
+        <div>
+          <h4 className="mb-2 text-xs uppercase tracking-widest text-muted">
+            About This Release
+          </h4>
+          <Dedication text={card.dedication} />
+        </div>
       )}
-    </div>
+
+      {r.tracks.length > 0 && (
+        <div>
+          <h4 className="mb-2 text-xs uppercase tracking-widest text-muted">Tracklist</h4>
+          <ol className="flex flex-col">
+            {r.tracks.map((t, i) => {
+              const playable = trackUrl(mediaCtx, t) != null;
+              return (
+                <li
+                  key={t.id}
+                  className="flex items-center gap-3 border-b border-border/60 py-2.5 last:border-b-0"
+                >
+                  <span className="w-5 shrink-0 text-right text-xs text-muted">
+                    {t.track_no ?? i + 1}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={!playable}
+                    onClick={() => onPlayTrack(card, i)}
+                    className="min-w-0 flex-1 truncate text-left text-sm text-foreground/90 transition enabled:hover:text-red disabled:cursor-default"
+                    title={playable ? "Play track" : "Audio offline"}
+                  >
+                    {t.title}
+                    {t.version_label && (
+                      <span className="ml-2 text-[11px] text-muted">{t.version_label}</span>
+                    )}
+                  </button>
+                  {t.duration && (
+                    <span className="shrink-0 text-xs text-muted">{t.duration}</span>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      )}
+    </aside>
   );
 }
 
-function MembersLine({ members }: { members: PersonaMember[] }) {
-  if (members.length === 0) return null;
-  return (
-    <p className="mt-1 text-xs text-muted">
-      {members
-        .map((m) => (m.role ? `${m.name} (${m.role})` : m.name))
-        .join(" · ")}
-    </p>
-  );
-}
+type NowPlaying = { card: ReleaseCard; index: number };
 
-function PersonaBlock({ p, mediaCtx }: { p: PersonaWithReleases; mediaCtx: MediaCtx }) {
-  if (p.releases.length === 0 && p.singles.length === 0) return null;
+/** The sticky now-playing bar. Reuses the existing AudioPlayer machinery (scrubber, play
+ *  count ping, offline degradation) for the current track; prev/next step through the
+ *  release's tracklist. Renders only when a playable track is selected. */
+function NowPlayingBar({
+  now,
+  src,
+  mediaCtx,
+  onStep,
+  onClose,
+}: {
+  now: NowPlaying;
+  src: string;
+  mediaCtx: MediaCtx;
+  onStep: (delta: number) => void;
+  onClose: () => void;
+}) {
+  const tracks = now.card.release.tracks;
+  const t = tracks[now.index];
+  const hasPrev = now.index > 0;
+  const hasNext = now.index < tracks.length - 1;
   return (
-    <section className="flex flex-col gap-4">
-      <div>
-        <div className="flex flex-wrap items-baseline gap-x-2">
-          <h3 className="text-lg font-bold tracking-tight text-foreground">{p.name}</h3>
-          {p.kind === "group" && (
-            <span className="rounded-full border border-red/50 px-2 py-0.5 text-[10px] uppercase tracking-widest text-red">
-              Group
-            </span>
+    <div className="sticky bottom-0 z-10 mt-2 rounded-xl border border-border bg-panel-soft p-3 shadow-lg">
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => onStep(-1)}
+          disabled={!hasPrev}
+          aria-label="Previous track"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-foreground transition enabled:hover:border-red disabled:opacity-30"
+        >
+          ⏮
+        </button>
+        <div className="min-w-0 flex-1">
+          {/* AudioPlayer is keyed on the source so switching tracks remounts it clean. */}
+          <AudioPlayer
+            key={`${now.card.key}:${t.id}`}
+            src={src}
+            title={t.title}
+            artist={now.card.personaName ?? undefined}
+            duration={t.duration ?? undefined}
+            trackId={t.id}
+          />
+          {mediaCtx.hasMedia ? null : (
+            <p className="mt-1 text-[11px] text-muted">Audio streams once the artist connects their agent.</p>
           )}
         </div>
-        {p.kind === "group" && <MembersLine members={p.members} />}
-        {p.bio && <p className="mt-2 text-sm leading-relaxed text-foreground/80">{p.bio}</p>}
-        {p.dedication && <Dedication text={p.dedication} />}
+        <button
+          type="button"
+          onClick={() => onStep(1)}
+          disabled={!hasNext}
+          aria-label="Next track"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-foreground transition enabled:hover:border-red disabled:opacity-30"
+        >
+          ⏭
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close player"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted transition hover:border-red hover:text-foreground"
+        >
+          ✕
+        </button>
       </div>
-      <div className="flex flex-col gap-3">
-        {p.releases.map((r) => (
-          <ReleaseBlock key={r.id} r={r} mediaCtx={mediaCtx} />
-        ))}
-      </div>
-      {p.singles.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <h4 className="text-xs uppercase tracking-widest text-muted">Singles</h4>
-          {p.singles.map((t) => (
-            <TrackRow key={t.id} t={t} src={trackUrl(mediaCtx, t)} />
-          ))}
-        </div>
-      )}
-    </section>
+    </div>
   );
 }
 
 /**
- * Type-aware discography for the dossier: personas (solo or group) each with their
- * releases and tracks, plus the artist's own "direct" lane (releases + singles with no
- * persona). The dedication/story field renders alongside the music. Tracks play when the
- * artist's media is live; otherwise the catalog still shows (graceful degradation).
+ * Type-aware discography for the dossier, rebuilt to the pinned mockup: a featured-release
+ * hero, filter chips (All / Albums / EPs / Singles / Personas / Collaborations), a
+ * search + sort row, a release-card grid, a detail side panel, and a sticky now-playing
+ * bar. The persona/group and direct/collaboration structure is preserved in the flattened
+ * model; the dedication callout stays as the differentiator.
+ *
+ * Graceful degradation: when the artist's media is offline (trackUrl returns null) the whole
+ * catalog still renders — cards, tracklists, dedications — just without live players. The
+ * card text is in the initial SSR HTML (this client component is server-rendered for the
+ * first paint) so the catalog stays crawlable for SEO.
  */
 export function DiscographyPanel({
   discography,
@@ -162,37 +392,164 @@ export function DiscographyPanel({
   discography: Discography;
   mediaCtx: MediaCtx;
 }) {
-  const { personas, directReleases, directSingles } = discography;
-  const personasWithContent = personas.filter(
-    (p) => p.releases.length > 0 || p.singles.length > 0
-  );
+  const cards = useMemo(() => flattenDiscography(discography), [discography]);
+  const counts = useMemo(() => filterCounts(cards), [cards]);
+
+  const [filter, setFilter] = useState<FilterId>("all");
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortId>("newest");
+  const [detailKey, setDetailKey] = useState<string | null>(null);
+  const [now, setNow] = useState<NowPlaying | null>(null);
+
+  const featured = cards[0] ?? null;
+
+  const grid = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const filtered = cards.filter(
+      (c) =>
+        matchesFilter(c, filter) &&
+        (q === "" ||
+          c.release.title.toLowerCase().includes(q) ||
+          (c.personaName ?? "").toLowerCase().includes(q))
+    );
+    const yearNum = (c: ReleaseCard) => Number(c.release.year) || 0;
+    return [...filtered].sort((a, b) =>
+      sort === "newest" ? yearNum(b) - yearNum(a) : yearNum(a) - yearNum(b)
+    );
+  }, [cards, filter, query, sort]);
+
+  const detailCard = detailKey
+    ? cards.find((c) => c.key === detailKey) ?? null
+    : null;
+
+  /** Start playback at the first playable track of a release (or a specific index). */
+  function play(card: ReleaseCard, index = 0) {
+    const tracks = card.release.tracks;
+    // Find the first playable track at or after `index` so "Play Album" never dead-ends
+    // when the media is offline for the lead track but not others.
+    let i = index;
+    while (i < tracks.length && trackUrl(mediaCtx, tracks[i]) == null) i++;
+    if (i >= tracks.length) {
+      // Nothing playable in this release (media offline): open details instead of a dead bar.
+      setDetailKey(card.key);
+      return;
+    }
+    setNow({ card, index: i });
+  }
+
+  function playTrack(card: ReleaseCard, index: number) {
+    if (trackUrl(mediaCtx, card.release.tracks[index]) == null) return;
+    setNow({ card, index });
+  }
+
+  function step(delta: number) {
+    if (!now) return;
+    const tracks = now.card.release.tracks;
+    let i = now.index + delta;
+    while (i >= 0 && i < tracks.length && trackUrl(mediaCtx, tracks[i]) == null) i += delta;
+    if (i < 0 || i >= tracks.length) return;
+    setNow({ card: now.card, index: i });
+  }
+
+  const nowSrc = now ? trackUrl(mediaCtx, now.card.release.tracks[now.index]) : null;
+
+  const visibleFilters = FILTER_LABELS.filter((f) => f.id === "all" || counts[f.id] > 0);
 
   return (
-    <div className="flex flex-col gap-8">
-      {personasWithContent.map((p) => (
-        <PersonaBlock key={p.id} p={p} mediaCtx={mediaCtx} />
-      ))}
+    <div className="flex flex-col gap-6">
+      {/* A two-lane layout: catalog on the left, detail panel on the right when open. */}
+      <div
+        className={
+          detailCard
+            ? "grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]"
+            : "flex flex-col gap-6"
+        }
+      >
+        <div className="flex min-w-0 flex-col gap-6">
+          {featured && (
+            <FeaturedHero card={featured} onPlay={play} onDetails={(c) => setDetailKey(c.key)} />
+          )}
 
-      {directReleases.length > 0 && (
-        <section className="flex flex-col gap-4">
-          <h3 className="text-lg font-bold tracking-tight text-foreground">Releases</h3>
-          <div className="flex flex-col gap-3">
-            {directReleases.map((r) => (
-              <ReleaseBlock key={r.id} r={r} mediaCtx={mediaCtx} />
+          {/* Filter chips */}
+          <div className="flex flex-wrap gap-2">
+            {visibleFilters.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setFilter(f.id)}
+                className={`rounded-full px-3.5 py-1.5 text-sm transition ${
+                  filter === f.id
+                    ? "bg-red text-foreground"
+                    : "border border-border bg-panel-soft text-muted hover:text-foreground"
+                }`}
+              >
+                {f.label}
+              </button>
             ))}
           </div>
-        </section>
-      )}
 
-      {directSingles.length > 0 && (
-        <section className="flex flex-col gap-4">
-          <h3 className="text-lg font-bold tracking-tight text-foreground">Singles</h3>
-          <div className="flex flex-col gap-2">
-            {directSingles.map((t) => (
-              <TrackRow key={t.id} t={t} src={trackUrl(mediaCtx, t)} />
-            ))}
+          {/* Search + sort */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search releases..."
+              className="min-w-0 flex-1 rounded-md border border-border bg-panel-soft px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-red focus:outline-none"
+            />
+            <label className="flex items-center gap-2 text-sm text-muted">
+              <span className="sr-only">Sort</span>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortId)}
+                className="rounded-md border border-border bg-panel-soft px-3 py-2 text-sm text-foreground focus:border-red focus:outline-none"
+              >
+                <option value="newest">Sort: Newest</option>
+                <option value="oldest">Sort: Oldest</option>
+              </select>
+            </label>
           </div>
-        </section>
+
+          {/* Release card grid */}
+          {grid.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {grid.map((card) => (
+                <ReleaseGridCard
+                  key={card.key}
+                  card={card}
+                  onPlay={play}
+                  onDetails={(c) => setDetailKey(c.key)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-border bg-panel p-10 text-center">
+              <p className="text-sm text-muted">No releases match this filter.</p>
+            </div>
+          )}
+        </div>
+
+        {detailCard && (
+          <div className="lg:sticky lg:top-20 lg:self-start">
+            <DetailPanel
+              card={detailCard}
+              onClose={() => setDetailKey(null)}
+              onPlay={play}
+              onPlayTrack={playTrack}
+              mediaCtx={mediaCtx}
+            />
+          </div>
+        )}
+      </div>
+
+      {now && nowSrc && (
+        <NowPlayingBar
+          now={now}
+          src={nowSrc}
+          mediaCtx={mediaCtx}
+          onStep={step}
+          onClose={() => setNow(null)}
+        />
       )}
     </div>
   );
