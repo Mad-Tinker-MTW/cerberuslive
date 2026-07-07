@@ -5,9 +5,15 @@ import type {
   Discography,
   ReleaseWithTracks,
   MediaCtx,
+  Track,
 } from "@/lib/db";
 import { trackUrl } from "@/lib/db";
-import { AudioPlayer } from "./AudioPlayer";
+import {
+  PlayerProvider,
+  NowPlayingBar,
+  usePlayer,
+  type PlayerTrack,
+} from "./DiscographyPlayer";
 import {
   flattenDiscography,
   filterCounts,
@@ -303,74 +309,34 @@ function DetailPanel({
   );
 }
 
-type NowPlaying = { card: ReleaseCard; index: number };
+/** Build a single playable item for the one audio source from a card's track, resolving its
+ *  gateway URL. Returns null when the track is not playable (media offline), so callers can
+ *  skip it. The cover + persona ride along for the now-playing bar. */
+function toPlayerTrack(
+  card: ReleaseCard,
+  t: Track,
+  mediaCtx: MediaCtx
+): PlayerTrack | null {
+  const src = trackUrl(mediaCtx, t);
+  if (src == null) return null;
+  const r = card.release;
+  return {
+    id: t.id,
+    src,
+    title: t.title,
+    persona: card.personaName,
+    coverUrl: r.cover_url,
+    coverInitial: r.title.trim().charAt(0).toUpperCase() || "?",
+    duration: t.duration,
+  };
+}
 
-/** The sticky now-playing bar. Reuses the existing AudioPlayer machinery (scrubber, play
- *  count ping, offline degradation) for the current track; prev/next step through the
- *  release's tracklist. Renders only when a playable track is selected. */
-function NowPlayingBar({
-  now,
-  src,
-  mediaCtx,
-  onStep,
-  onClose,
-}: {
-  now: NowPlaying;
-  src: string;
-  mediaCtx: MediaCtx;
-  onStep: (delta: number) => void;
-  onClose: () => void;
-}) {
-  const tracks = now.card.release.tracks;
-  const t = tracks[now.index];
-  const hasPrev = now.index > 0;
-  const hasNext = now.index < tracks.length - 1;
-  return (
-    <div className="sticky bottom-0 z-10 mt-2 rounded-xl border border-border bg-panel-soft p-3 shadow-lg">
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => onStep(-1)}
-          disabled={!hasPrev}
-          aria-label="Previous track"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-foreground transition enabled:hover:border-red disabled:opacity-30"
-        >
-          ⏮
-        </button>
-        <div className="min-w-0 flex-1">
-          {/* AudioPlayer is keyed on the source so switching tracks remounts it clean. */}
-          <AudioPlayer
-            key={`${now.card.key}:${t.id}`}
-            src={src}
-            title={t.title}
-            artist={now.card.personaName ?? undefined}
-            duration={t.duration ?? undefined}
-            trackId={t.id}
-          />
-          {mediaCtx.hasMedia ? null : (
-            <p className="mt-1 text-[11px] text-muted">Audio streams once the artist connects their agent.</p>
-          )}
-        </div>
-        <button
-          type="button"
-          onClick={() => onStep(1)}
-          disabled={!hasNext}
-          aria-label="Next track"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-foreground transition enabled:hover:border-red disabled:opacity-30"
-        >
-          ⏭
-        </button>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close player"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted transition hover:border-red hover:text-foreground"
-        >
-          ✕
-        </button>
-      </div>
-    </div>
-  );
+/** Build the playable queue for a whole release (Play Album), dropping offline tracks so the
+ *  queue never dead-ends on a missing lead track. */
+function releaseQueue(card: ReleaseCard, mediaCtx: MediaCtx): PlayerTrack[] {
+  return card.release.tracks
+    .map((t) => toPlayerTrack(card, t, mediaCtx))
+    .filter((pt): pt is PlayerTrack => pt != null);
 }
 
 /**
@@ -392,6 +358,23 @@ export function DiscographyPanel({
   discography: Discography;
   mediaCtx: MediaCtx;
 }) {
+  // PlayerProvider owns the single audio element; every play affordance inside the body
+  // routes through it, so two sources can never overlap.
+  return (
+    <PlayerProvider>
+      <DiscographyBody discography={discography} mediaCtx={mediaCtx} />
+    </PlayerProvider>
+  );
+}
+
+function DiscographyBody({
+  discography,
+  mediaCtx,
+}: {
+  discography: Discography;
+  mediaCtx: MediaCtx;
+}) {
+  const player = usePlayer();
   const cards = useMemo(() => flattenDiscography(discography), [discography]);
   const counts = useMemo(() => filterCounts(cards), [cards]);
 
@@ -399,7 +382,6 @@ export function DiscographyPanel({
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortId>("newest");
   const [detailKey, setDetailKey] = useState<string | null>(null);
-  const [now, setNow] = useState<NowPlaying | null>(null);
 
   const featured = cards[0] ?? null;
 
@@ -422,36 +404,27 @@ export function DiscographyPanel({
     ? cards.find((c) => c.key === detailKey) ?? null
     : null;
 
-  /** Start playback at the first playable track of a release (or a specific index). */
+  /** Play Album: load the release's playable tracks as the queue and start at track 1 (or a
+   *  given index). Loads into the ONE audio source, stopping anything already playing. When
+   *  nothing is playable (media offline), open details instead of a dead player. */
   function play(card: ReleaseCard, index = 0) {
-    const tracks = card.release.tracks;
-    // Find the first playable track at or after `index` so "Play Album" never dead-ends
-    // when the media is offline for the lead track but not others.
-    let i = index;
-    while (i < tracks.length && trackUrl(mediaCtx, tracks[i]) == null) i++;
-    if (i >= tracks.length) {
-      // Nothing playable in this release (media offline): open details instead of a dead bar.
+    const queue = releaseQueue(card, mediaCtx);
+    if (queue.length === 0) {
       setDetailKey(card.key);
       return;
     }
-    setNow({ card, index: i });
+    // The queue drops offline tracks, so translate the requested track index to its slot.
+    const requested = toPlayerTrack(card, card.release.tracks[index], mediaCtx);
+    const start = requested ? queue.findIndex((q) => q.id === requested.id) : 0;
+    player.playQueue(queue, start < 0 ? 0 : start);
   }
 
+  /** Play a single track from the detail tracklist into the one source (no queue). */
   function playTrack(card: ReleaseCard, index: number) {
-    if (trackUrl(mediaCtx, card.release.tracks[index]) == null) return;
-    setNow({ card, index });
+    const pt = toPlayerTrack(card, card.release.tracks[index], mediaCtx);
+    if (!pt) return;
+    player.play(pt);
   }
-
-  function step(delta: number) {
-    if (!now) return;
-    const tracks = now.card.release.tracks;
-    let i = now.index + delta;
-    while (i >= 0 && i < tracks.length && trackUrl(mediaCtx, tracks[i]) == null) i += delta;
-    if (i < 0 || i >= tracks.length) return;
-    setNow({ card: now.card, index: i });
-  }
-
-  const nowSrc = now ? trackUrl(mediaCtx, now.card.release.tracks[now.index]) : null;
 
   const visibleFilters = FILTER_LABELS.filter((f) => f.id === "all" || counts[f.id] > 0);
 
@@ -542,15 +515,8 @@ export function DiscographyPanel({
         )}
       </div>
 
-      {now && nowSrc && (
-        <NowPlayingBar
-          now={now}
-          src={nowSrc}
-          mediaCtx={mediaCtx}
-          onStep={step}
-          onClose={() => setNow(null)}
-        />
-      )}
+      {/* The single player UI. Renders nothing when idle. */}
+      <NowPlayingBar />
     </div>
   );
 }
