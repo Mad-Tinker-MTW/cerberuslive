@@ -353,4 +353,14 @@ Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr
 | 2026-06-30 | Phase B + billing verification (local D1: posts auth-gate + followers-only privacy, billing 503/400 gating, account + dossier render) | QA Engineer | 2.0 |
 | 2026-06-30 | Phase B + billing deploy (prod migrations 0020-0021, commit, push, CI, prod smoke) | Deployment Engineer | 1.0 |
 | 2026-06-30 | Checkpoint docs round 3 (WBS, CHANGELOG, ROADMAP, ledger, registry, CLAUDE.md, mirror) | Technical Writer | 0.5 |
-| **Total** | | | **230.0** |
+| 2026-07-07 | Cerberus-line flow plan + two invariants (window/service economics, build/ship native-client) + three frozen contracts + slice order | Solutions Architect | 2.0 |
+| 2026-07-07 | CLS near-death investigation (why nearly scrapped): Explore agents + 6/28-7/3 transcript dig + synthesis + claude.ai export ingest into TinkerBrain | Solutions Architect | 1.5 |
+| 2026-07-07 | Device-auth onboarding: diagnosed built-but-unpushed (prod 404) -> deploy; CORS root-cause + fix on /api/auth/device + /token (agent Tauri-webview fetch was blocked) | Lead Developer | 1.5 |
+| 2026-07-07 | Prod D1 investigation (schema, counts, users, R2 gone) + f-de-la-paz reinstate then delete for a virgin signup + verification | Lead Developer | 1.0 |
+| 2026-07-07 | Two prod deploys (device-auth routes + CORS fix) via CI + endpoint verification | Deployment Engineer | 1.0 |
+| 2026-07-07 | Fresh-artist no-paste on-ramp end-to-end verify (download -> sign in -> device link -> artist page -> 21 tracks) + discography D1 readout + gap analysis | QA Engineer | 1.0 |
+| 2026-07-07 | Discography design: mockup pinned (web/docs/designs/discography.png) + client-editor / add-art / preview-before-publish model | Solutions Architect | 0.5 |
+| 2026-07-07 | CerberusAgent installer release CI (release.yml, tauri-action) + v0.4.0 tag build + installer publish + download [Agent work, counted here] | Lead Developer | 1.0 |
+| 2026-07-07 | CerberusAgent v0.4.0 installer build/publish + no-paste device-auth verify [Agent work, counted here] | Deployment Engineer | 0.5 |
+| 2026-07-07 | Checkpoint docs (WBS, CHANGELOG, registry, ledger, mirror, journal, session report) | Technical Writer | 1.0 |
+| **Total** | | | **241.0** |

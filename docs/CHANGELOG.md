@@ -1,5 +1,33 @@
 # Changelog — Cerberus Live Studio
 
+## [0.12.0] — 2026-07-07
+
+The no-paste artist on-ramp went from "planned wrong, can't ship" to working end to end.
+
+### Added
+- (Deployed) Device-authorization onboarding (RFC 8628): `/device` page + `/api/auth/device`,
+  `/token`, `/approve`, `/deny`, plus `/api/agent/installer`. Built earlier but never pushed;
+  deployed this session. The Cerberus Agent now links to an account with no key/token paste.
+- Cerberus-line flow plan (Q:\MTW\Docs\CERBERUS-LINE-FLOW.md): two frozen invariants (window
+  not service; client ships/tests without the PC or WSL, no-paste wizard), the pipeline, three
+  frozen contracts, and the slice order.
+- Discography design contract pinned (web/docs/designs/discography.png): art-driven release
+  cards, featured hero, filters, detail panel, now-playing bar. The target for the discography
+  rebuild + the client-side add-art / preview-before-publish editor.
+
+### Fixed
+- CORS on the device-auth routes: `/api/auth/device` + `/token` sent no `Access-Control-Allow-Origin`,
+  so the Agent's Tauri-webview `fetch()` was silently blocked ("Failed to fetch"). Added permissive
+  CORS + an OPTIONS handler to both (device endpoints are public; the security is the user code +
+  approval). Verified live.
+
+### Infrastructure
+- Prod D1: audited after the artist/media wipe (admin intact; artist_profiles/tracks empty; R2
+  buckets gone). Reinstated then deleted f-de-la-paz to allow a genuine fresh signup. Verified the
+  real signup created `mad-tinker` (free tier, self-host tunnel, 21 tracks, full persona/release
+  discography scanned by the Agent).
+- Two CI prod deploys (device-auth routes, then the CORS fix).
+
 ## [0.11.0] — 2026-06-30
 
 Live Phase B (social + performance) plus the self-managed+ billing path. Four builds, all
