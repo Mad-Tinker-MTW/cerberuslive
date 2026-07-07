@@ -2,13 +2,25 @@ import { checkPollRate, consumeApprovedGrant, getGrantByDeviceCode } from "@/lib
 
 export const dynamic = "force-dynamic";
 
+// Cross-origin from the Tauri agent webview, so CORS headers are required (see the
+// device start route). Public poll endpoint; the device_code is the bearer secret.
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: CORS });
+}
+
 // Desktop polls this with { device_code }. Responds with a status; the desktop
 // stops polling on 'success', 'access_denied', or 'expired_token'.
 export async function POST(req: Request) {
   const json = (code: number, body: unknown) =>
     new Response(JSON.stringify(body), {
       status: code,
-      headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+      headers: { "Content-Type": "application/json", "Cache-Control": "no-store", ...CORS },
     });
 
   let body: { device_code?: string };
