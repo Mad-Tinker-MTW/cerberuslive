@@ -6,6 +6,7 @@ import { isControlDeckRequest } from "@/lib/host";
 import { getDb } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { TwoFactorSetup } from "@/components/admin/TwoFactorSetup";
+import { ChangePassword } from "@/components/admin/ChangePassword";
 import { AdminManager, type AdminRow } from "@/components/admin/AdminManager";
 
 export const dynamic = "force-dynamic";
@@ -51,6 +52,10 @@ export default async function AdminSecurityPage() {
           Two-factor for the control deck. Cloudflare Access also gates this host at the edge.
         </p>
         <TwoFactorSetup enabled={enabled} />
+
+        <div className="mt-6">
+          <ChangePassword />
+        </div>
 
         <div className="mt-8">
           <AdminManager admins={admins} />
