@@ -12,6 +12,12 @@
       "runtimeExecutable": "cmd",
       "runtimeArgs": ["/c", "cd web && bun run dev -- -p 4322"],
       "port": 4322
+    },
+    {
+      "name": "agent-editor",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "cd /d Q:\\MTW\\CerberusAgent\\desktop && bun run dev -- --port 5180 --strictPort"],
+      "port": 5180
     }
   ]
 }
