@@ -1,5 +1,26 @@
 # Changelog — Cerberus Live Studio
 
+## [0.16.0] — 2026-07-08
+
+Per-track cover art. Singles can now carry their own art, and the agent reads embedded art from files that already have it.
+
+### Added
+- **`tracks.cover_url`** (migration 0024): a per-track cover so a loose single shows its own art.
+  A track inside an album or EP still shows the one release cover; only a standalone single falls
+  back to its own. Populated by the agent or the client editor. (L-057)
+- **`selfCoverUrl(slug, path)`** in `db.ts`, mirroring `trackUrl`'s media-gateway scheme so covers
+  cache through R2 and never expose the tunnel host.
+- The agent (`register` route) now accepts a per-track `cover` (a relative path, turned into a
+  gateway URL) or an absolute `coverUrl` (stored as-is); absent leaves it null.
+- **Embedded-art reading** in the CerberusAgent desktop scan: `extract_cover` pulls each audio
+  file's embedded picture (APIC / attached picture) to a served sidecar under `.cerberus-covers/`
+  via ffmpeg, and the scan reports its path. Best-effort: a file with no art, or a missing ffmpeg,
+  just yields no cover. The agent's static server now serves image content-types.
+
+### Changed
+- A loose single in the discography render now uses its own `cover_url` instead of always falling
+  through to the placeholder tile.
+
 ## [0.15.1] — 2026-07-08
 
 Booking dates are now structured, so the admin Upcoming column counts real future bookings instead of guarding against free-text garbage.

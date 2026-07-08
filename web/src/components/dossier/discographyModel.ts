@@ -63,8 +63,8 @@ export function totalDuration(r: ReleaseWithTracks): string {
 }
 
 /** Wrap a loose single (a track with no release) as a synthetic single-kind release
- *  so it renders as a card alongside real releases. Singles carry no cover in the schema,
- *  so they fall through to the placeholder tile. */
+ *  so it renders as a card alongside real releases. A single carries its own cover_url
+ *  (its own art); tracks inside a real release show the release cover instead. */
 function singleAsRelease(t: Track): ReleaseWithTracks {
   return {
     id: -t.id, // negative id space so it never collides with a real release id
@@ -72,7 +72,7 @@ function singleAsRelease(t: Track): ReleaseWithTracks {
     title: t.title,
     kind: "single",
     year: null,
-    cover_url: null,
+    cover_url: t.cover_url,
     dedication: null,
     sort: t.sort,
     tracks: [t],

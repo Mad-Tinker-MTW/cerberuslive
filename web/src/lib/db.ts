@@ -136,11 +136,15 @@ export type Track = {
   composer: string | null;
   track_no: number | null;
   media_kind: string; // 'audio' | 'video'
+  // Per-track cover art. Used for a loose single's own art; a track inside a release
+  // shows the release cover instead. Stored as a ready-to-use gateway URL (or absolute
+  // for r2/admin-hosted), so the render uses it directly like releases.cover_url.
+  cover_url: string | null;
 };
 
 const TRACK_COLUMNS =
   "id, title, filename, duration, is_featured, sort, source, play_count, " +
-  "release_id, persona_id, version_label, performer, composer, track_no, media_kind";
+  "release_id, persona_id, version_label, performer, composer, track_no, media_kind, cover_url";
 
 /** Where the media gateway lives. The gateway resolves the artist's hidden tunnel origin
  *  and R2-caches, so the public URL is path-based and never exposes the tunnel host. */
@@ -168,6 +172,13 @@ export function trackUrl(ctx: MediaCtx, t: Track): string | null {
   }
   // 'r2' (admin-hosted) filenames are already absolute URLs.
   return t.filename;
+}
+
+/** Build the public gateway URL for a self-hosted cover-art file the agent extracted or the
+ *  artist added. Mirrors trackUrl's path scheme (media gateway + slug + relative path) so
+ *  covers cache through R2 and never expose the tunnel host. */
+export function selfCoverUrl(slug: string, relPath: string): string {
+  return `${MEDIA_BASE}/${encodeURIComponent(slug)}/${encodeURIComponent(relPath)}`;
 }
 
 export type Review = {

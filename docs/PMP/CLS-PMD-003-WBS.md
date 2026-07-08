@@ -72,6 +72,7 @@ Project Manager: Francisco De La Paz
 | 1.2.36 | Admin control-deck overhaul: three-tier model (Independent = Free/Plus vs Managed) with per-tier tabs + metric restructure, chip hover tooltips + booking-gate mislabel fix, minimal admin header + logout (drops the public site chrome), dossier preview route (iframe + back bar) + copy-public-link, per-tier + Fans search | Complete |
 | 1.2.37 | Server-side admin artist search + pagination (api/admin/artists route, ADMIN_ARTIST_SELECT/SORT/PAGE_SIZE in db.ts) + real-booking counts (kind='booking') + Upcoming column (future accepted, ISO-date guarded) | Complete |
 | 1.2.38 | Booking structured-date field (L-064): native type=date picker on the dossier booking form (min=today, dark scheme), /api/bookings normalizes event_date to YYYY-MM-DD else null, and the ISO GLOB guard dropped from the Upcoming subquery (plain event_date >= date('now')) now that stored values are guaranteed ISO or null | Complete |
+| 1.2.39 | Per-track cover art + embedded-art reading (L-057): tracks.cover_url (mig 0024) so a single carries its own art (release cover still wins inside an album/EP); selfCoverUrl gateway helper; single render uses its own cover_url; register accepts per-track cover (relative->gateway URL / absolute passthrough). CerberusAgent desktop scan extract_cover pulls embedded APIC to a served .cerberus-covers/ sidecar via ffmpeg + image content-types in the static server | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -403,4 +404,11 @@ Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr
 | 2026-07-08 | Structured-date safety analysis: prod-D1 audit of existing event_date values (zero rows, no backfill), decide whether the ISO GLOB guard can be dropped (L-064) (1.2.38) | Solutions Architect | 0.5 |
 | 2026-07-08 | Booking structured-date field: native type=date picker + /api/bookings ISO normalization + drop the Upcoming GLOB guard (1.2.38) | Lead Developer | 1.0 |
 | 2026-07-08 | End-to-end verification (form->API->D1->Upcoming count matrix: ISO future counted, garbage->null, past excluded) + local test-row cleanup (1.2.38) | QA Engineer | 0.5 |
-| **Total** | | | **282.0** |
+| 2026-07-08 | Artist data-model design session: persona/release/track/direct-single semantics, one-human-many-identities, persona-as-AI-marker + ai_assisted disclosure, art model (release cover vs per-track single art, embedded vs standalone), label + producer/writer + fingerprint schema gaps | Solutions Architect | 1.5 |
+| 2026-07-08 | Client prep-app architecture design: 3-panel Library/Prep/Serve flow, local-SQLite draft vs platform serve, tag-editor writes-to-file (Mp3tag-style), DistroKid field capture, AudioRanger genre (L-061), fingerprint/guardian (L-060) staging | Solutions Architect | 1.0 |
+| 2026-07-08 | Per-track cover art (cerberuslive): tracks.cover_url (mig 0024) + selfCoverUrl helper + single-render own-art + register per-track cover accept/build (1.2.39) | Lead Developer | 1.5 |
+| 2026-07-08 | Embedded-art reading (CerberusAgent): extract_cover ffmpeg APIC->sidecar + cover_sidecar_name + image mime types + build_tracks wiring + 2 cargo tests (1.2.39) | Lead Developer | 1.0 |
+| 2026-07-08 | Client prep-page 3-column mockup (Library/Prep/Serve, per-track fields, stage pipeline) | Lead Developer | 0.5 |
+| 2026-07-08 | Cover-art verification: register cover matrix (relative->gateway/absolute/null) vs local D1, cargo tests, real embedded-APIC extraction proof, X:\Music art review (4 EP covers) | QA Engineer | 0.5 |
+| 2026-07-08 | Checkpoint (cover art + client design: WBS/CHANGELOG/registry/ledger/mirror/journal/report; Ravina spelling fix) | Technical Writer / PM | 0.5 |
+| **Total** | | | **288.5** |
