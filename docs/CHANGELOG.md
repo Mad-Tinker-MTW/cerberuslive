@@ -1,5 +1,25 @@
 # Changelog — Cerberus Live Studio
 
+## [0.17.0] — 2026-07-08
+
+Dossier polish (standard player, a sidebar that follows what's playing) and the artist label / managed imprint.
+
+### Added
+- **Artist `label`** (migration 0025): an artist's own label / production company, editable in
+  `/account/edit` ("Label / production company"), rendered as the Label row on the dossier.
+- **Managed imprint** (`managed_imprint`, migration 0025): an **admin-granted** credential, shown only
+  for managed artists in the control deck ("Grant CLS Imprint") and refused for non-managed artists by
+  `/api/admin/artist`. When granted, the dossier's label of record becomes **Cerberus Live Studio**,
+  overriding the artist's own label. Never self-editable — it behaves like verification. (L-057)
+- `artistLabel()` helper centralizes that display rule.
+
+### Changed
+- The dossier **audio player** now uses a standard progress bar (filled track + hover thumb,
+  click-to-seek) instead of the fake waveform; the featured-track no-audio placeholder waveform is gone.
+- The discography **detail side panel** now follows what's **playing** (not only "View Details") and
+  highlights the now-playing track in the tracklist; its close affordance shows only for an
+  explicitly-opened detail.
+
 ## [0.16.1] — 2026-07-08
 
 ### Changed
