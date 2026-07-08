@@ -24,7 +24,7 @@ export const ADMIN_ARTIST_SELECT = `a.slug, a.display_name, a.tier, a.verified, 
   (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug AND b.kind = 'booking') AS bookings,
   (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug AND b.kind = 'booking' AND b.status = 'pending') AS open_bookings,
   (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug AND b.kind = 'booking' AND b.status = 'accepted'
-     AND b.event_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*' AND b.event_date >= date('now')) AS upcoming,
+     AND b.event_date >= date('now')) AS upcoming,
   (SELECT MAX(s.updatedAt) FROM session s WHERE s.userId = a.user_id) AS last_active`;
 
 /** Number of neg reviews at which an artist is "flagged" for the Overview. */

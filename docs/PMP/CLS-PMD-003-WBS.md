@@ -71,6 +71,7 @@ Project Manager: Francisco De La Paz
 | 1.2.35 | Admin credential lifecycle: self-service Change password card (Security page) + account-recovery Change-user-email-in-place on /admin/artist/[slug] (admin.updateUser; keeps user.id so the artist_profile, tracks, and connected Agent survive untouched) | Complete |
 | 1.2.36 | Admin control-deck overhaul: three-tier model (Independent = Free/Plus vs Managed) with per-tier tabs + metric restructure, chip hover tooltips + booking-gate mislabel fix, minimal admin header + logout (drops the public site chrome), dossier preview route (iframe + back bar) + copy-public-link, per-tier + Fans search | Complete |
 | 1.2.37 | Server-side admin artist search + pagination (api/admin/artists route, ADMIN_ARTIST_SELECT/SORT/PAGE_SIZE in db.ts) + real-booking counts (kind='booking') + Upcoming column (future accepted, ISO-date guarded) | Complete |
+| 1.2.38 | Booking structured-date field (L-064): native type=date picker on the dossier booking form (min=today, dark scheme), /api/bookings normalizes event_date to YYYY-MM-DD else null, and the ISO GLOB guard dropped from the Upcoming subquery (plain event_date >= date('now')) now that stored values are guaranteed ISO or null | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -399,4 +400,7 @@ Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr
 | 2026-07-08 | ~13 CI prod deploys + apex health verification across the arc | Deployment Engineer | 1.5 |
 | 2026-07-08 | Live QA across features (tiers, search, preview, cleanup, tooltips) | QA Engineer | 1.0 |
 | 2026-07-08 | Checkpoint round 4 (admin control-deck overhaul: WBS/CHANGELOG/registry/ledger/mirror/journal/report) | Technical Writer / PM | 1.0 |
-| **Total** | | | **280.0** |
+| 2026-07-08 | Structured-date safety analysis: prod-D1 audit of existing event_date values (zero rows, no backfill), decide whether the ISO GLOB guard can be dropped (L-064) (1.2.38) | Solutions Architect | 0.5 |
+| 2026-07-08 | Booking structured-date field: native type=date picker + /api/bookings ISO normalization + drop the Upcoming GLOB guard (1.2.38) | Lead Developer | 1.0 |
+| 2026-07-08 | End-to-end verification (form->API->D1->Upcoming count matrix: ISO future counted, garbage->null, past excluded) + local test-row cleanup (1.2.38) | QA Engineer | 0.5 |
+| **Total** | | | **282.0** |

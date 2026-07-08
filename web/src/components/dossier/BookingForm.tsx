@@ -112,14 +112,18 @@ export function BookingForm({
           />
         </div>
         {kind === "booking" && (
-          <input
-            id="booking-date"
-            name="eventDate"
-            value={eventDate}
-            onChange={(e) => setEventDate(e.target.value)}
-            placeholder="Event date / window (optional)"
-            className="h-11 rounded-md border border-border bg-panel px-3 text-sm outline-none focus:border-red"
-          />
+          <label htmlFor="booking-date" className="flex flex-col gap-1 text-xs text-muted">
+            Event date (optional)
+            <input
+              id="booking-date"
+              name="eventDate"
+              type="date"
+              value={eventDate}
+              min={new Date().toISOString().slice(0, 10)}
+              onChange={(e) => setEventDate(e.target.value)}
+              className="h-11 rounded-md border border-border bg-panel px-3 text-sm text-foreground outline-none [color-scheme:dark] focus:border-red"
+            />
+          </label>
         )}
         <textarea
           id="booking-message"

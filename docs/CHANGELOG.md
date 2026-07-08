@@ -1,5 +1,20 @@
 # Changelog — Cerberus Live Studio
 
+## [0.15.1] — 2026-07-08
+
+Booking dates are now structured, so the admin Upcoming column counts real future bookings instead of guarding against free-text garbage.
+
+### Changed
+- The dossier **booking form** now uses a native `type=date` picker (labelled "Event date (optional)",
+  `min` set to today so past dates cannot be chosen, dark color-scheme) in place of the old free-text
+  "Event date / window" field. Flexible or uncertain timing goes in the details field.
+- `/api/bookings` **normalizes** the submitted date: it stores `event_date` only when it matches
+  `YYYY-MM-DD`, otherwise `null`, so no client can land a free-text value.
+- The admin **Upcoming** count dropped its defensive `event_date GLOB '[0-9]...'` guard in
+  `ADMIN_ARTIST_SELECT`; it is now a plain `event_date >= date('now')` (one constant, so both the SSR
+  admin table and the `/api/admin/artists` search route are covered) now that stored values are
+  guaranteed ISO or null. Prod had zero booking rows, so no backfill was needed. (L-064, WBS 1.2.38)
+
 ## [0.15.0] — 2026-07-08
 
 Admin control-deck overhaul: a clearer tier model, real search that scales, and a control deck

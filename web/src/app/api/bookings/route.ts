@@ -51,6 +51,11 @@ export async function POST(req: Request) {
   if (!slug || !name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return json(400, { error: "Name and a valid email are required" });
   }
+  // Normalize the event date: the dossier form sends a native date picker value
+  // (YYYY-MM-DD). Store only a well-formed ISO date, otherwise null, so the admin
+  // Upcoming column can compare dates directly without a defensive format guard.
+  const rawDate = (body.eventDate ?? "").trim();
+  const eventDate = /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : null;
 
   const db = getDb();
   const artist = await db
@@ -86,7 +91,7 @@ export async function POST(req: Request) {
     .prepare(
       "INSERT INTO bookings (artist_slug, requester_name, requester_email, event_date, message, kind, status, routed_to, created_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)"
     )
-    .bind(slug, name, email, body.eventDate ?? null, body.message ?? null, kind, recipient, now)
+    .bind(slug, name, email, eventDate, body.message ?? null, kind, recipient, now)
     .run();
 
   // Send the notification (best-effort; the request is already recorded).
@@ -104,7 +109,7 @@ export async function POST(req: Request) {
         <p style="color:#8f8f8f;margin:0 0 16px">For <b style="color:#f2f2f2">${artist.display_name}</b> on Cerberus Live Studio</p>
         <table style="font-size:14px;line-height:1.7">
           <tr><td style="color:#8f8f8f;padding-right:12px">From</td><td>${name} &lt;${email}&gt;</td></tr>
-          ${body.eventDate ? `<tr><td style="color:#8f8f8f;padding-right:12px">Date</td><td>${body.eventDate}</td></tr>` : ""}
+          ${eventDate ? `<tr><td style="color:#8f8f8f;padding-right:12px">Date</td><td>${eventDate}</td></tr>` : ""}
           ${body.message ? `<tr><td style="color:#8f8f8f;padding-right:12px;vertical-align:top">Message</td><td>${String(body.message).replace(/</g, "&lt;")}</td></tr>` : ""}
         </table>
         <p style="color:#555;font-size:12px;margin-top:16px">Reply directly to this email to reach ${name}.</p>
