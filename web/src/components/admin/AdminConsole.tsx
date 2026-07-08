@@ -81,7 +81,7 @@ export type SupportMessage = {
   created_at: string;
 };
 
-const TABS = ["Overview", "Managed", "Free", "Fans", "Venues", "Inbox"] as const;
+const TABS = ["Overview", "Managed", "Freelance", "Fans", "Venues", "Inbox"] as const;
 type Tab = (typeof TABS)[number];
 
 // ---- Sort helper ----------------------------------------------------------
@@ -258,10 +258,10 @@ export function AdminConsole({
         />
       )}
 
-      {tab === "Free" && (
+      {tab === "Freelance" && (
         <ArtistTable
           rows={roster}
-          empty="No free-tier artists."
+          empty="No freelance artists."
           sortKey={aKey}
           dir={aDir}
           onSort={aSort}
@@ -433,7 +433,7 @@ function Overview({
       <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">People</h2>
       <section className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <MetricCard label="Managed" value={metrics.managed} onClick={() => go("Managed")} />
-        <MetricCard label="Free Artists" value={metrics.freeArtists} onClick={() => go("Free")} />
+        <MetricCard label="Freelance" value={metrics.freeArtists} onClick={() => go("Freelance")} />
         <MetricCard label="Fans" value={metrics.fans} onClick={() => go("Fans")} />
         <MetricCard label="Venues" value={metrics.venues} onClick={() => go("Venues")} />
       </section>
@@ -489,7 +489,7 @@ function Overview({
           </h2>
           <div className="flex flex-col gap-1.5">
             {flagged.map((a) => (
-              <button key={a.slug} type="button" onClick={() => go(a.tier === "managed" ? "Managed" : "Free")} className="flex items-center gap-3 rounded-md border border-red/40 bg-red/5 px-3 py-2 text-left text-xs transition hover:border-red">
+              <button key={a.slug} type="button" onClick={() => go(a.tier === "managed" ? "Managed" : "Freelance")} className="flex items-center gap-3 rounded-md border border-red/40 bg-red/5 px-3 py-2 text-left text-xs transition hover:border-red">
                 <span className="font-medium">{a.display_name}</span>
                 <span className="text-red">⚠ {a.neg} negative{a.neg === 1 ? "" : "s"}</span>
                 <span className="ml-auto text-muted">{(a.gate_status ?? "").toLowerCase() === "open" ? "gate open — review" : "gate closed"}</span>
