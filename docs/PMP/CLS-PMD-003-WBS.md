@@ -69,6 +69,8 @@ Project Manager: Francisco De La Paz
 | 1.2.33 | Installable PWA: app/manifest.ts (standalone), maskable icon, service worker (network-first nav + offline fallback, no media/API cache), SW registration (L-048 Phase 4) | Complete |
 | 1.2.34 | Repeatable admin onboarding (Better Auth admin plugin): admin() + adminClient(), migration 0023 (banned/banReason/banExpires + session.impersonatedBy), control-deck AdminManager UI to create a standalone admin or promote a fan/artist (role + password + username), replacing the one-off owner seed | Complete |
 | 1.2.35 | Admin credential lifecycle: self-service Change password card (Security page) + account-recovery Change-user-email-in-place on /admin/artist/[slug] (admin.updateUser; keeps user.id so the artist_profile, tracks, and connected Agent survive untouched) | Complete |
+| 1.2.36 | Admin control-deck overhaul: three-tier model (Independent = Free/Plus vs Managed) with per-tier tabs + metric restructure, chip hover tooltips + booking-gate mislabel fix, minimal admin header + logout (drops the public site chrome), dossier preview route (iframe + back bar) + copy-public-link, per-tier + Fans search | Complete |
+| 1.2.37 | Server-side admin artist search + pagination (api/admin/artists route, ADMIN_ARTIST_SELECT/SORT/PAGE_SIZE in db.ts) + real-booking counts (kind='booking') + Upcoming column (future accepted, ISO-date guarded) | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -385,4 +387,16 @@ Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr
 | 2026-07-07 | Three CI prod deploys + prod migration 0023 (--remote) + deploy-order safety (migration-before-code to avoid getSession lockout) | Deployment Engineer | 1.0 |
 | 2026-07-07 | Checkpoint round 3 (admin identity + credential lifecycle: WBS/CHANGELOG/registry/ledger/mirror/journal/report) | Technical Writer / PM | 1.0 |
 | 2026-07-07 | Admin offboard: Retire (remove) control (admin.removeUser + self/last-admin guards, commit 0da9102) + mad.tinker retirement + prod-clean verification (users=2, admins=1, 0 orphan account/session/twoFactor rows) (1.2.35) | Lead Developer / QA Engineer | 1.0 |
-| **Total** | | | **262.5** |
+| 2026-07-08 | Chip hover tooltips (both admin surfaces) + booking-gate mislabel fix (unset gate read as Closed) (1.2.36) | Lead Developer | 1.0 |
+| 2026-07-08 | Booking-gate / ACTIVE / SELF / booking-count semantics analysis + operator explanations | Solutions Architect | 0.5 |
+| 2026-07-08 | Tier taxonomy design (Independent umbrella; Free/Plus/Managed; industry-term reasoning) (1.2.36) | Solutions Architect | 1.0 |
+| 2026-07-08 | Three-tier admin build (Roster->Free->Freelance->tiers, per-tier tabs, metric restructure, tier toggle) (1.2.36) | Lead Developer | 2.5 |
+| 2026-07-08 | Per-tier client search + server-side artist search + pagination (api/admin/artists, ADMIN_ARTIST_SELECT, debounced console wiring) (1.2.37) | Lead Developer | 3.5 |
+| 2026-07-08 | Booking columns: real-booking kind filter + Upcoming column (event_date ISO GLOB guard) (1.2.37) | Lead Developer | 1.0 |
+| 2026-07-08 | Admin dossier preview route (iframe + back bar) + copy-public-link iterations (1.2.36) | Lead Developer | 1.5 |
+| 2026-07-08 | Console cleanup: minimal admin header + logout (5-page swap), Fans search, quick-view copy, search placeholder (1.2.36) | Lead Developer | 1.5 |
+| 2026-07-08 | Parallel-task orchestration + git reconciliation (untangle uncommitted state, verify scope, merge two spawned tasks) | Solutions Architect | 1.5 |
+| 2026-07-08 | ~13 CI prod deploys + apex health verification across the arc | Deployment Engineer | 1.5 |
+| 2026-07-08 | Live QA across features (tiers, search, preview, cleanup, tooltips) | QA Engineer | 1.0 |
+| 2026-07-08 | Checkpoint round 4 (admin control-deck overhaul: WBS/CHANGELOG/registry/ledger/mirror/journal/report) | Technical Writer / PM | 1.0 |
+| **Total** | | | **280.0** |

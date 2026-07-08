@@ -1,5 +1,40 @@
 # Changelog — Cerberus Live Studio
 
+## [0.15.0] — 2026-07-08
+
+Admin control-deck overhaul: a clearer tier model, real search that scales, and a control deck
+that finally reads as an admin tool instead of the public site.
+
+### Added
+- **Three-tier artist model** in the admin: Independent (self-host, on the **Free** or paid **Plus**
+  plan) vs **Managed** (Cerberus-hosted). Per-tier tabs (Managed / Plus / Free) and an Artists metric
+  group so paying (Plus + Managed) is separable from Free. Plus artists were previously hidden inside
+  a lumped "Free Artists" count.
+- **Server-side artist search + pagination** (new `api/admin/artists` route; `ADMIN_ARTIST_SELECT` /
+  `ADMIN_ARTIST_SORT` / `ADMIN_ARTIST_PAGE_SIZE` in `db.ts`) so the console scales past a couple
+  thousand artists. Per-tier + Fans search boxes.
+- **Upcoming** admin column (future-dated accepted bookings), and **Bookings** now counts real
+  booking requests only (`kind = 'booking'`, excludes message contacts).
+- Admin-framed **dossier preview** (`/admin/artist/[slug]/preview`, iframe + Back-to-admin bar) and a
+  **Copy public link** button (detail page + quick-view), so admins can view/share a dossier without
+  leaving the deck or losing their place.
+- Hover **tooltips** on every artist-control chip (Verify / Booking gate / Feature / Suspend / Delete /
+  tier), each explaining the action and that the label shows the current state.
+
+### Changed
+- Control-deck header replaced with a **minimal admin header** (brand + Log out) on all admin pages;
+  the public site nav, "Search artists" box, and hamburger-to-account are gone. Logout is reachable
+  on every admin page.
+
+### Fixed
+- Booking-gate chip mislabelled an unset gate as red "Closed" while the dossier still accepted
+  bookings (checked `=== 'open'` instead of `!== 'closed'`).
+
+### Known
+- The booking "date" field is free text, so **Upcoming** only counts ISO-shaped dates (guarded by
+  `GLOB`), under-counting rather than counting garbage. A structured date field is tracked
+  (`task_26dd382b`).
+
 ## [0.14.0] — 2026-07-07
 
 Repeatable admin onboarding and the admin credential lifecycle. The site owner was a one-off
