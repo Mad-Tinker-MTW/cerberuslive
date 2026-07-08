@@ -39,7 +39,7 @@ export default async function ArtistDossierPreview({ params }: { params: Promise
           Public dossier preview <span className="text-foreground">/artist/{slug}</span>
         </span>
         <a
-          href={`/artist/${slug}`}
+          href={`https://cerberuslive.studio/artist/${slug}`}
           target="_blank"
           rel="noopener noreferrer"
           className="ml-auto text-sm text-red hover:underline"
