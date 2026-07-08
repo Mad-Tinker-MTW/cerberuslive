@@ -4,7 +4,7 @@ import Link from "next/link";
 import { authFromContext } from "@/lib/auth";
 import { isControlDeckRequest } from "@/lib/host";
 import { getDb, getTracks } from "@/lib/db";
-import { SiteHeader } from "@/components/dossier/SiteHeader";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 import { ArtistAdminControls, type ArtistAdminState } from "@/components/admin/ArtistAdminControls";
 import { ReviewModerator, type ModReview } from "@/components/admin/ReviewModerator";
 import { ContactUser } from "@/components/admin/ContactUser";
@@ -54,7 +54,7 @@ export default async function AdminArtistDetail({ params }: { params: Promise<{ 
   if (role !== "admin") {
     return (
       <>
-        <SiteHeader />
+        <AdminHeader />
         <main className="mx-auto w-full max-w-2xl px-6 py-16 text-center">
           <h1 className="text-2xl font-bold">Admin</h1>
           <p className="mt-2 text-muted">This area is for Cerberus admins.</p>
@@ -97,7 +97,7 @@ export default async function AdminArtistDetail({ params }: { params: Promise<{ 
 
   return (
     <>
-      <SiteHeader />
+      <AdminHeader />
       <main className="mx-auto w-full max-w-3xl px-6 py-12">
         <Link href="/admin" className="text-sm text-muted transition hover:text-foreground">&larr; Control deck</Link>
 

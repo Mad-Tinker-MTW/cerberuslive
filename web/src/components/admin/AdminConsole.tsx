@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
+import { CopyLink } from "./CopyLink";
 
 // ---- Data contract (filled by app/admin/page.tsx) -------------------------
 
@@ -585,7 +586,7 @@ function ServerArtistTable({ tier, empty }: { tier: string; empty: string }) {
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="Search by name or slug"
+        placeholder="Search artists"
         className="h-9 w-full max-w-sm rounded-md border border-border bg-panel-soft px-3 text-sm outline-none focus:border-red"
       />
 
@@ -735,6 +736,10 @@ function ArtistControls({ a, busy, setArtist, deleteArtist }: { a: AdminArtist; 
         <ControlBtn on={a.suspended === 1} danger busy={b} title="Suspend = take the public dossier offline (visitors get a 404) without deleting any data. Reversible. Click to toggle." label={a.suspended ? "Suspended" : "Suspend"} onClick={() => setArtist(a.slug, { suspended: a.suspended !== 1 })} />
         <button type="button" title="Permanently delete this dossier and ALL its tracks, reviews, follows, and bookings. Cannot be undone." disabled={b} onClick={() => deleteArtist(a.slug, a.display_name)} className="rounded-md border border-border px-3 py-1.5 text-xs text-muted transition hover:border-red hover:text-red disabled:opacity-50">Delete</button>
       </div>
+      <div className="flex flex-wrap items-center gap-2 border-t border-border pt-2 text-xs">
+        <a href={`/admin/artist/${a.slug}`} className="text-muted transition hover:text-foreground hover:underline">Open full admin &rarr;</a>
+        <CopyLink url={`https://cerberuslive.studio/artist/${a.slug}`} />
+      </div>
     </div>
   );
 }
@@ -762,10 +767,25 @@ function FanTable({
   busy: string | null;
   setUserRole: (id: string, role: string) => void;
 }) {
+  const [q, setQ] = useState("");
+  const query = q.trim().toLowerCase();
+  const filtered = query
+    ? rows.filter((u) => u.email.toLowerCase().includes(query) || (u.username ?? "").toLowerCase().includes(query))
+    : rows;
   if (rows.length === 0) return <p className="text-sm text-muted">No fans yet.</p>;
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse text-sm">
+    <div className="flex flex-col gap-3">
+      <input
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="Search fans"
+        className="h-9 w-full max-w-sm rounded-md border border-border bg-panel-soft px-3 text-sm outline-none focus:border-red"
+      />
+      {filtered.length === 0 ? (
+        <p className="text-sm text-muted">No matches for &ldquo;{q.trim()}&rdquo;.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-border">
             <Th label="Fan" k="email" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} />
@@ -778,7 +798,7 @@ function FanTable({
           </tr>
         </thead>
         <tbody>
-          {rows.map((u) => {
+          {filtered.map((u) => {
             const open = openRow === `fan-${u.id}`;
             return (
               <Fragment key={u.id}>
@@ -813,8 +833,10 @@ function FanTable({
               </Fragment>
             );
           })}
-        </tbody>
-      </table>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

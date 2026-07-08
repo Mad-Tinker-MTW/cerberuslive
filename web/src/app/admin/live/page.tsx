@@ -4,7 +4,7 @@ import Link from "next/link";
 import { authFromContext } from "@/lib/auth";
 import { isControlDeckRequest } from "@/lib/host";
 import { getDb } from "@/lib/db";
-import { SiteHeader } from "@/components/dossier/SiteHeader";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminLiveControls } from "@/components/admin/AdminLiveControls";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +28,7 @@ export default async function AdminLivePage() {
   if (role !== "admin") {
     return (
       <>
-        <SiteHeader />
+        <AdminHeader />
         <main className="mx-auto w-full max-w-2xl px-6 py-16 text-center">
           <h1 className="text-2xl font-bold">Admin</h1>
           <p className="mt-2 text-muted">This area is for Cerberus admins.</p>
@@ -52,7 +52,7 @@ export default async function AdminLivePage() {
 
   return (
     <>
-      <SiteHeader />
+      <AdminHeader />
       <main className="mx-auto w-full max-w-4xl px-6 py-12">
         <div className="mb-6 flex items-center justify-between gap-3">
           <h1 className="text-2xl font-bold tracking-tight">Live now</h1>
