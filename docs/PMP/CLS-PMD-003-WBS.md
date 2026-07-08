@@ -75,6 +75,7 @@ Project Manager: Francisco De La Paz
 | 1.2.39 | Per-track cover art + embedded-art reading (L-057): tracks.cover_url (mig 0024) so a single carries its own art (release cover still wins inside an album/EP); selfCoverUrl gateway helper; single render uses its own cover_url; register accepts per-track cover (relative->gateway URL / absolute passthrough). CerberusAgent desktop scan extract_cover pulls embedded APIC to a served .cerberus-covers/ sidecar via ffmpeg + image content-types in the static server | Complete |
 | 1.2.40 | Client editor UI (CerberusAgent, L-057b): 3-panel Organize-library (Library/Prep/Serve) scan-wired with a browser-dev mock + dev-preview affordance; Prep editable fields (title/voice/release/type/track#/composer) + derived AI-assisted; grouped-by-type Serve preview; Save-tags writes edits back into file tags via lofty (write_tags: voice->album_artist+artist, release->album, title/track/composer) then re-scans. Serve push + cover picker are later slices | Complete |
 | 1.2.41 | Client editor slices 3-5 (CerberusAgent, L-057b): Serve push (serve_catalog re-scans + registers, dirty-guard); cover-art picker (set_cover embeds a chosen image into the release's files via lofty, extract path serves it) + register sets releases.cover_url from the first track cover so EP/album cards show art; group-version fields (Version + Performer) via the standard album_artist=act / artist=member / subtitle=version convention, round-tripped by the scan | Complete |
+| 1.2.42 | Client editor Album Covers library picker (CerberusAgent, L-057b): list_covers scans the Album Covers/ subfolder + top-level images; Prep cover slot opens a thumbnail grid (Tauri asset protocol via convertFileSrc); title-match highlights + sorts the cover whose filename matches the release (apostrophe-insensitive); click embeds via set_cover, Browse fallback kept | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -421,4 +422,7 @@ Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr
 | 2026-07-08 | Client editor slice 5 group-version fields: album_artist=act/artist=member/subtitle=version TPE convention (write + scan read-back) + Version/Performer Prep fields + mock (1.2.41) | Lead Developer | 2.5 |
 | 2026-07-08 | Slices 3-5 verification: 2 new cargo tests (set_cover_embeds_picture, write_tags version/performer roundtrip) + browser drives (serve guard, cover picker, version fields) (1.2.41) | QA Engineer | 1.0 |
 | 2026-07-08 | Checkpoint (client-editor arc: WBS/CHANGELOG x2/registry x2/ledger/mirror/journal/report) | Technical Writer / PM | 0.5 |
-| **Total** | | | **302.5** |
+| 2026-07-08 | Client editor Album Covers library picker (list_covers + asset protocol config + picker grid + title-match with apostrophe fix + set_cover apply + mock) (1.2.42) | Lead Developer | 2.5 |
+| 2026-07-08 | Library-picker verification: browser drives (picker opens, 4 covers, title-match highlight+sort, apply closes) + build/cargo checks (1.2.42) | QA Engineer | 0.5 |
+| 2026-07-08 | Checkpoint (library picker: WBS/CHANGELOG/registry/ledger/mirror/journal/report) | Technical Writer / PM | 0.5 |
+| **Total** | | | **306.0** |
