@@ -30,6 +30,7 @@ export type AdminArtist = {
   neg: number;
   bookings: number;
   open_bookings: number;
+  upcoming: number;
   last_active: string | null;
 };
 export type AdminFan = {
@@ -606,6 +607,7 @@ function ServerArtistTable({ tier, empty }: { tier: string; empty: string }) {
                   <Th label="Followers" k="followers" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
                   <Th label="Reviews" k="reviews" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
                   <Th label="Bookings" k="bookings" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
+                  <Th label="Upcoming" k="upcoming" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
                   <Th label="Active" k="last_active" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} />
                   <th className="px-2 py-2" />
                 </tr>
@@ -637,6 +639,7 @@ function ServerArtistTable({ tier, empty }: { tier: string; empty: string }) {
                           {a.bookings}
                           {a.open_bookings > 0 && <span className="text-red"> ({a.open_bookings})</span>}
                         </td>
+                        <td className="px-2 py-2.5 text-right tabular-nums">{a.upcoming}</td>
                         <td className="px-2 py-2.5 font-mono text-xs text-muted">{short(a.last_active)}</td>
                         <td className="px-2 py-2.5 text-right">
                           <button type="button" onClick={() => setOpenRow(open ? null : a.slug)} className="rounded-md border border-border px-2 py-1 text-xs text-muted transition hover:border-red hover:text-foreground">
@@ -646,7 +649,7 @@ function ServerArtistTable({ tier, empty }: { tier: string; empty: string }) {
                       </tr>
                       {open && (
                         <tr className="border-b border-border/60 bg-panel-soft/40">
-                          <td colSpan={8} className="px-2 py-3">
+                          <td colSpan={9} className="px-2 py-3">
                             <ArtistControls a={a} busy={busy} setArtist={setArtist} deleteArtist={deleteArtist} />
                           </td>
                         </tr>

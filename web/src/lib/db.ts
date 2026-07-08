@@ -21,8 +21,10 @@ export const ADMIN_ARTIST_SELECT = `a.slug, a.display_name, a.tier, a.verified, 
   (SELECT COUNT(*) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved') AS reviews,
   (SELECT AVG(r.rating) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved') AS avg_rating,
   (SELECT COUNT(*) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved' AND r.sentiment = 'negative') AS neg,
-  (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug) AS bookings,
-  (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug AND b.status = 'pending') AS open_bookings,
+  (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug AND b.kind = 'booking') AS bookings,
+  (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug AND b.kind = 'booking' AND b.status = 'pending') AS open_bookings,
+  (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug AND b.kind = 'booking' AND b.status = 'accepted'
+     AND b.event_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*' AND b.event_date >= date('now')) AS upcoming,
   (SELECT MAX(s.updatedAt) FROM session s WHERE s.userId = a.user_id) AS last_active`;
 
 /** Number of neg reviews at which an artist is "flagged" for the Overview. */
@@ -40,6 +42,7 @@ export const ADMIN_ARTIST_SORT: Record<string, string> = {
   followers: "followers",
   reviews: "reviews",
   bookings: "bookings",
+  upcoming: "upcoming",
   last_active: "last_active",
 };
 
