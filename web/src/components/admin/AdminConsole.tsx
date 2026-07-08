@@ -606,10 +606,11 @@ function ArtistTable({
   );
 }
 
-function ControlBtn({ on, label, onClick, busy, danger }: { on?: boolean; label: string; onClick: () => void; busy: boolean; danger?: boolean }) {
+function ControlBtn({ on, label, onClick, busy, danger, title }: { on?: boolean; label: string; onClick: () => void; busy: boolean; danger?: boolean; title?: string }) {
   return (
     <button
       type="button"
+      title={title}
       disabled={busy}
       onClick={onClick}
       className={`rounded-md px-3 py-1.5 text-xs font-medium transition disabled:opacity-50 ${
@@ -632,15 +633,15 @@ function ArtistControls({ a, busy, setArtist, deleteArtist }: { a: AdminArtist; 
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-[10px] uppercase tracking-widest text-muted">Tier</span>
         <span className="text-xs">{isManaged ? "Cerberus Managed" : "Free"}</span>
-        <ControlBtn on={false} busy={b} label={isManaged ? "Set Free" : "Promote to Managed"} onClick={() => setArtist(a.slug, { tier: isManaged ? "free" : "managed" })} />
+        <ControlBtn on={false} busy={b} title="Switch tier. Free = artist self-hosts media through their own tunnel (no R2). Cerberus Managed = Cerberus hosts the media (R2) and runs the managed service. Click to toggle." label={isManaged ? "Set Free" : "Promote to Managed"} onClick={() => setArtist(a.slug, { tier: isManaged ? "free" : "managed" })} />
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-[10px] uppercase tracking-widest text-muted">Status</span>
-        <ControlBtn on={a.verified === 1} busy={b} label={a.verified ? "Verified" : "Verify"} onClick={() => setArtist(a.slug, { verified: a.verified !== 1 })} />
-        <ControlBtn on={!gateOpen} danger busy={b} label={`Booking: ${gateOpen ? "Open" : "Closed"}`} onClick={() => setArtist(a.slug, { gate_status: gateOpen ? "Closed" : "Open" })} />
-        <ControlBtn on={a.featured === 1} danger busy={b} label={a.featured ? "Featured" : "Feature"} onClick={() => setArtist(a.slug, { featured: a.featured !== 1 })} />
-        <ControlBtn on={a.suspended === 1} danger busy={b} label={a.suspended ? "Suspended" : "Suspend"} onClick={() => setArtist(a.slug, { suspended: a.suspended !== 1 })} />
-        <button type="button" disabled={b} onClick={() => deleteArtist(a.slug, a.display_name)} className="rounded-md border border-border px-3 py-1.5 text-xs text-muted transition hover:border-red hover:text-red disabled:opacity-50">Delete</button>
+        <ControlBtn on={a.verified === 1} busy={b} title="Verified badge. On = the dossier shows a green Verified check (you vouch the artist and their media are legitimate). Click to toggle." label={a.verified ? "Verified" : "Verify"} onClick={() => setArtist(a.slug, { verified: a.verified !== 1 })} />
+        <ControlBtn on={!gateOpen} danger busy={b} title="Booking gate. Open = this artist is accepting booking requests; Closed = not accepting. The label shows the CURRENT state; click to flip it." label={`Booking: ${gateOpen ? "Open" : "Closed"}`} onClick={() => setArtist(a.slug, { gate_status: gateOpen ? "Closed" : "Open" })} />
+        <ControlBtn on={a.featured === 1} danger busy={b} title="Featured placement. On = the artist gets a star and is spotlighted on Discover. Click to toggle." label={a.featured ? "Featured" : "Feature"} onClick={() => setArtist(a.slug, { featured: a.featured !== 1 })} />
+        <ControlBtn on={a.suspended === 1} danger busy={b} title="Suspend = take the public dossier offline (visitors get a 404) without deleting any data. Reversible. Click to toggle." label={a.suspended ? "Suspended" : "Suspend"} onClick={() => setArtist(a.slug, { suspended: a.suspended !== 1 })} />
+        <button type="button" title="Permanently delete this dossier and ALL its tracks, reviews, follows, and bookings. Cannot be undone." disabled={b} onClick={() => deleteArtist(a.slug, a.display_name)} className="rounded-md border border-border px-3 py-1.5 text-xs text-muted transition hover:border-red hover:text-red disabled:opacity-50">Delete</button>
       </div>
     </div>
   );
