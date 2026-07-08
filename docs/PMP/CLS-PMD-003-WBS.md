@@ -79,6 +79,9 @@ Project Manager: Francisco De La Paz
 | 1.2.43 | Dossier player standardize + discography sidebar (L-057): AudioPlayer fake-waveform seek bar replaced with a standard progress bar (+ Hero placeholder waveform removed); the release detail side panel now follows what's playing (not just View Details) and highlights the now-playing track; close X only for an explicitly-opened detail | Complete |
 | 1.2.44 | Artist label + managed imprint (L-057): migration 0025 (artist_profiles.label + managed_imprint); artistLabel() helper (managed_imprint=1 -> "Cerberus Live Studio" else the artist's own label); Label row on the dossier; artist edits their own label in /account/edit; managed_imprint is admin-only (control-deck toggle, managed-tier-guarded, rejected for non-managed) -- an earned credential like verification, never self-editable | Complete |
 | 1.2.45 | Agent v0.8.0 downloadable release (L-058): tauri.conf version sync 0.4.0->0.8.0; release.yml auto-publishes the NSIS installer to R2 (cerberus-images/installers/...-latest) after the GitHub Release so /api/agent/installer always serves the newest build; tagged v0.8.0 (CI-built), first R2 upload done manually (repo CF secrets pending). Download route now serves the editor-era client | Complete |
+| 1.2.46 | Dossier-ID generator (L-065): migration 0026 (per-tier dossier_seq counter + unique dossier_id index); lib/dossierId mints CLS-<TIER><digit><letter>-<NNN> letters-forward (FR/PL/MG, ~260K/tier, rolls suffix->letter->digit, first CLS-FR0A-001); profile/create auto-assigns at dossier claim; admin custom-override guarded by the unique index | Complete |
+| 1.2.47 | Unique-handle enforcement (L-065): lib/handle (validate/normalize/case-insensitive, reserved-name block, tasteful non-numbered suggestions) + /api/handle/check (public live availability) + /api/handle/set (signed-in, unique-enforced, sets username/displayUsername/name); DB idx_user_username is the race backstop | Complete |
+| 1.2.48 | Signup rework (L-065): /welcome onboarding gate (pick unique handle -> Fan/Artist/Venue role choice), /api/onboarding/role (self-serve fan/venue, never downgrades an elevated role); magic-link callback -> /welcome; /account redirects to /welcome until a handle is set. Fans/venues get a handle + shown name (comments/reviews); artists route to claim a dossier (auto-mints the ID) | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -435,4 +438,11 @@ Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr
 | 2026-07-08 | Label/imprint verification + prod migration 0025 + deploy-verify (1.2.44) | QA / Deployment Engineer | 0.5 |
 | 2026-07-08 | Agent v0.8.0 release: version sync + release.yml R2 auto-upload step + tag/CI build + manual R2 publish + download-route verify (1.2.45) | Deployment Engineer | 1.5 |
 | 2026-07-08 | Checkpoint (dossier + release run: WBS/CHANGELOG x2/registry x2/ledger/mirror/journal/report) | Technical Writer / PM | 0.5 |
-| **Total** | | | **314.0** |
+| 2026-07-08 | Signup/identity architecture design: download-in-account vs page, role model (fan/artist/venue), dossier-ID letters-forward odometer + capacity math, one-unique-handle (no auto-numbering) (1.2.46-48) | Solutions Architect | 1.5 |
+| 2026-07-08 | Dossier-ID generator: mig 0026 + lib/dossierId odometer + atomic per-tier counter + profile/create wiring (1.2.46) | Lead Developer | 1.5 |
+| 2026-07-08 | Unique-handle enforcement: lib/handle + /api/handle/check + /api/handle/set (1.2.47) | Lead Developer | 1.5 |
+| 2026-07-08 | Signup rework: /welcome onboarding (handle picker + role choice) + /api/onboarding/role + login/account gating (1.2.48) | Lead Developer | 2.5 |
+| 2026-07-08 | Verification: odometer boundaries + atomic counter + handle uniqueness/case + role guard (local D1) + prod handle-check end-to-end (1.2.46-48) | QA Engineer | 1.0 |
+| 2026-07-08 | Deployment: prod migration 0026 (+ dupe-check) + CI deploy + prod verify (1.2.46-48) | Deployment Engineer | 0.5 |
+| 2026-07-08 | Checkpoint (signup rework: WBS/CHANGELOG/registry/ledger/mirror/journal/report) | Technical Writer / PM | 0.5 |
+| **Total** | | | **323.0** |

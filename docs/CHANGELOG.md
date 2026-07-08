@@ -1,5 +1,25 @@
 # Changelog — Cerberus Live Studio
 
+## [0.18.0] — 2026-07-08
+
+Signup rework: a unique handle for everyone, role-based onboarding, and auto-assigned dossier IDs.
+
+### Added
+- **Auto dossier IDs** (migration 0026): a per-tier `dossier_seq` counter mints
+  `CLS-<TIER><digit><letter>-<NNN>` (letters-forward, `FR`/`PL`/`MG`, ~260K per tier, first
+  `CLS-FR0A-001`) when an artist claims a dossier. A unique index on `dossier_id` guards it against
+  admin custom-overrides. (`lib/dossierId`)
+- **Unique handles** — one human handle per account, case-insensitive, **never auto-numbered**. A
+  taken handle offers tasteful non-numbered suggestions instead. `lib/handle` + a public
+  `/api/handle/check` (live availability) + `/api/handle/set` (unique-enforced).
+- **`/welcome` onboarding** — after magic-link sign-in you pick your handle, then a role: **Fan /
+  Artist / Venue**. Fans and venues finish there (handle only, no download); artists route to claim a
+  dossier. `/api/onboarding/role` is self-serve for fan/venue and never downgrades an elevated role.
+
+### Changed
+- Magic-link sign-in now lands on `/welcome`; `/account` redirects there until you've set a handle,
+  so nobody skips onboarding.
+
 ## [0.17.0] — 2026-07-08
 
 Dossier polish (standard player, a sidebar that follows what's playing) and the artist label / managed imprint.
