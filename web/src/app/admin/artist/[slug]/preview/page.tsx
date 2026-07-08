@@ -38,14 +38,6 @@ export default async function ArtistDossierPreview({ params }: { params: Promise
         <span className="min-w-0 truncate text-sm text-muted">
           Public dossier preview <span className="text-foreground">/artist/{slug}</span>
         </span>
-        <a
-          href={`https://cerberuslive.studio/artist/${slug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-auto text-sm text-red hover:underline"
-        >
-          Open live page &#8599;
-        </a>
       </div>
       <iframe
         src={`/artist/${slug}`}
