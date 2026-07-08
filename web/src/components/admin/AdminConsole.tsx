@@ -626,7 +626,10 @@ function ControlBtn({ on, label, onClick, busy, danger, title }: { on?: boolean;
 
 function ArtistControls({ a, busy, setArtist, deleteArtist }: { a: AdminArtist; busy: string | null; setArtist: (slug: string, patch: Record<string, unknown>) => void; deleteArtist: (slug: string, name: string) => void }) {
   const b = busy === a.slug;
-  const gateOpen = (a.gate_status ?? "").toLowerCase() === "open";
+  // An unset gate means bookings are open (matches the dossier + /api/bookings, which
+  // only block when gate_status is explicitly "closed"). Checking === "open" here made a
+  // never-touched artist render as "Closed" while their dossier still accepted bookings.
+  const gateOpen = (a.gate_status ?? "").toLowerCase() !== "closed";
   const isManaged = a.tier === "managed";
   return (
     <div className="flex flex-col gap-3">

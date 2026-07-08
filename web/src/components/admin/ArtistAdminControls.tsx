@@ -36,7 +36,9 @@ function Btn({ on, label, onClick, busy, danger, title }: { on?: boolean; label:
 export function ArtistAdminControls({ a }: { a: ArtistAdminState }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
-  const gateOpen = (a.gate_status ?? "").toLowerCase() === "open";
+  // An unset gate means bookings are open (matches the dossier + /api/bookings, which only
+  // block when gate_status is explicitly "closed"). === "open" mislabelled fresh artists "Closed".
+  const gateOpen = (a.gate_status ?? "").toLowerCase() !== "closed";
   const isManaged = a.tier === "managed";
 
   async function patch(body: Record<string, unknown>) {
