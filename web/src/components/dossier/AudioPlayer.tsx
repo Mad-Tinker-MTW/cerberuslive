@@ -12,10 +12,6 @@ function fmt(s: number): string {
   return `${m}:${sec.toString().padStart(2, "0")}`;
 }
 
-const BARS = Array.from({ length: 64 }, (_, i) =>
-  Math.min(100, 20 + Math.abs(Math.sin(i * 0.7) * 60) + ((i * 13) % 20))
-);
-
 export function AudioPlayer({
   src,
   title,
@@ -116,17 +112,14 @@ export function AudioPlayer({
       <div className="min-w-0 flex-1">
         <p className="truncate font-semibold text-foreground">{title}</p>
         {artist && <p className="truncate text-sm text-muted">{artist}</p>}
-        <div onClick={seek} className="mt-2 flex h-12 cursor-pointer items-center gap-0.5">
-          {BARS.map((h, i) => {
-            const on = (i / BARS.length) * 100 <= pct;
-            return (
-              <span
-                key={i}
-                className={`w-1 rounded-full ${on ? "bg-red" : "bg-foreground/20"}`}
-                style={{ height: `${h}%` }}
-              />
-            );
-          })}
+        <div onClick={seek} className="group mt-3 flex h-4 cursor-pointer items-center" aria-label="Seek">
+          <div className="relative h-1.5 w-full rounded-full bg-foreground/15">
+            <div className="absolute inset-y-0 left-0 rounded-full bg-red" style={{ width: `${pct}%` }} />
+            <div
+              className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red opacity-0 transition group-hover:opacity-100"
+              style={{ left: `${pct}%` }}
+            />
+          </div>
         </div>
         <div className="mt-1 flex justify-between text-xs text-muted">
           <span>{fmt(cur)}</span>

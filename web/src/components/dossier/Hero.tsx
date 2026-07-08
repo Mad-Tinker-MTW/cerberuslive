@@ -2,25 +2,6 @@ import type { ArtistDossier, FeaturedTrack } from "@/lib/db";
 import { genreList } from "@/lib/db";
 import { AudioPlayer } from "./AudioPlayer";
 
-/** A deterministic fake waveform, shown only when there's no real audio yet. */
-function Waveform() {
-  const bars = Array.from({ length: 64 }, (_, i) => {
-    const h = 20 + Math.abs(Math.sin(i * 0.7) * 60) + ((i * 13) % 20);
-    return Math.min(100, h);
-  });
-  return (
-    <div className="flex h-12 items-center gap-0.5">
-      {bars.map((h, i) => (
-        <span
-          key={i}
-          className={`w-1 rounded-full ${i < 18 ? "bg-red" : "bg-foreground/20"}`}
-          style={{ height: `${h}%` }}
-        />
-      ))}
-    </div>
-  );
-}
-
 export function FeaturedTrackCard({
   track,
   src,
@@ -56,9 +37,9 @@ export function FeaturedTrackCard({
               {track.artist && (
                 <p className="truncate text-sm text-muted">{track.artist}</p>
               )}
-              <div className="mt-2">
-                <Waveform />
-              </div>
+              {track.duration && (
+                <p className="mt-1 text-xs text-muted">{track.duration}</p>
+              )}
             </div>
           </div>
           <p className="mt-3 text-xs text-muted">

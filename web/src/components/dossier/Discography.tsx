@@ -204,12 +204,17 @@ function DetailPanel({
   onPlay,
   onPlayTrack,
   mediaCtx,
+  currentTrackId,
 }: {
   card: ReleaseCard;
-  onClose: () => void;
+  /** Provided only when the panel shows an explicitly-selected release; omitted when it is
+   *  auto-tracking what's playing or the featured default (so no dismiss affordance then). */
+  onClose?: () => void;
   onPlay: (card: ReleaseCard) => void;
   onPlayTrack: (card: ReleaseCard, index: number) => void;
   mediaCtx: MediaCtx;
+  /** Id of the track currently playing, so its tracklist row is highlighted. */
+  currentTrackId?: number | null;
 }) {
   const r = card.release;
   return (
@@ -219,14 +224,16 @@ function DetailPanel({
           release={r}
           className="h-40 w-40 shrink-0 rounded-lg border border-border"
         />
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close details"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border text-muted transition hover:border-red hover:text-foreground"
-        >
-          ✕
-        </button>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close details"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border text-muted transition hover:border-red hover:text-foreground"
+          >
+            ✕
+          </button>
+        )}
       </div>
 
       <div>
@@ -276,19 +283,20 @@ function DetailPanel({
           <ol className="flex flex-col">
             {r.tracks.map((t, i) => {
               const playable = trackUrl(mediaCtx, t) != null;
+              const isNow = currentTrackId != null && currentTrackId === t.id;
               return (
                 <li
                   key={t.id}
                   className="flex items-center gap-3 border-b border-border/60 py-2.5 last:border-b-0"
                 >
-                  <span className="w-5 shrink-0 text-right text-xs text-muted">
-                    {t.track_no ?? i + 1}
+                  <span className={`w-5 shrink-0 text-right text-xs ${isNow ? "text-red" : "text-muted"}`}>
+                    {isNow ? <PlayIcon /> : t.track_no ?? i + 1}
                   </span>
                   <button
                     type="button"
                     disabled={!playable}
                     onClick={() => onPlayTrack(card, i)}
-                    className="min-w-0 flex-1 truncate text-left text-sm text-foreground/90 transition enabled:hover:text-red disabled:cursor-default"
+                    className={`min-w-0 flex-1 truncate text-left text-sm transition enabled:hover:text-red disabled:cursor-default ${isNow ? "text-red" : "text-foreground/90"}`}
                     title={playable ? "Play track" : "Audio offline"}
                   >
                     {t.title}
@@ -400,9 +408,13 @@ function DiscographyBody({
     );
   }, [cards, filter, query, sort]);
 
-  const detailCard = detailKey
-    ? cards.find((c) => c.key === detailKey) ?? null
+  // The release the side panel shows: an explicitly-opened detail (View Details) wins, otherwise
+  // whatever is currently playing. Nothing selected and nothing playing => no panel.
+  const playingCard = player.current
+    ? cards.find((c) => c.release.tracks.some((t) => t.id === player.current!.id)) ?? null
     : null;
+  const detailCard =
+    (detailKey ? cards.find((c) => c.key === detailKey) ?? null : null) ?? playingCard;
 
   /** Play Album: load the release's playable tracks as the queue and start at track 1 (or a
    *  given index). Loads into the ONE audio source, stopping anything already playing. When
@@ -506,10 +518,11 @@ function DiscographyBody({
           <div className="lg:sticky lg:top-20 lg:self-start">
             <DetailPanel
               card={detailCard}
-              onClose={() => setDetailKey(null)}
+              onClose={detailKey ? () => setDetailKey(null) : undefined}
               onPlay={play}
               onPlayTrack={playTrack}
               mediaCtx={mediaCtx}
+              currentTrackId={player.current?.id ?? null}
             />
           </div>
         )}
