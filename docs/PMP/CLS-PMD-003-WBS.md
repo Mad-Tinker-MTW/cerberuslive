@@ -67,6 +67,8 @@ Project Manager: Francisco De La Paz
 | 1.2.31 | Personas/releases data model + type-aware dossier (migration 0013): Artist -> personas (solo/group) -> releases (album/EP/single) -> tracks + direct lane, persona/release dedication, getDiscography assembler, conditional Discography tab render (L-048 Phase 1) | Complete |
 | 1.2.32 | Discography full CRUD editor (/account/discography + /api/discography, ownership-checked, deletes orphan child tracks to the direct lane) + roles chips (L-048 Phase 1) | Complete |
 | 1.2.33 | Installable PWA: app/manifest.ts (standalone), maskable icon, service worker (network-first nav + offline fallback, no media/API cache), SW registration (L-048 Phase 4) | Complete |
+| 1.2.34 | Repeatable admin onboarding (Better Auth admin plugin): admin() + adminClient(), migration 0023 (banned/banReason/banExpires + session.impersonatedBy), control-deck AdminManager UI to create a standalone admin or promote a fan/artist (role + password + username), replacing the one-off owner seed | Complete |
+| 1.2.35 | Admin credential lifecycle: self-service Change password card (Security page) + account-recovery Change-user-email-in-place on /admin/artist/[slug] (admin.updateUser; keeps user.id so the artist_profile, tracks, and connected Agent survive untouched) | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -374,4 +376,12 @@ Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr
 | 2026-07-07 | Artist tooling & services consolidation: audited VISION/BUSINESS-MODEL/SPEC (all absent), added flow-plan section + ledger L-060 guardian/provenance, L-061 genre classification, L-062 DistroKid | Solutions Architect | 1.0 |
 | 2026-07-07 | Platform stack decision (L-059): rebuild-off-OpenNext vs patch-forward; DECIDED patch-forward with SvelteKit-on-CF escape hatch | Solutions Architect | 0.5 |
 | 2026-07-07 | Checkpoint round 2 (headless run: WBS/CHANGELOG/registry/ledger/mirror/journal/report) | Technical Writer / PM | 1.0 |
-| **Total** | | | **250.5** |
+| 2026-07-07 | Admin account-model diagnosis + prod D1 investigation (identity tangle mad.tinker/mad-tinker/f-de-la-paz, seeding-gap discovery, agent-auth model read) | Solutions Architect | 2.0 |
+| 2026-07-07 | Repeatable-admin-onboarding design (admin plugin vs re-seed vs re-identify; verified against installed Better Auth admin schema + endpoint API) (1.2.34) | Solutions Architect | 1.0 |
+| 2026-07-07 | Admin plugin build: admin() + adminClient(), AdminManager UI (create/promote), migration 0023 (1.2.34) | Lead Developer | 2.5 |
+| 2026-07-07 | Self-service Change password card on the control-deck Security page (1.2.35) | Lead Developer | 1.0 |
+| 2026-07-07 | Account-recovery change-user-email-in-place on /admin/artist/[slug] + agent-independence verification (agent_key on profile, not email) (1.2.35) | Lead Developer | 1.0 |
+| 2026-07-07 | Admin identity first-run + live verification (promote francisco.delapaz, TOTP enroll, Cloudflare Access allow-list guidance, re-login chain, prod health x3) | QA Engineer | 1.5 |
+| 2026-07-07 | Three CI prod deploys + prod migration 0023 (--remote) + deploy-order safety (migration-before-code to avoid getSession lockout) | Deployment Engineer | 1.0 |
+| 2026-07-07 | Checkpoint round 3 (admin identity + credential lifecycle: WBS/CHANGELOG/registry/ledger/mirror/journal/report) | Technical Writer / PM | 1.0 |
+| **Total** | | | **261.5** |

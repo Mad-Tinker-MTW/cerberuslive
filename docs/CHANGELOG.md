@@ -1,5 +1,29 @@
 # Changelog — Cerberus Live Studio
 
+## [0.14.0] — 2026-07-07
+
+Repeatable admin onboarding and the admin credential lifecycle. The site owner was a one-off
+manual seed with no way to mint or promote another admin; that gap is now a product feature,
+and the owner identity was reworked onto a clean account.
+
+### Added
+- Better Auth **admin plugin** (commit 33d80cd, migration 0023 adds banned/banReason/banExpires
+  on user + impersonatedBy on session). New control-deck **Admins** panel on /admin/security:
+  **Create new** mints a standalone admin (email + username + password), **Promote existing**
+  turns a fan/artist into an admin (role + password + username in one action). Lists active admins.
+- Self-service **Change password** card on /admin/security (commit 1ebb670): current -> new,
+  revokes other sessions. Replaces the promote-existing workaround for rotating your own password.
+- Account-recovery **Change email** control on /admin/artist/[slug] (commit c8d4fee): changes an
+  artist's login email in place via admin.updateUser. In-place keeps user.id, so the artist's
+  profile, tracks, and connected Agent (authenticated by the agent_key on the profile, not the
+  email) survive untouched. For when an artist loses inbox access and can't receive the magic link.
+
+### Changed
+- Admin identity reworked: the control-deck owner is now Francisco De La Paz
+  (francisco.delapaz.jr@outlook.com, @francisco.delapaz), promoted via the new plugin path, TOTP
+  enrolled, added to the Cloudflare Access allow-list, and verified end to end on a fresh re-login
+  (Access -> password -> TOTP). The legacy mad.tinker admin remains until formally retired.
+
 ## [0.13.0] — 2026-07-07
 
 The public discography went from a flat waveform list to the pinned art-driven mockup, with a
