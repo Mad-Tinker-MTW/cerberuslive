@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { authFromContext } from "@/lib/auth";
 import { isControlDeckRequest } from "@/lib/host";
-import { getDb } from "@/lib/db";
+import { getDb, ADMIN_ARTIST_SELECT, FLAGGED_NEG_THRESHOLD } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { AdminConsole } from "@/components/admin/AdminConsole";
 import type {
@@ -46,24 +46,17 @@ export default async function AdminPage() {
       .all<PendingReview>()
   ).results ?? [];
 
-  // Artists with live per-entity metrics. Subqueries keep it one round-trip and
-  // mirror the existing negative-review pattern. last_active is the most recent
-  // session touch for the linked user (cheap, approximate).
-  const artists = (
+  // The per-tier artist tables now page + search server-side (api/admin/artists), so the
+  // dashboard no longer loads every artist. The Overview still needs the (small) flagged
+  // set — artists carrying >= FLAGGED_NEG_THRESHOLD approved negative reviews — so read
+  // only those here, with the shared metric SELECT.
+  const flagged = (
     await db
       .prepare(
-        `SELECT a.slug, a.display_name, a.tier, a.verified, a.gate_status, a.tunnel_url, a.suspended, a.featured,
-           (SELECT COUNT(*) FROM tracks t WHERE t.artist_slug = a.slug) AS tracks,
-           (SELECT COALESCE(SUM(t.play_count), 0) FROM tracks t WHERE t.artist_slug = a.slug) AS plays,
-           (SELECT COUNT(*) FROM follows f WHERE f.artist_slug = a.slug) AS followers,
-           (SELECT COUNT(*) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved') AS reviews,
-           (SELECT AVG(r.rating) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved') AS avg_rating,
-           (SELECT COUNT(*) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved' AND r.sentiment = 'negative') AS neg,
-           (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug) AS bookings,
-           (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug AND b.status = 'pending') AS open_bookings,
-           (SELECT MAX(s.updatedAt) FROM session s WHERE s.userId = a.user_id) AS last_active
+        `SELECT ${ADMIN_ARTIST_SELECT}
          FROM artist_profiles a
-         ORDER BY a.featured DESC, a.display_name`
+         WHERE (SELECT COUNT(*) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved' AND r.sentiment = 'negative') >= ${FLAGGED_NEG_THRESHOLD}
+         ORDER BY a.display_name`
       )
       .all<AdminArtist>()
   ).results ?? [];
@@ -122,7 +115,7 @@ export default async function AdminPage() {
     venues: await stat("SELECT COUNT(*) AS n FROM user WHERE role = 'venue'"),
     reviewsPending: reviews.length,
     openBookings: await stat("SELECT COUNT(*) AS n FROM bookings WHERE status = 'pending'"),
-    flaggedArtists: artists.filter((a) => a.neg >= 2).length,
+    flaggedArtists: flagged.length,
     problemReports: support.filter((m) => m.status === "open").length,
     bookingsTotal: await stat("SELECT COUNT(*) AS n FROM bookings WHERE kind = 'booking'"),
     bookedArtists: await stat("SELECT COUNT(DISTINCT artist_slug) AS n FROM bookings WHERE kind = 'booking'"),
@@ -146,7 +139,7 @@ export default async function AdminPage() {
         </div>
         <AdminConsole
           reviews={reviews}
-          artists={artists}
+          flagged={flagged}
           fans={fans}
           venues={venues}
           support={support}

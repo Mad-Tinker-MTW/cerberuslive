@@ -7,6 +7,45 @@ export function getDb(): D1Database {
   return (env as unknown as { DB: D1Database }).DB;
 }
 
+/**
+ * SELECT list for the admin control-deck's per-artist metric rows. Aliased `a` =
+ * artist_profiles; the subqueries mirror the dossier's live-metric pattern and keep it a
+ * single round-trip. Shared by the paged artist API (api/admin/artists) and the page's
+ * flagged-artist read so the two never drift. `last_active` is the most recent session
+ * touch for the linked user (cheap, approximate).
+ */
+export const ADMIN_ARTIST_SELECT = `a.slug, a.display_name, a.tier, a.verified, a.gate_status, a.tunnel_url, a.suspended, a.featured,
+  (SELECT COUNT(*) FROM tracks t WHERE t.artist_slug = a.slug) AS tracks,
+  (SELECT COALESCE(SUM(t.play_count), 0) FROM tracks t WHERE t.artist_slug = a.slug) AS plays,
+  (SELECT COUNT(*) FROM follows f WHERE f.artist_slug = a.slug) AS followers,
+  (SELECT COUNT(*) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved') AS reviews,
+  (SELECT AVG(r.rating) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved') AS avg_rating,
+  (SELECT COUNT(*) FROM reviews r WHERE r.artist_slug = a.slug AND r.status = 'approved' AND r.sentiment = 'negative') AS neg,
+  (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug) AS bookings,
+  (SELECT COUNT(*) FROM bookings b WHERE b.artist_slug = a.slug AND b.status = 'pending') AS open_bookings,
+  (SELECT MAX(s.updatedAt) FROM session s WHERE s.userId = a.user_id) AS last_active`;
+
+/** Number of neg reviews at which an artist is "flagged" for the Overview. */
+export const FLAGGED_NEG_THRESHOLD = 2;
+
+/**
+ * Whitelist mapping an admin-table sort key to a safe ORDER BY expression. Only these keys
+ * may drive the server-side sort; anything else falls back to display_name (no injection).
+ * The numeric keys reference the ADMIN_ARTIST_SELECT aliases.
+ */
+export const ADMIN_ARTIST_SORT: Record<string, string> = {
+  display_name: "a.display_name",
+  tracks: "tracks",
+  plays: "plays",
+  followers: "followers",
+  reviews: "reviews",
+  bookings: "bookings",
+  last_active: "last_active",
+};
+
+/** Page size for the admin artist tables (server-side pagination). */
+export const ADMIN_ARTIST_PAGE_SIZE = 50;
+
 export type Artist = {
   slug: string;
   display_name: string;

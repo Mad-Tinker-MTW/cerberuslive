@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 // ---- Data contract (filled by app/admin/page.tsx) -------------------------
 
@@ -108,14 +108,14 @@ function short(d: string | null): string {
 
 export function AdminConsole({
   reviews,
-  artists,
+  flagged: flaggedInit,
   fans,
   venues,
   support,
   metrics,
 }: {
   reviews: PendingReview[];
-  artists: AdminArtist[];
+  flagged: AdminArtist[];
   fans: AdminFan[];
   venues: AdminVenue[];
   support: SupportMessage[];
@@ -123,22 +123,15 @@ export function AdminConsole({
 }) {
   const [tab, setTab] = useState<Tab>("Overview");
   const [pending, setPending] = useState(reviews);
-  const [arts, setArts] = useState(artists);
   const [people, setPeople] = useState(fans);
   const [msgs, setMsgs] = useState(support);
   const [busy, setBusy] = useState<string | null>(null);
   const [openRow, setOpenRow] = useState<string | null>(null);
 
-  // Artist + fan table sort state
-  const [aKey, setAKey] = useState<keyof AdminArtist>("display_name");
-  const [aDir, setADir] = useState<Dir>("asc");
+  // Fan table sort state (fans still load in full; the artist tables page server-side).
   const [fKey, setFKey] = useState<keyof AdminFan>("createdAt");
   const [fDir, setFDir] = useState<Dir>("desc");
 
-  function aSort(k: keyof AdminArtist) {
-    if (k === aKey) setADir((d) => (d === "asc" ? "desc" : "asc"));
-    else { setAKey(k); setADir("asc"); }
-  }
   function fSort(k: keyof AdminFan) {
     if (k === fKey) setFDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setFKey(k); setFDir("asc"); }
@@ -153,41 +146,6 @@ export function AdminConsole({
     });
     if (res.ok) setPending((p) => p.filter((r) => r.id !== id));
     setBusy(null);
-  }
-
-  async function setArtist(slug: string, patch: Record<string, unknown>) {
-    setBusy(slug);
-    const res = await fetch("/api/admin/artist", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ slug, ...patch }),
-    });
-    if (res.ok) {
-      if (patch.delete) {
-        setArts((list) => list.filter((a) => a.slug !== slug));
-      } else {
-        setArts((list) =>
-          list.map((a) =>
-            a.slug === slug
-              ? {
-                  ...a,
-                  verified: "verified" in patch ? (patch.verified ? 1 : 0) : a.verified,
-                  gate_status: "gate_status" in patch ? (patch.gate_status as string) : a.gate_status,
-                  suspended: "suspended" in patch ? (patch.suspended ? 1 : 0) : a.suspended,
-                  featured: "featured" in patch ? (patch.featured ? 1 : 0) : a.featured,
-                  tier: "tier" in patch ? (patch.tier as string) : a.tier,
-                }
-              : a
-          )
-        );
-      }
-    }
-    setBusy(null);
-  }
-
-  async function deleteArtist(slug: string, name: string) {
-    if (!confirm(`Delete ${name}'s dossier and all its tracks, reviews, follows, and bookings? This cannot be undone.`)) return;
-    await setArtist(slug, { delete: true });
   }
 
   async function setUserRole(userId: string, role: string) {
@@ -207,13 +165,10 @@ export function AdminConsole({
     setBusy(null);
   }
 
-  // Three tiers: managed (Cerberus-hosted + represented), plus (paid self-host), free (self-host).
-  // Plus + Managed are the paying artists; Free is the free tier. Plus + Free are "Independent".
-  const managed = sortRows(arts.filter((a) => a.tier === "managed"), aKey, aDir);
-  const plus = sortRows(arts.filter((a) => a.tier === "plus"), aKey, aDir);
-  const free = sortRows(arts.filter((a) => a.tier === "free"), aKey, aDir);
+  // The per-tier artist tables page + search server-side (ServerArtistTable). The Overview
+  // still needs the small flagged set, which the server supplies directly.
   const fanRows = sortRows(people, fKey, fDir);
-  const flagged = arts.filter((a) => a.neg >= 2);
+  const flagged = flaggedInit;
   const openMsgs = msgs.filter((m) => m.status === "open");
 
   return (
@@ -247,49 +202,18 @@ export function AdminConsole({
         />
       )}
 
+      {/* Each tier table mounts its own fetch/search/pager. key ensures a fresh instance per
+          tier so state (query, page, sort) does not bleed across tabs. */}
       {tab === "Managed" && (
-        <ArtistTable
-          rows={managed}
-          empty="No managed artists yet."
-          sortKey={aKey}
-          dir={aDir}
-          onSort={aSort}
-          openRow={openRow}
-          setOpenRow={setOpenRow}
-          busy={busy}
-          setArtist={setArtist}
-          deleteArtist={deleteArtist}
-        />
+        <ServerArtistTable key="managed" tier="managed" empty="No managed artists yet." />
       )}
 
       {tab === "Plus" && (
-        <ArtistTable
-          rows={plus}
-          empty="No Plus artists (paid self-host tier)."
-          sortKey={aKey}
-          dir={aDir}
-          onSort={aSort}
-          openRow={openRow}
-          setOpenRow={setOpenRow}
-          busy={busy}
-          setArtist={setArtist}
-          deleteArtist={deleteArtist}
-        />
+        <ServerArtistTable key="plus" tier="plus" empty="No Plus artists (paid self-host tier)." />
       )}
 
       {tab === "Free" && (
-        <ArtistTable
-          rows={free}
-          empty="No Free-tier artists."
-          sortKey={aKey}
-          dir={aDir}
-          onSort={aSort}
-          openRow={openRow}
-          setOpenRow={setOpenRow}
-          busy={busy}
-          setArtist={setArtist}
-          deleteArtist={deleteArtist}
-        />
+        <ServerArtistTable key="free" tier="free" empty="No Free-tier artists." />
       )}
 
       {tab === "Fans" && (
@@ -545,107 +469,224 @@ function Th({ label, k, sortKey, dir, onSort, num }: { label: string; k: string;
   );
 }
 
-function ArtistTable({
-  rows,
-  empty,
-  sortKey,
-  dir,
-  onSort,
-  openRow,
-  setOpenRow,
-  busy,
-  setArtist,
-  deleteArtist,
-}: {
-  rows: AdminArtist[];
-  empty: string;
-  sortKey: keyof AdminArtist;
-  dir: Dir;
-  onSort: (k: keyof AdminArtist) => void;
-  openRow: string | null;
-  setOpenRow: (s: string | null) => void;
-  busy: string | null;
-  setArtist: (slug: string, patch: Record<string, unknown>) => void;
-  deleteArtist: (slug: string, name: string) => void;
-}) {
+type ArtistPage = { rows: AdminArtist[]; total: number; page: number; pageSize: number };
+
+/**
+ * One tier's artist table, paged + searched + sorted server-side (api/admin/artists). Holds
+ * its own query/sort/page/rows state; a fresh instance mounts per tier (keyed by tier in the
+ * parent) so nothing bleeds across tabs. Replaces the old load-all-then-filter ArtistTable,
+ * which did not scale past a couple thousand artists.
+ */
+function ServerArtistTable({ tier, empty }: { tier: string; empty: string }) {
+  const [rows, setRows] = useState<AdminArtist[]>([]);
+  const [total, setTotal] = useState(0);
+  const [pageSize, setPageSize] = useState(50);
+  const [page, setPage] = useState(0);
   const [q, setQ] = useState("");
-  const query = q.trim().toLowerCase();
-  const filtered = query
-    ? rows.filter((a) => a.display_name.toLowerCase().includes(query) || a.slug.toLowerCase().includes(query))
-    : rows;
-  if (rows.length === 0) return <p className="text-sm text-muted">{empty}</p>;
+  const [dq, setDq] = useState(""); // debounced query actually sent to the server
+  const [sortKey, setSortKey] = useState<keyof AdminArtist>("display_name");
+  const [dir, setDir] = useState<Dir>("asc");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [openRow, setOpenRow] = useState<string | null>(null);
+
+  // Debounce the search box; settling on a new query resets to the first page.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDq(q.trim());
+      setPage(0);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [q]);
+
+  // Fetch a page whenever tier, (debounced) query, sort, or page changes. A cancelled flag
+  // drops stale responses so fast typing/paging can't land an out-of-order result.
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(false);
+    const params = new URLSearchParams({ tier, q: dq, sort: sortKey as string, dir, page: String(page) });
+    fetch(`/api/admin/artists?${params.toString()}`)
+      .then((r) => (r.ok ? (r.json() as Promise<ArtistPage>) : Promise.reject(new Error(String(r.status)))))
+      .then((d) => {
+        if (cancelled) return;
+        setRows(d.rows ?? []);
+        setTotal(d.total ?? 0);
+        if (d.pageSize) setPageSize(d.pageSize);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setRows([]);
+        setTotal(0);
+        setError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tier, dq, sortKey, dir, page]);
+
+  function onSort(k: keyof AdminArtist) {
+    if (k === sortKey) setDir((d) => (d === "asc" ? "desc" : "asc"));
+    else {
+      setSortKey(k);
+      setDir("asc");
+    }
+    setPage(0);
+    setOpenRow(null);
+  }
+
+  async function setArtist(slug: string, patch: Record<string, unknown>) {
+    setBusy(slug);
+    const res = await fetch("/api/admin/artist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug, ...patch }),
+    });
+    if (res.ok) {
+      if (patch.delete || "tier" in patch) {
+        // Deleted, or moved to another tier -> the row leaves this tier's table.
+        setRows((list) => list.filter((a) => a.slug !== slug));
+        setTotal((t) => Math.max(0, t - 1));
+      } else {
+        setRows((list) =>
+          list.map((a) =>
+            a.slug === slug
+              ? {
+                  ...a,
+                  verified: "verified" in patch ? (patch.verified ? 1 : 0) : a.verified,
+                  gate_status: "gate_status" in patch ? (patch.gate_status as string) : a.gate_status,
+                  suspended: "suspended" in patch ? (patch.suspended ? 1 : 0) : a.suspended,
+                  featured: "featured" in patch ? (patch.featured ? 1 : 0) : a.featured,
+                }
+              : a
+          )
+        );
+      }
+    }
+    setBusy(null);
+  }
+
+  async function deleteArtist(slug: string, name: string) {
+    if (!confirm(`Delete ${name}'s dossier and all its tracks, reviews, follows, and bookings? This cannot be undone.`)) return;
+    await setArtist(slug, { delete: true });
+  }
+
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const from = total === 0 ? 0 : page * pageSize + 1;
+  const to = Math.min(total, page * pageSize + rows.length);
+
   return (
     <div className="flex flex-col gap-3">
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder={`Search ${rows.length} artist${rows.length === 1 ? "" : "s"} by name or slug`}
+        placeholder="Search by name or slug"
         className="h-9 w-full max-w-sm rounded-md border border-border bg-panel-soft px-3 text-sm outline-none focus:border-red"
       />
-      {filtered.length === 0 ? (
-        <p className="text-sm text-muted">No matches for &ldquo;{q.trim()}&rdquo;.</p>
+
+      {loading && rows.length === 0 ? (
+        <p className="text-sm text-muted">Loading…</p>
+      ) : error ? (
+        <p className="text-sm text-red">Could not load artists. Try again.</p>
+      ) : total === 0 ? (
+        <p className="text-sm text-muted">{dq ? <>No matches for &ldquo;{dq}&rdquo;.</> : empty}</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr className="border-b border-border">
-            <Th label="Artist" k="display_name" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} />
-            <Th label="Tracks" k="tracks" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
-            <Th label="Plays" k="plays" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
-            <Th label="Followers" k="followers" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
-            <Th label="Reviews" k="reviews" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
-            <Th label="Bookings" k="bookings" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
-            <Th label="Active" k="last_active" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} />
-            <th className="px-2 py-2" />
-          </tr>
-        </thead>
-        <tbody>
-          {filtered.map((a) => {
-            const open = openRow === a.slug;
-            return (
-              <Fragment key={a.slug}>
-                <tr className={`border-b border-border/60 ${a.suspended ? "opacity-60" : ""}`}>
-                  <td className="px-2 py-2.5">
-                    <div className="flex items-center gap-1.5">
-                      <span className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${a.tunnel_url ? "bg-green" : "bg-muted/40"}`} title={a.tunnel_url ? "agent connected" : "no agent"} />
-                      <a href={`/admin/artist/${a.slug}`} className="font-medium hover:underline">{a.display_name}</a>
-                      {a.verified === 1 && <span className="text-green" title="verified">✓</span>}
-                      {a.featured === 1 && <span className="text-red" title="featured">★</span>}
-                      {a.suspended === 1 && <span className="text-[10px] text-red">suspended</span>}
-                    </div>
-                  </td>
-                  <td className="px-2 py-2.5 text-right tabular-nums">{a.tracks}</td>
-                  <td className="px-2 py-2.5 text-right tabular-nums">{a.plays.toLocaleString()}</td>
-                  <td className="px-2 py-2.5 text-right tabular-nums">{a.followers}</td>
-                  <td className="px-2 py-2.5 text-right tabular-nums">
-                    {a.reviews}
-                    {a.avg_rating != null && <span className="text-muted"> · {a.avg_rating.toFixed(1)}★</span>}
-                    {a.neg >= 2 && <span className="text-red" title={`${a.neg} negative`}> ⚠</span>}
-                  </td>
-                  <td className="px-2 py-2.5 text-right tabular-nums">
-                    {a.bookings}
-                    {a.open_bookings > 0 && <span className="text-red"> ({a.open_bookings})</span>}
-                  </td>
-                  <td className="px-2 py-2.5 font-mono text-xs text-muted">{short(a.last_active)}</td>
-                  <td className="px-2 py-2.5 text-right">
-                    <button type="button" onClick={() => setOpenRow(open ? null : a.slug)} className="rounded-md border border-border px-2 py-1 text-xs text-muted transition hover:border-red hover:text-foreground">
-                      {open ? "Close" : "Manage"}
-                    </button>
-                  </td>
+        <>
+          <div className={`overflow-x-auto ${loading ? "opacity-60" : ""}`}>
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <Th label="Artist" k="display_name" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} />
+                  <Th label="Tracks" k="tracks" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
+                  <Th label="Plays" k="plays" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
+                  <Th label="Followers" k="followers" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
+                  <Th label="Reviews" k="reviews" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
+                  <Th label="Bookings" k="bookings" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} num />
+                  <Th label="Active" k="last_active" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} />
+                  <th className="px-2 py-2" />
                 </tr>
-                {open && (
-                  <tr className="border-b border-border/60 bg-panel-soft/40">
-                    <td colSpan={8} className="px-2 py-3">
-                      <ArtistControls a={a} busy={busy} setArtist={setArtist} deleteArtist={deleteArtist} />
-                    </td>
-                  </tr>
-                )}
-              </Fragment>
-            );
-          })}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {rows.map((a) => {
+                  const open = openRow === a.slug;
+                  return (
+                    <Fragment key={a.slug}>
+                      <tr className={`border-b border-border/60 ${a.suspended ? "opacity-60" : ""}`}>
+                        <td className="px-2 py-2.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${a.tunnel_url ? "bg-green" : "bg-muted/40"}`} title={a.tunnel_url ? "agent connected" : "no agent"} />
+                            <a href={`/admin/artist/${a.slug}`} className="font-medium hover:underline">{a.display_name}</a>
+                            {a.verified === 1 && <span className="text-green" title="verified">✓</span>}
+                            {a.featured === 1 && <span className="text-red" title="featured">★</span>}
+                            {a.suspended === 1 && <span className="text-[10px] text-red">suspended</span>}
+                          </div>
+                        </td>
+                        <td className="px-2 py-2.5 text-right tabular-nums">{a.tracks}</td>
+                        <td className="px-2 py-2.5 text-right tabular-nums">{a.plays.toLocaleString()}</td>
+                        <td className="px-2 py-2.5 text-right tabular-nums">{a.followers}</td>
+                        <td className="px-2 py-2.5 text-right tabular-nums">
+                          {a.reviews}
+                          {a.avg_rating != null && <span className="text-muted"> · {a.avg_rating.toFixed(1)}★</span>}
+                          {a.neg >= 2 && <span className="text-red" title={`${a.neg} negative`}> ⚠</span>}
+                        </td>
+                        <td className="px-2 py-2.5 text-right tabular-nums">
+                          {a.bookings}
+                          {a.open_bookings > 0 && <span className="text-red"> ({a.open_bookings})</span>}
+                        </td>
+                        <td className="px-2 py-2.5 font-mono text-xs text-muted">{short(a.last_active)}</td>
+                        <td className="px-2 py-2.5 text-right">
+                          <button type="button" onClick={() => setOpenRow(open ? null : a.slug)} className="rounded-md border border-border px-2 py-1 text-xs text-muted transition hover:border-red hover:text-foreground">
+                            {open ? "Close" : "Manage"}
+                          </button>
+                        </td>
+                      </tr>
+                      {open && (
+                        <tr className="border-b border-border/60 bg-panel-soft/40">
+                          <td colSpan={8} className="px-2 py-3">
+                            <ArtistControls a={a} busy={busy} setArtist={setArtist} deleteArtist={deleteArtist} />
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex items-center gap-3 text-xs text-muted">
+            <span>
+              {from}&ndash;{to} of {total}
+            </span>
+            {totalPages > 1 && (
+              <div className="ml-auto flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={page === 0 || loading}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  className="rounded-md border border-border px-2 py-1 transition hover:border-red hover:text-foreground disabled:opacity-40 disabled:hover:border-border"
+                >
+                  Prev
+                </button>
+                <span className="tabular-nums">
+                  Page {page + 1} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={page >= totalPages - 1 || loading}
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  className="rounded-md border border-border px-2 py-1 transition hover:border-red hover:text-foreground disabled:opacity-40 disabled:hover:border-border"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
