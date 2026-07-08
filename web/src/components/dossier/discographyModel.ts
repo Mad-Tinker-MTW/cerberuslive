@@ -92,6 +92,9 @@ export function flattenDiscography(d: Discography): ReleaseCard[] {
     r: ReleaseWithTracks,
     persona: PersonaWithReleases | null
   ) => {
+    // Skip empty releases: a release with no tracks (e.g. a stale/orphaned release left
+    // after a folder reorg) should not render as a 0-track card.
+    if (r.tracks.length === 0) return;
     cards.push({
       key: `r${r.id}`,
       release: r,

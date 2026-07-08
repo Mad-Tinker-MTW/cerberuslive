@@ -167,7 +167,7 @@ function ReleaseGridCard({
     <div className="flex flex-col rounded-xl border border-border bg-panel transition hover:border-red/50">
       <CoverArt
         release={r}
-        className="aspect-video w-full rounded-t-xl border-b border-border"
+        className="aspect-square w-full rounded-t-xl border-b border-border"
       />
       <div className="flex min-w-0 flex-1 flex-col p-4">
         <h4 className="truncate text-base font-semibold text-foreground">{r.title}</h4>
