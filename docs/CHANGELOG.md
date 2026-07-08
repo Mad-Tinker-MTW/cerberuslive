@@ -1,5 +1,31 @@
 # Changelog — Cerberus Live Studio
 
+## [0.13.0] — 2026-07-07
+
+The public discography went from a flat waveform list to the pinned art-driven mockup, with a
+proper single-source player and real cover art.
+
+### Added
+- Discography render rebuilt to the mockup (commit b05ee60, deployed): featured-release hero,
+  filter chips (All/Albums/EPs/Singles/Personas/Collaborations), search + sort, an art-driven
+  release-card grid, a release detail side panel with numbered tracklist, and a sticky
+  now-playing bar. Render-only; the SSR-safe flattening lives in discographyModel.ts.
+- Real EP cover art on the owner's dossier: the four covers were sitting in an "Album Covers"
+  folder the Agent never matched; wired cover_url to the tunnel-served gateway paths (free-tier,
+  no R2), verified 200. A durable auto-match (Agent scans Album Covers + per-release folders,
+  serves images with correct Content-Type; register stores cover_url; render onError->placeholder)
+  is built on branches agent-cover-match (359310c) + register-cover (612e19b), pending merge/deploy.
+
+### Changed
+- Single-source discography player (commit fd0e8f5, deployed): one <audio> element via a
+  PlayerProvider; the featured song, Play Album, and every track button route through it, so two
+  sources can no longer play at once. Waveforms retired in the discography; the now-playing bar is
+  the compact mockup player (thumb, title, prev/play/next, thin scrubber, volume, queue).
+
+### Fixed
+- Featured-song + Play-Album overlap (two audio elements playing simultaneously) resolved by the
+  single-source controller.
+
 ## [0.12.0] — 2026-07-07
 
 The no-paste artist on-ramp went from "planned wrong, can't ship" to working end to end.

@@ -363,4 +363,15 @@ Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr
 | 2026-07-07 | CerberusAgent installer release CI (release.yml, tauri-action) + v0.4.0 tag build + installer publish + download [Agent work, counted here] | Lead Developer | 1.0 |
 | 2026-07-07 | CerberusAgent v0.4.0 installer build/publish + no-paste device-auth verify [Agent work, counted here] | Deployment Engineer | 0.5 |
 | 2026-07-07 | Checkpoint docs (WBS, CHANGELOG, registry, ledger, mirror, journal, session report) | Technical Writer | 1.0 |
-| **Total** | | | **241.0** |
+| 2026-07-07 | Discography render rebuilt to the pinned mockup (worker orchestration + review + merge + deploy; commit b05ee60): featured hero, filter chips, card grid, release detail panel, SSR-safe model | Lead Developer | 1.5 |
+| 2026-07-07 | Single-source discography player refactor (worker + review + deploy; commit fd0e8f5): one audio element via PlayerProvider, all Play affordances routed to it (fixed featured+album overlap), waveforms retired, compact mockup now-playing bar | Lead Developer | 1.0 |
+| 2026-07-07 | Discography render + player worker specs (single-source design, mockup mapping) | Solutions Architect | 0.5 |
+| 2026-07-07 | Cover investigation (X:\Music Album Covers folder) + manual D1 cover_url wiring for 4 EPs + gateway serve verify (200) | Lead Developer | 0.5 |
+| 2026-07-07 | Durable cover auto-match worker (Agent cover scan + Content-Type + platform register cover_url + render onError fallback; branches agent-cover-match 359310c / register-cover 612e19b) orchestration + review | Lead Developer | 1.0 |
+| 2026-07-07 | Cloudflared console-window hide on Windows (CREATE_NO_WINDOW; Agent commit 95b974e, L-058a) | Lead Developer | 0.5 |
+| 2026-07-07 | Two CI prod deploys (discography render, single-source player) + live page verification | Deployment Engineer | 1.0 |
+| 2026-07-07 | Live verification (render/player/covers render, gateway cover 200, page 200) | QA Engineer | 1.0 |
+| 2026-07-07 | Artist tooling & services consolidation: audited VISION/BUSINESS-MODEL/SPEC (all absent), added flow-plan section + ledger L-060 guardian/provenance, L-061 genre classification, L-062 DistroKid | Solutions Architect | 1.0 |
+| 2026-07-07 | Platform stack decision (L-059): rebuild-off-OpenNext vs patch-forward; DECIDED patch-forward with SvelteKit-on-CF escape hatch | Solutions Architect | 0.5 |
+| 2026-07-07 | Checkpoint round 2 (headless run: WBS/CHANGELOG/registry/ledger/mirror/journal/report) | Technical Writer / PM | 1.0 |
+| **Total** | | | **250.5** |
