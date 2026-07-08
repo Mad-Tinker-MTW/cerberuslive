@@ -1,5 +1,12 @@
 # Changelog — Cerberus Live Studio
 
+## [0.16.1] — 2026-07-08
+
+### Changed
+- The agent `register` route now sets `releases.cover_url` from the first track that carries a cover
+  (non-clobbering), so album and EP **release cards** show the art on the dossier, not just singles.
+  Deployed; no migration. (L-057, supports the CerberusAgent cover picker)
+
 ## [0.16.0] — 2026-07-08
 
 Per-track cover art. Singles can now carry their own art, and the agent reads embedded art from files that already have it.
