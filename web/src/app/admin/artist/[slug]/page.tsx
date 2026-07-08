@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { ArtistAdminControls, type ArtistAdminState } from "@/components/admin/ArtistAdminControls";
 import { ReviewModerator, type ModReview } from "@/components/admin/ReviewModerator";
 import { ContactUser } from "@/components/admin/ContactUser";
+import { ChangeUserEmail } from "@/components/admin/ChangeUserEmail";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ type Row = ArtistAdminState & {
   contact_email: string | null;
   tunnel_url: string | null;
   media_origin: string | null;
+  login_email: string | null;
 };
 type BookingRow = {
   id: number;
@@ -63,7 +65,7 @@ export default async function AdminArtistDetail({ params }: { params: Promise<{ 
   const db = getDb();
   const a = await db
     .prepare(
-      "SELECT slug, display_name, tier, verified, gate_status, suspended, featured, user_id, contact_email, tunnel_url, media_origin FROM artist_profiles WHERE slug = ?"
+      "SELECT slug, display_name, tier, verified, gate_status, suspended, featured, user_id, contact_email, tunnel_url, media_origin, (SELECT email FROM user WHERE user.id = artist_profiles.user_id) AS login_email FROM artist_profiles WHERE slug = ?"
     )
     .bind(slug)
     .first<Row>();
@@ -123,6 +125,11 @@ export default async function AdminArtistDetail({ params }: { params: Promise<{ 
             {a.user_id && (
               <div className="mt-4 border-t border-border pt-4">
                 <ContactUser userId={a.user_id} label={a.display_name} />
+              </div>
+            )}
+            {a.user_id && (
+              <div className="mt-4 border-t border-border pt-4">
+                <ChangeUserEmail userId={a.user_id} currentEmail={a.login_email} />
               </div>
             )}
           </div>
