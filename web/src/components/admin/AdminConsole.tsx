@@ -568,10 +568,25 @@ function ArtistTable({
   setArtist: (slug: string, patch: Record<string, unknown>) => void;
   deleteArtist: (slug: string, name: string) => void;
 }) {
+  const [q, setQ] = useState("");
+  const query = q.trim().toLowerCase();
+  const filtered = query
+    ? rows.filter((a) => a.display_name.toLowerCase().includes(query) || a.slug.toLowerCase().includes(query))
+    : rows;
   if (rows.length === 0) return <p className="text-sm text-muted">{empty}</p>;
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse text-sm">
+    <div className="flex flex-col gap-3">
+      <input
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder={`Search ${rows.length} artist${rows.length === 1 ? "" : "s"} by name or slug`}
+        className="h-9 w-full max-w-sm rounded-md border border-border bg-panel-soft px-3 text-sm outline-none focus:border-red"
+      />
+      {filtered.length === 0 ? (
+        <p className="text-sm text-muted">No matches for &ldquo;{q.trim()}&rdquo;.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-border">
             <Th label="Artist" k="display_name" sortKey={sortKey} dir={dir} onSort={onSort as (k: never) => void} />
@@ -585,7 +600,7 @@ function ArtistTable({
           </tr>
         </thead>
         <tbody>
-          {rows.map((a) => {
+          {filtered.map((a) => {
             const open = openRow === a.slug;
             return (
               <Fragment key={a.slug}>
@@ -628,8 +643,10 @@ function ArtistTable({
               </Fragment>
             );
           })}
-        </tbody>
-      </table>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
