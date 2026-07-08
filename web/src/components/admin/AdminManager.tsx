@@ -43,7 +43,7 @@ function Field({
   );
 }
 
-export function AdminManager({ admins }: { admins: AdminRow[] }) {
+export function AdminManager({ admins, selfId }: { admins: AdminRow[]; selfId: string }) {
   const router = useRouter();
   const [mode, setMode] = useState<"create" | "promote">("create");
   const [email, setEmail] = useState("");
@@ -108,6 +108,18 @@ export function AdminManager({ admins }: { admins: AdminRow[] }) {
     }
   }
 
+  async function removeAdmin(a: AdminRow) {
+    if (a.id === selfId) { setError("You cannot remove the account you are signed in as."); return; }
+    if (admins.length <= 1) { setError("Cannot remove the last admin."); return; }
+    if (!window.confirm(`Retire admin ${a.email}? This deletes the account (login, password, TOTP).`)) return;
+    setBusy(true); setError(""); setOk("");
+    const { error } = await admin.removeUser({ userId: a.id });
+    setBusy(false);
+    if (error) { setError(error.message || "Could not remove admin."); return; }
+    setOk(`Retired admin ${a.email}.`);
+    router.refresh();
+  }
+
   return (
     <div className="rounded-xl border border-border bg-panel p-5">
       <div className="mb-1 flex items-center gap-3">
@@ -128,6 +140,18 @@ export function AdminManager({ admins }: { admins: AdminRow[] }) {
               <span className="font-medium text-foreground">{a.name || a.username || "(no name)"}</span>
               <span className="text-muted">{a.email}</span>
               {a.username && <span className="text-xs text-muted">· @{a.username}</span>}
+              {a.id === selfId ? (
+                <span className="ml-auto text-xs text-muted/60">you</span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => removeAdmin(a)}
+                  disabled={busy || admins.length <= 1}
+                  className="ml-auto rounded-md border border-border px-2 py-0.5 text-xs text-muted transition hover:border-red hover:text-red disabled:opacity-40"
+                >
+                  Retire
+                </button>
+              )}
             </li>
           ))}
         </ul>

@@ -58,7 +58,7 @@ export default async function AdminSecurityPage() {
         </div>
 
         <div className="mt-8">
-          <AdminManager admins={admins} />
+          <AdminManager admins={admins} selfId={session.user.id} />
         </div>
       </main>
     </>
