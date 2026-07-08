@@ -384,4 +384,5 @@ Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr
 | 2026-07-07 | Admin identity first-run + live verification (promote francisco.delapaz, TOTP enroll, Cloudflare Access allow-list guidance, re-login chain, prod health x3) | QA Engineer | 1.5 |
 | 2026-07-07 | Three CI prod deploys + prod migration 0023 (--remote) + deploy-order safety (migration-before-code to avoid getSession lockout) | Deployment Engineer | 1.0 |
 | 2026-07-07 | Checkpoint round 3 (admin identity + credential lifecycle: WBS/CHANGELOG/registry/ledger/mirror/journal/report) | Technical Writer / PM | 1.0 |
-| **Total** | | | **261.5** |
+| 2026-07-07 | Admin offboard: Retire (remove) control (admin.removeUser + self/last-admin guards, commit 0da9102) + mad.tinker retirement + prod-clean verification (users=2, admins=1, 0 orphan account/session/twoFactor rows) (1.2.35) | Lead Developer / QA Engineer | 1.0 |
+| **Total** | | | **262.5** |

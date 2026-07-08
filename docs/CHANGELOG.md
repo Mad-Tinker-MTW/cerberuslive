@@ -10,7 +10,9 @@ and the owner identity was reworked onto a clean account.
 - Better Auth **admin plugin** (commit 33d80cd, migration 0023 adds banned/banReason/banExpires
   on user + impersonatedBy on session). New control-deck **Admins** panel on /admin/security:
   **Create new** mints a standalone admin (email + username + password), **Promote existing**
-  turns a fan/artist into an admin (role + password + username in one action). Lists active admins.
+  turns a fan/artist into an admin (role + password + username in one action). Lists active admins,
+  each with a **Retire** action (admin.removeUser, cascades login/password/TOTP; guarded against
+  removing yourself or the last admin) to complete the admin onboarding/offboarding lifecycle.
 - Self-service **Change password** card on /admin/security (commit 1ebb670): current -> new,
   revokes other sessions. Replaces the promote-existing workaround for rotating your own password.
 - Account-recovery **Change email** control on /admin/artist/[slug] (commit c8d4fee): changes an
