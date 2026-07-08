@@ -58,7 +58,8 @@ export type AdminBooking = {
 };
 export type AdminMetrics = {
   managed: number;
-  freeArtists: number;
+  plus: number;
+  free: number;
   fans: number;
   venues: number;
   reviewsPending: number;
@@ -81,7 +82,7 @@ export type SupportMessage = {
   created_at: string;
 };
 
-const TABS = ["Overview", "Managed", "Freelance", "Fans", "Venues", "Inbox"] as const;
+const TABS = ["Overview", "Managed", "Plus", "Free", "Fans", "Venues", "Inbox"] as const;
 type Tab = (typeof TABS)[number];
 
 // ---- Sort helper ----------------------------------------------------------
@@ -206,8 +207,11 @@ export function AdminConsole({
     setBusy(null);
   }
 
+  // Three tiers: managed (Cerberus-hosted + represented), plus (paid self-host), free (self-host).
+  // Plus + Managed are the paying artists; Free is the free tier. Plus + Free are "Independent".
   const managed = sortRows(arts.filter((a) => a.tier === "managed"), aKey, aDir);
-  const roster = sortRows(arts.filter((a) => a.tier !== "managed"), aKey, aDir);
+  const plus = sortRows(arts.filter((a) => a.tier === "plus"), aKey, aDir);
+  const free = sortRows(arts.filter((a) => a.tier === "free"), aKey, aDir);
   const fanRows = sortRows(people, fKey, fDir);
   const flagged = arts.filter((a) => a.neg >= 2);
   const openMsgs = msgs.filter((m) => m.status === "open");
@@ -258,10 +262,25 @@ export function AdminConsole({
         />
       )}
 
-      {tab === "Freelance" && (
+      {tab === "Plus" && (
         <ArtistTable
-          rows={roster}
-          empty="No freelance artists."
+          rows={plus}
+          empty="No Plus artists (paid self-host tier)."
+          sortKey={aKey}
+          dir={aDir}
+          onSort={aSort}
+          openRow={openRow}
+          setOpenRow={setOpenRow}
+          busy={busy}
+          setArtist={setArtist}
+          deleteArtist={deleteArtist}
+        />
+      )}
+
+      {tab === "Free" && (
+        <ArtistTable
+          rows={free}
+          empty="No Free-tier artists."
           sortKey={aKey}
           dir={aDir}
           onSort={aSort}
@@ -430,10 +449,19 @@ function Overview({
 }) {
   return (
     <>
-      <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">People</h2>
-      <section className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <h2 className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted">Artists</h2>
+      <p className="mb-3 text-xs text-muted">
+        Independent artists self-host their media (Free, or paid Plus). Managed artists are hosted and
+        represented by Cerberus. Paying = Plus + Managed.
+      </p>
+      <section className="mb-8 grid grid-cols-3 gap-3">
         <MetricCard label="Managed" value={metrics.managed} onClick={() => go("Managed")} />
-        <MetricCard label="Freelance" value={metrics.freeArtists} onClick={() => go("Freelance")} />
+        <MetricCard label="Plus" value={metrics.plus} onClick={() => go("Plus")} />
+        <MetricCard label="Free" value={metrics.free} onClick={() => go("Free")} />
+      </section>
+
+      <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">People</h2>
+      <section className="mb-8 grid grid-cols-2 gap-3">
         <MetricCard label="Fans" value={metrics.fans} onClick={() => go("Fans")} />
         <MetricCard label="Venues" value={metrics.venues} onClick={() => go("Venues")} />
       </section>
@@ -489,7 +517,7 @@ function Overview({
           </h2>
           <div className="flex flex-col gap-1.5">
             {flagged.map((a) => (
-              <button key={a.slug} type="button" onClick={() => go(a.tier === "managed" ? "Managed" : "Freelance")} className="flex items-center gap-3 rounded-md border border-red/40 bg-red/5 px-3 py-2 text-left text-xs transition hover:border-red">
+              <button key={a.slug} type="button" onClick={() => go(a.tier === "managed" ? "Managed" : a.tier === "plus" ? "Plus" : "Free")} className="flex items-center gap-3 rounded-md border border-red/40 bg-red/5 px-3 py-2 text-left text-xs transition hover:border-red">
                 <span className="font-medium">{a.display_name}</span>
                 <span className="text-red">⚠ {a.neg} negative{a.neg === 1 ? "" : "s"}</span>
                 <span className="ml-auto text-muted">{(a.gate_status ?? "").toLowerCase() === "open" ? "gate open — review" : "gate closed"}</span>
@@ -635,8 +663,8 @@ function ArtistControls({ a, busy, setArtist, deleteArtist }: { a: AdminArtist; 
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-[10px] uppercase tracking-widest text-muted">Tier</span>
-        <span className="text-xs">{isManaged ? "Cerberus Managed" : "Freelance"}</span>
-        <ControlBtn on={false} busy={b} title="Switch tier. Freelance = artist self-hosts media through their own tunnel (no R2). Cerberus Managed = Cerberus hosts the media (R2) and runs the managed service. Click to toggle." label={isManaged ? "Make Freelance" : "Promote to Managed"} onClick={() => setArtist(a.slug, { tier: isManaged ? "free" : "managed" })} />
+        <span className="text-xs">{a.tier === "managed" ? "Cerberus Managed" : a.tier === "plus" ? "Independent · Plus" : "Independent · Free"}</span>
+        <ControlBtn on={false} busy={b} title="Independent = artist self-hosts media through their own tunnel (Free, or paid Plus). Managed = Cerberus hosts the media (R2) and represents them. This toggle flips Independent (Free) and Managed; the Plus tier is set by Stripe billing, not here." label={isManaged ? "Make Independent" : "Promote to Managed"} onClick={() => setArtist(a.slug, { tier: isManaged ? "free" : "managed" })} />
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-[10px] uppercase tracking-widest text-muted">Status</span>

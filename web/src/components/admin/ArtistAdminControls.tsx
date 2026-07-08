@@ -72,8 +72,8 @@ export function ArtistAdminControls({ a }: { a: ArtistAdminState }) {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-16 text-[10px] uppercase tracking-widest text-muted">Tier</span>
-        <span className="text-xs">{isManaged ? "Cerberus Managed" : "Freelance"}</span>
-        <Btn busy={busy} title="Switch tier. Freelance = artist self-hosts media through their own tunnel (no R2). Cerberus Managed = Cerberus hosts the media (R2) and runs the managed service. Click to toggle." label={isManaged ? "Make Freelance" : "Promote to Managed"} onClick={() => patch({ tier: isManaged ? "free" : "managed" })} />
+        <span className="text-xs">{a.tier === "managed" ? "Cerberus Managed" : a.tier === "plus" ? "Independent · Plus" : "Independent · Free"}</span>
+        <Btn busy={busy} title="Independent = artist self-hosts media through their own tunnel (Free, or paid Plus). Managed = Cerberus hosts the media (R2) and represents them. This toggle flips Independent (Free) and Managed; the Plus tier is set by Stripe billing, not here." label={isManaged ? "Make Independent" : "Promote to Managed"} onClick={() => patch({ tier: isManaged ? "free" : "managed" })} />
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-16 text-[10px] uppercase tracking-widest text-muted">Status</span>

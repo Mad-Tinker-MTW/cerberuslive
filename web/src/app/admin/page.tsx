@@ -116,7 +116,8 @@ export default async function AdminPage() {
   const metrics: AdminMetrics = {
     // People counts exclude the owner/admin (role 'admin').
     managed: await stat("SELECT COUNT(*) AS n FROM artist_profiles WHERE tier = 'managed'"),
-    freeArtists: await stat("SELECT COUNT(*) AS n FROM artist_profiles WHERE tier <> 'managed'"),
+    plus: await stat("SELECT COUNT(*) AS n FROM artist_profiles WHERE tier = 'plus'"),
+    free: await stat("SELECT COUNT(*) AS n FROM artist_profiles WHERE tier = 'free'"),
     fans: await stat("SELECT COUNT(*) AS n FROM user WHERE role = 'fan'"),
     venues: await stat("SELECT COUNT(*) AS n FROM user WHERE role = 'venue'"),
     reviewsPending: reviews.length,
