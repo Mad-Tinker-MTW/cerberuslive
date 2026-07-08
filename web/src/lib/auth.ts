@@ -1,6 +1,6 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { magicLink } from "better-auth/plugins/magic-link";
-import { username } from "better-auth/plugins";
+import { username, admin } from "better-auth/plugins";
 import { twoFactor } from "better-auth/plugins/two-factor";
 import { nextCookies } from "better-auth/next-js";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
@@ -72,6 +72,7 @@ export function getAuth(env: AuthEnv) {
     },
     plugins: [
       username(), // owner/admin sign-in by username + password
+      admin(), // admin lifecycle: createUser / setRole / setUserPassword (adminRoles defaults to ['admin'])
       twoFactor({ issuer: "Cerberus Control Deck" }), // authenticator TOTP for the owner
       magicLink({
         sendMagicLink: async ({ email, url }) => {

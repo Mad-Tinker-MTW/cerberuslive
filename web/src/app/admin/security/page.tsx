@@ -6,6 +6,7 @@ import { isControlDeckRequest } from "@/lib/host";
 import { getDb } from "@/lib/db";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { TwoFactorSetup } from "@/components/admin/TwoFactorSetup";
+import { AdminManager, type AdminRow } from "@/components/admin/AdminManager";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +35,12 @@ export default async function AdminSecurityPage() {
     .first<{ twoFactorEnabled: number }>();
   const enabled = (row?.twoFactorEnabled ?? 0) === 1;
 
+  const admins = (
+    await db
+      .prepare("SELECT id, email, username, name FROM user WHERE role = 'admin' ORDER BY createdAt")
+      .all<AdminRow>()
+  ).results ?? [];
+
   return (
     <>
       <SiteHeader />
@@ -44,6 +51,10 @@ export default async function AdminSecurityPage() {
           Two-factor for the control deck. Cloudflare Access also gates this host at the edge.
         </p>
         <TwoFactorSetup enabled={enabled} />
+
+        <div className="mt-8">
+          <AdminManager admins={admins} />
+        </div>
       </main>
     </>
   );
