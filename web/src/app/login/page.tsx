@@ -21,7 +21,7 @@ export default function LoginPage() {
     }
     setStatus("sending");
     setError("");
-    const { error } = await signIn.magicLink({ email, callbackURL: "/account" });
+    const { error } = await signIn.magicLink({ email, callbackURL: "/welcome" });
     if (error) {
       setError(error.message || "Something went wrong. Try again.");
       setStatus("error");

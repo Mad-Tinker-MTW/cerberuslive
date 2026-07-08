@@ -32,6 +32,13 @@ export default async function AccountPage() {
 
   const { user } = session;
   const db = getDb();
+  // Everyone needs a handle first; send un-onboarded users to pick one.
+  const handleRow = await db
+    .prepare("SELECT username FROM user WHERE id = ? LIMIT 1")
+    .bind(user.id)
+    .first<{ username: string | null }>();
+  if (!handleRow?.username) redirect("/welcome");
+
   const profile = await db
     .prepare(
       "SELECT slug, display_name, tunnel_url, media_origin, tier, roles, subscription_status, stripe_customer_id FROM artist_profiles WHERE user_id = ? LIMIT 1"

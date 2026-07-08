@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { authFromContext } from "@/lib/auth";
 import { getDb } from "@/lib/db";
+import { nextDossierId } from "@/lib/dossierId";
 
 export const dynamic = "force-dynamic";
 
@@ -55,11 +56,13 @@ export async function POST(req: Request) {
   }
 
   const now = new Date().toISOString();
+  // Auto-assign the next free-tier dossier ID (CLS-FR0A-001, ...); admin can override later.
+  const dossierId = await nextDossierId(db, "free");
   await db
     .prepare(
-      "INSERT INTO artist_profiles (user_id, slug, display_name, tier, created_at) VALUES (?, ?, ?, 'free', ?)"
+      "INSERT INTO artist_profiles (user_id, slug, display_name, tier, dossier_id, created_at) VALUES (?, ?, ?, 'free', ?, ?)"
     )
-    .bind(userId, slug, displayName, now)
+    .bind(userId, slug, displayName, dossierId, now)
     .run();
 
   // Promote a fan to the artist role, but never downgrade an elevated role
