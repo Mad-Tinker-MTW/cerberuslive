@@ -635,8 +635,8 @@ function ArtistControls({ a, busy, setArtist, deleteArtist }: { a: AdminArtist; 
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-[10px] uppercase tracking-widest text-muted">Tier</span>
-        <span className="text-xs">{isManaged ? "Cerberus Managed" : "Free"}</span>
-        <ControlBtn on={false} busy={b} title="Switch tier. Free = artist self-hosts media through their own tunnel (no R2). Cerberus Managed = Cerberus hosts the media (R2) and runs the managed service. Click to toggle." label={isManaged ? "Set Free" : "Promote to Managed"} onClick={() => setArtist(a.slug, { tier: isManaged ? "free" : "managed" })} />
+        <span className="text-xs">{isManaged ? "Cerberus Managed" : "Freelance"}</span>
+        <ControlBtn on={false} busy={b} title="Switch tier. Freelance = artist self-hosts media through their own tunnel (no R2). Cerberus Managed = Cerberus hosts the media (R2) and runs the managed service. Click to toggle." label={isManaged ? "Make Freelance" : "Promote to Managed"} onClick={() => setArtist(a.slug, { tier: isManaged ? "free" : "managed" })} />
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-[10px] uppercase tracking-widest text-muted">Status</span>
