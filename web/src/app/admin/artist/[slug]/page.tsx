@@ -108,7 +108,7 @@ export default async function AdminArtistDetail({ params }: { params: Promise<{ 
           {a.verified === 1 && <span className="text-green" title="verified">✓</span>}
           {a.featured === 1 && <span className="text-red" title="featured">★</span>}
           {a.suspended === 1 && <span className="rounded-full border border-red/40 bg-red/10 px-2 py-0.5 text-[10px] text-red">suspended</span>}
-          <Link href={`/artist/${a.slug}`} className="ml-auto text-sm text-red hover:underline">View public dossier &rarr;</Link>
+          <Link href={`/admin/artist/${a.slug}/preview`} className="ml-auto text-sm text-red hover:underline">View public dossier &rarr;</Link>
         </div>
 
         <Card title="Controls">
