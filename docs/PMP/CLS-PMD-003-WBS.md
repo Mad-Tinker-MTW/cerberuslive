@@ -73,6 +73,7 @@ Project Manager: Francisco De La Paz
 | 1.2.37 | Server-side admin artist search + pagination (api/admin/artists route, ADMIN_ARTIST_SELECT/SORT/PAGE_SIZE in db.ts) + real-booking counts (kind='booking') + Upcoming column (future accepted, ISO-date guarded) | Complete |
 | 1.2.38 | Booking structured-date field (L-064): native type=date picker on the dossier booking form (min=today, dark scheme), /api/bookings normalizes event_date to YYYY-MM-DD else null, and the ISO GLOB guard dropped from the Upcoming subquery (plain event_date >= date('now')) now that stored values are guaranteed ISO or null | Complete |
 | 1.2.39 | Per-track cover art + embedded-art reading (L-057): tracks.cover_url (mig 0024) so a single carries its own art (release cover still wins inside an album/EP); selfCoverUrl gateway helper; single render uses its own cover_url; register accepts per-track cover (relative->gateway URL / absolute passthrough). CerberusAgent desktop scan extract_cover pulls embedded APIC to a served .cerberus-covers/ sidecar via ffmpeg + image content-types in the static server | Complete |
+| 1.2.40 | Client editor UI (CerberusAgent, L-057b): 3-panel Organize-library (Library/Prep/Serve) scan-wired with a browser-dev mock + dev-preview affordance; Prep editable fields (title/voice/release/type/track#/composer) + derived AI-assisted; grouped-by-type Serve preview; Save-tags writes edits back into file tags via lofty (write_tags: voice->album_artist+artist, release->album, title/track/composer) then re-scans. Serve push + cover picker are later slices | Complete |
 | 1.2.10 | Migrate waitlist emails to platform invites | Pending |
 | 1.2.11 | Resend confirmation emails on waitlist signup | Pending |
 | 1.2.12 | Phase 1 validation: acceptance criteria verified | Pending |
@@ -411,4 +412,7 @@ Seeded from docs/HOURS.md, extended at checkpoint. 230.0 hours to date at $85/hr
 | 2026-07-08 | Client prep-page 3-column mockup (Library/Prep/Serve, per-track fields, stage pipeline) | Lead Developer | 0.5 |
 | 2026-07-08 | Cover-art verification: register cover matrix (relative->gateway/absolute/null) vs local D1, cargo tests, real embedded-APIC extraction proof, X:\Music art review (4 EP covers) | QA Engineer | 0.5 |
 | 2026-07-08 | Checkpoint (cover art + client design: WBS/CHANGELOG/registry/ledger/mirror/journal/report; Ravina spelling fix) | Technical Writer / PM | 0.5 |
-| **Total** | | | **288.5** |
+| 2026-07-08 | Client editor UI slice 1 (CerberusAgent): 3-panel Organize-library (Library/Prep/Serve), scan-wired + browser-dev mock + dev-preview affordance, editable Prep fields + derived AI-assisted, grouped-by-type Serve preview (1.2.40) | Lead Developer | 3.0 |
+| 2026-07-08 | Client editor UI slice 2 (CerberusAgent): Save-tags write-to-file via lofty (write_tags command + write_one_tag, voice->album_artist/artist, release->album, title/track/composer) + re-scan + frontend wiring (1.2.40) | Lead Developer | 2.0 |
+| 2026-07-08 | Client editor verification: browser-preview drive (open/edit/group/save flow), edit->preview test, lofty write_tags roundtrip cargo test on a real mp3 (1.2.40) | QA Engineer | 1.0 |
+| **Total** | | | **294.5** |
