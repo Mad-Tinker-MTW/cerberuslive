@@ -1,5 +1,5 @@
 import type { ArtistDossier, FeaturedTrack } from "@/lib/db";
-import { genreList } from "@/lib/db";
+import { genreList, artistLabel } from "@/lib/db";
 import { AudioPlayer } from "./AudioPlayer";
 
 export function FeaturedTrackCard({
@@ -80,6 +80,7 @@ function DossierTable({ artist }: { artist: ArtistDossier }) {
       good: artist.gate_status?.toLowerCase() === "open",
     },
     { label: "Booking Range", value: artist.booking_range },
+    { label: "Label", value: artistLabel(artist) },
     { label: "Member Since", value: artist.member_since },
   ];
   const present = rows.filter((r) => r.value);

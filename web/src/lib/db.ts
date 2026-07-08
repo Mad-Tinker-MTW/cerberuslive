@@ -116,7 +116,18 @@ export type ArtistDossier = Artist & {
   tunnel_url: string | null;
   media_origin: string | null;
   suspended: number;
+  // The artist's own label (artist-editable). managed_imprint is an admin-granted credential that,
+  // when set, makes the release label of record "Cerberus Live Studio" instead.
+  label: string | null;
+  managed_imprint: number;
 };
+
+/** The label of record shown on the dossier: the Cerberus imprint when admin-granted (managed
+ *  artists only), otherwise the artist's own label. Null when the artist has set none. */
+export function artistLabel(a: { label: string | null; managed_imprint: number }): string | null {
+  if (a.managed_imprint === 1) return "Cerberus Live Studio";
+  return a.label && a.label.trim() ? a.label.trim() : null;
+}
 
 export type Track = {
   id: number;
@@ -613,7 +624,7 @@ const DOSSIER_COLUMNS =
   "subtitle, dossier_id, artist_class, performance_type, set_length, travel_range, " +
   "availability_status, response_time, member_since, verified, booking_range, clearance, " +
   "signal_status, gate_status, sound_style, booking_email, roles, social_links, profile_json, " +
-  "tunnel_url, media_origin, suspended";
+  "tunnel_url, media_origin, suspended, label, managed_imprint";
 
 export async function getArtistDossier(
   slug: string

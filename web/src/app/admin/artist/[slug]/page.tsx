@@ -66,7 +66,7 @@ export default async function AdminArtistDetail({ params }: { params: Promise<{ 
   const db = getDb();
   const a = await db
     .prepare(
-      "SELECT slug, display_name, tier, verified, gate_status, suspended, featured, user_id, contact_email, tunnel_url, media_origin, (SELECT email FROM user WHERE user.id = artist_profiles.user_id) AS login_email FROM artist_profiles WHERE slug = ?"
+      "SELECT slug, display_name, tier, verified, gate_status, suspended, featured, managed_imprint, user_id, contact_email, tunnel_url, media_origin, (SELECT email FROM user WHERE user.id = artist_profiles.user_id) AS login_email FROM artist_profiles WHERE slug = ?"
     )
     .bind(slug)
     .first<Row>();

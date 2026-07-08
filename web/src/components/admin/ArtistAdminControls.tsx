@@ -11,6 +11,7 @@ export type ArtistAdminState = {
   gate_status: string | null;
   suspended: number;
   featured: number;
+  managed_imprint: number;
 };
 
 function Btn({ on, label, onClick, busy, danger, title }: { on?: boolean; label: string; onClick: () => void; busy: boolean; danger?: boolean; title?: string }) {
@@ -74,6 +75,9 @@ export function ArtistAdminControls({ a }: { a: ArtistAdminState }) {
         <span className="w-16 text-[10px] uppercase tracking-widest text-muted">Tier</span>
         <span className="text-xs">{a.tier === "managed" ? "Cerberus Managed" : a.tier === "plus" ? "Independent · Plus" : "Independent · Free"}</span>
         <Btn busy={busy} title="Independent = artist self-hosts media through their own tunnel (Free, or paid Plus). Managed = Cerberus hosts the media (R2) and represents them. This toggle flips Independent (Free) and Managed; the Plus tier is set by Stripe billing, not here." label={isManaged ? "Make Independent" : "Promote to Managed"} onClick={() => patch({ tier: isManaged ? "free" : "managed" })} />
+        {isManaged && (
+          <Btn on={a.managed_imprint === 1} busy={busy} title="Cerberus Live Studio imprint — the label of record for a managed release. Admin-granted only (managed artists); when on, the dossier shows 'Cerberus Live Studio' as the label instead of the artist's own." label={a.managed_imprint ? "CLS Imprint" : "Grant CLS Imprint"} onClick={() => patch({ managed_imprint: a.managed_imprint !== 1 })} />
+        )}
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-16 text-[10px] uppercase tracking-widest text-muted">Status</span>

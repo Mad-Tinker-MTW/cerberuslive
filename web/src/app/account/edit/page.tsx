@@ -22,7 +22,7 @@ const COLS =
   "slug, display_name, bio, city, genre_tags, photo_url, tier, subtitle, dossier_id, " +
   "artist_class, performance_type, set_length, travel_range, availability_status, " +
   "response_time, member_since, verified, booking_range, clearance, signal_status, " +
-  "gate_status, sound_style, booking_email, roles, social_links, profile_json";
+  "gate_status, sound_style, booking_email, label, roles, social_links, profile_json";
 
 export default async function EditProfilePage() {
   const auth = authFromContext();
@@ -55,6 +55,7 @@ export default async function EditProfilePage() {
     response_time: p.response_time ?? "",
     booking_range: p.booking_range ?? "",
     booking_email: p.booking_email ?? "",
+    label: p.label ?? "",
     dossier_id: p.dossier_id ?? "",
     socials,
     bestFor: profile.bestFor ?? [],

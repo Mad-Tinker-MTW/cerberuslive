@@ -14,6 +14,7 @@ type Body = {
   tier?: string;
   suspended?: boolean;
   featured?: boolean;
+  managed_imprint?: boolean;
   delete?: boolean;
 };
 
@@ -58,6 +59,20 @@ export async function POST(req: Request) {
   if (body.tier !== undefined) { sets.push("tier = ?"); vals.push(body.tier); }
   if (typeof body.suspended === "boolean") { sets.push("suspended = ?"); vals.push(body.suspended ? 1 : 0); }
   if (typeof body.featured === "boolean") { sets.push("featured = ?"); vals.push(body.featured ? 1 : 0); }
+  if (typeof body.managed_imprint === "boolean") {
+    // The Cerberus Live Studio imprint is a managed-only credential: grant it only when the artist
+    // is (or is being set) managed in this request. Revoking is always allowed.
+    if (body.managed_imprint) {
+      const effectiveTier =
+        body.tier ??
+        (await db.prepare("SELECT tier FROM artist_profiles WHERE slug = ?").bind(slug).first<{ tier: string }>())?.tier;
+      if (effectiveTier !== "managed") {
+        return json(400, { error: "The Cerberus Live Studio imprint is managed-tier only" });
+      }
+    }
+    sets.push("managed_imprint = ?");
+    vals.push(body.managed_imprint ? 1 : 0);
+  }
   if (sets.length === 0) return json(400, { error: "Nothing to update" });
 
   sets.push("updated_at = ?");

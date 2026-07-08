@@ -24,6 +24,7 @@ const SCALAR_FIELDS = [
   "dossier_id",
   "bio",
   "roles",
+  "label",
 ] as const;
 
 type Body = Partial<Record<(typeof SCALAR_FIELDS)[number], string>> & {

@@ -21,6 +21,7 @@ export type EditorValues = {
   response_time: string;
   booking_range: string;
   booking_email: string;
+  label: string;
   dossier_id: string;
   socials: Socials;
   bestFor: string[];
@@ -254,6 +255,7 @@ export function ProfileEditor({
         availability_status: v.availability_status,
         response_time: v.response_time,
         booking_range: v.booking_range,
+        label: v.label,
         booking_email: v.booking_email,
         dossier_id: v.dossier_id,
         socials: v.socials,
@@ -358,6 +360,7 @@ export function ProfileEditor({
         <Field label="Response time" value={v.response_time} onChange={(x) => set("response_time", x)} placeholder="Within 24 hours" />
         <Field label="Booking range" value={v.booking_range} onChange={(x) => set("booking_range", x)} placeholder="$300 - $750" />
         <Field label="Booking email" value={v.booking_email} onChange={(x) => set("booking_email", x)} placeholder="booking@cerberuslive.studio" />
+        <Field label="Label / production company" value={v.label} onChange={(x) => set("label", x)} placeholder="Mad Tinkers Music Productions" />
       </section>
 
       <section>
