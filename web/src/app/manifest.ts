@@ -17,9 +17,8 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#050505",
     categories: ["music", "entertainment"],
     icons: [
-      { src: "/icon-maskable.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" },
-      { src: "/logo.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/logo.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/web-app-manifest-192x192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+      { src: "/web-app-manifest-512x512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
     ],
   };
 }
