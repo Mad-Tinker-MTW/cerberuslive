@@ -102,6 +102,7 @@ export default async function Home() {
             hello@cerberuslive.studio
           </a>
         </p>
+        <p className="mt-2 text-muted/60">A division of Atlantis Prime Holdings LLC</p>
       </footer>
     </>
   );
