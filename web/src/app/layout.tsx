@@ -14,9 +14,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://cerberuslive.studio"),
   title: "Cerberus Live Studio",
   description:
     "A creator platform for underground artists, DJs, and performers. Profile, media vault, and live booking, all in one place.",
+  alternates: { canonical: "./" },
+  openGraph: {
+    type: "website",
+    siteName: "Cerberus Live Studio",
+    title: "Cerberus Live Studio",
+    description:
+      "A creator platform for underground artists, DJs, and performers. Profile, media vault, and live booking, all in one place.",
+    url: "https://cerberuslive.studio",
+    images: ["/logo.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cerberus Live Studio",
+    description:
+      "A creator platform for underground artists, DJs, and performers.",
+    images: ["/logo.png"],
+  },
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Cerberus" },
   icons: {
     icon: [

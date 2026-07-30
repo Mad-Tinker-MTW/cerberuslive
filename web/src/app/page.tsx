@@ -29,6 +29,9 @@ export default async function Home() {
     <>
       <SiteHeader />
 
+      <main>
+      <h1 className="sr-only">Cerberus Live Studio — a creator platform for underground artists, DJs, and performers</h1>
+
       {/* Hero */}
       <section className="flex flex-col items-center px-6 pt-12 text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -76,12 +79,12 @@ export default async function Home() {
       </section>
 
       {/* Discovery */}
-      <main className="mx-auto mt-16 w-full max-w-5xl px-6 pb-20">
+      <section className="mx-auto mt-16 w-full max-w-5xl px-6 pb-20">
         <div className="mb-6 flex items-center gap-3">
           <h2 className="text-xs uppercase tracking-widest text-muted">
             Discover Artists
           </h2>
-          <span className="text-xs text-muted/60">{artists.length}</span>
+          <span className="text-xs text-muted">{artists.length}</span>
           <div className="h-px flex-1 bg-border" />
         </div>
 
@@ -90,9 +93,10 @@ export default async function Home() {
         ) : (
           <DiscoveryGrid artists={artists} />
         )}
+      </section>
       </main>
 
-      <footer className="border-t border-border px-6 py-8 text-center text-xs tracking-wide text-muted/70">
+      <footer className="border-t border-border px-6 py-8 text-center text-xs tracking-wide text-muted">
         <p>
           &copy; 2026 Cerberus Live Studio &middot;{" "}
           <a
@@ -102,11 +106,11 @@ export default async function Home() {
             hello@cerberuslive.studio
           </a>
         </p>
-        <p className="mt-2 text-muted/60">
+        <p className="mt-2 text-muted">
           A division of{" "}
           <a href="https://atlantisprimeholdings.com" className="underline transition hover:text-red">Atlantis Prime Holdings</a> LLC
         </p>
-        <p className="mt-1 text-muted/60">
+        <p className="mt-1 text-muted">
           Built and supported by tools from{" "}
           <a href="https://madtinkersworkshop.com" className="underline transition hover:text-red">Mad Tinker&rsquo;s Workshop</a>
         </p>
