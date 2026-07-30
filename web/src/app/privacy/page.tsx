@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: "Privacy Policy · Cerberus Live Studio",
   description:
     "Privacy Policy for Cerberus Live Studio: what we collect, how we use it, and the choices you have.",
   alternates: { canonical: "/privacy" },
