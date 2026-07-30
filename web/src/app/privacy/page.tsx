@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -10,12 +11,12 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-16">
-      <a
+      <Link
         href="/"
         className="text-xs uppercase tracking-[0.2em] text-muted transition hover:text-foreground"
       >
         &larr; Cerberus Live Studio
-      </a>
+      </Link>
       <h1 className="mt-8 text-4xl font-bold tracking-tight">Privacy Policy</h1>
       <p className="mt-2 text-xs uppercase tracking-[0.2em] text-muted">
         Effective July 30, 2026

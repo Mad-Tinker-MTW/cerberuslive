@@ -3,6 +3,7 @@ import { getDb, type Artist } from "@/lib/db";
 import { isControlDeckRequest } from "@/lib/host";
 import { SiteHeader } from "@/components/dossier/SiteHeader";
 import { DiscoveryGrid } from "@/components/DiscoveryGrid";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -106,9 +107,9 @@ export default async function Home() {
             hello@cerberuslive.studio
           </a>
           {" "}&middot;{" "}
-          <a href="/privacy" className="transition hover:text-red">
+          <Link href="/privacy" className="transition hover:text-red">
             Privacy Policy
-          </a>
+          </Link>
         </p>
         <p className="mt-2 text-muted">
           A division of{" "}
