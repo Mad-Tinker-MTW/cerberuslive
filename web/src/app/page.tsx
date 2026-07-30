@@ -105,6 +105,10 @@ export default async function Home() {
           >
             hello@cerberuslive.studio
           </a>
+          {" "}&middot;{" "}
+          <a href="/privacy" className="transition hover:text-red">
+            Privacy Policy
+          </a>
         </p>
         <p className="mt-2 text-muted">
           A division of{" "}
