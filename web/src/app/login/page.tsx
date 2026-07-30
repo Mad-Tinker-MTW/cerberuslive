@@ -33,7 +33,7 @@ export default function LoginPage() {
   return (
     <main className="mx-auto flex min-h-[70vh] w-full max-w-md flex-col justify-center px-6">
       <Link href="/" className="mb-8 text-center text-lg font-bold tracking-tight">
-        CERBERUS <span className="text-red">LIVE</span>
+        CERBERUS <span className="text-red-bright">LIVE</span>
       </Link>
 
       <div className="rounded-xl border border-border bg-panel p-6">
@@ -70,7 +70,7 @@ export default function LoginPage() {
               >
                 {status === "sending" ? "Sending..." : "Send sign-in link"}
               </button>
-              {status === "error" && <p className="text-sm text-red">{error}</p>}
+              {status === "error" && <p className="text-sm text-red-bright">{error}</p>}
             </form>
           </>
         )}
