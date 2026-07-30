@@ -18,7 +18,13 @@ export const metadata: Metadata = {
   description:
     "A creator platform for underground artists, DJs, and performers. Profile, media vault, and live booking, all in one place.",
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Cerberus" },
-  icons: { icon: "/favicon.ico", apple: "/logo.png" },
+  icons: {
+    icon: [
+      { url: "/icon0.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "48x48" },
+    ],
+    apple: "/logo.png",
+  },
 };
 
 export const viewport: Viewport = {
