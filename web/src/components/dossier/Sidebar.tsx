@@ -68,7 +68,7 @@ function QuickInfoCard({ artist }: { artist: ArtistDossier }) {
 function DossierIdCard({ id }: { id: string }) {
   return (
     <div className="relative overflow-hidden rounded-xl border border-border bg-panel-soft p-5">
-      <span className="pointer-events-none absolute -right-3 -top-2 select-none text-6xl font-black text-foreground/[0.03]">
+      <span aria-hidden className="pointer-events-none absolute -right-3 -top-2 select-none text-6xl font-black text-foreground/[0.03]">
         CERBERUS
       </span>
       <h3 className="mb-1 text-xs uppercase tracking-widest text-muted">
@@ -135,7 +135,7 @@ export function ArtistSidebar({
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-6xl font-black text-foreground/10">
+          <div aria-hidden className="flex h-full w-full items-center justify-center text-6xl font-black text-foreground/10">
             {initials}
           </div>
         )}

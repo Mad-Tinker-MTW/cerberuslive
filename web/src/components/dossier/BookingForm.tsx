@@ -80,7 +80,7 @@ export function BookingForm({
               disabled={disabled}
               onClick={() => setKind(k)}
               className={`rounded-md border px-3 py-1.5 text-xs transition disabled:cursor-not-allowed disabled:opacity-40 ${
-                kind === k ? "border-red bg-red/10 text-red" : "border-border text-muted hover:border-red"
+                kind === k ? "border-red bg-red/10 text-red-bright" : "border-border text-muted hover:border-red"
               }`}
             >
               {k === "booking" ? "Request Booking" : "Message"}

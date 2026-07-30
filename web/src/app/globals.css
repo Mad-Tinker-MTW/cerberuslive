@@ -5,7 +5,8 @@
   --background: #050505;
   --foreground: #f2f2f2;
   --muted: #8f8f8f;
-  --red: #ee2a30;
+  --red: #d71920;
+  --red-bright: #ff4a50;
   --red-dark: #b3121e;
   --red-soft: #7a1115;
   --green: #28c76f;
@@ -20,6 +21,7 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-red: var(--red);
+  --color-red-bright: var(--red-bright);
   --color-red-dark: var(--red-dark);
   --color-red-soft: var(--red-soft);
   --color-green: var(--green);

@@ -15,7 +15,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-6 px-4 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <span className="text-lg font-bold tracking-tight">
-            CERBERUS <span className="text-red">LIVE</span>
+            CERBERUS <span className="text-red-bright">LIVE</span>
           </span>
         </Link>
 
