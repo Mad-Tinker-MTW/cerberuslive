@@ -68,9 +68,10 @@ function QuickInfoCard({ artist }: { artist: ArtistDossier }) {
 function DossierIdCard({ id }: { id: string }) {
   return (
     <div className="relative overflow-hidden rounded-xl border border-border bg-panel-soft p-5">
-      <span aria-hidden className="pointer-events-none absolute -right-3 -top-2 select-none text-6xl font-black text-foreground/[0.03]">
-        CERBERUS
-      </span>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-3 -top-2 select-none text-6xl font-black text-foreground/[0.03] after:content-['CERBERUS']"
+      />
       <h3 className="mb-1 text-xs uppercase tracking-widest text-muted">
         Dossier ID
       </h3>
@@ -135,9 +136,11 @@ export function ArtistSidebar({
             className="h-full w-full object-cover"
           />
         ) : (
-          <div aria-hidden className="flex h-full w-full items-center justify-center text-6xl font-black text-foreground/10">
-            {initials}
-          </div>
+          <div
+            aria-hidden
+            data-initials={initials}
+            className="flex h-full w-full items-center justify-center text-6xl font-black text-foreground/10 before:content-[attr(data-initials)]"
+          />
         )}
         {artist.verified === 1 && (
           <span className="absolute bottom-3 left-3 rounded-md border border-green/40 bg-green/15 px-2 py-1 text-xs font-medium text-green">
