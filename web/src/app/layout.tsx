@@ -38,10 +38,10 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Cerberus" },
   icons: {
     icon: [
-      { url: "/icon0.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/icon1.png", type: "image/png", sizes: "96x96" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
-    apple: "/logo.png",
+    apple: "/apple-icon.png",
   },
 };
 
