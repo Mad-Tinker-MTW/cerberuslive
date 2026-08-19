@@ -1,0 +1,44 @@
+# TEMPORARY: builds and deploys the Highways & Byways site as the `hbt-preview`
+# worker so it can be looked at on a real URL. Runs only from this branch — it
+# never touches main, and deleting this file (plus the worker and its custom
+# domain) removes the preview entirely.
+name: Deploy hbt-preview
+
+on:
+  push:
+    branches: [claude/f500-website-logo-1-g5yiaq]
+    paths:
+      - "hbtravel/**"
+      - ".github/workflows/hbt-preview.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hbtravel
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 949e06c2a8427e64f40783d3cb3aefb2
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      PREVIEW: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Unit tests
+        run: bun test
+
+      - name: Build (OpenNext)
+        run: bunx opennextjs-cloudflare build
+
+      - name: Deploy preview worker
+        if: ${{ env.CLOUDFLARE_API_TOKEN != '' }}
+        run: bunx wrangler deploy

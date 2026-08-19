@@ -1,0 +1,16 @@
+{
+  // TEMPORARY preview deploy of the Highways & Byways site (hbt-preview worker).
+  // Not the production wiring: no custom domain here, no D1/R2/KV bindings, and
+  // the worker can be deleted with `bunx wrangler delete --name hbt-preview`.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hbt-preview",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true },
+  "vars": { "PREVIEW": "1" }
+}

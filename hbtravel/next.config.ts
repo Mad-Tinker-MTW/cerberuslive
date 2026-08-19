@@ -17,6 +17,11 @@ const csp = [
   "upgrade-insecure-requests",
 ].join("; ");
 
+// Preview deploys (PREVIEW=1) additionally ask crawlers to stay away.
+const previewHeaders = process.env.PREVIEW
+  ? [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]
+  : [];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   async headers() {
@@ -28,6 +33,7 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
+          ...previewHeaders,
         ],
       },
     ];
