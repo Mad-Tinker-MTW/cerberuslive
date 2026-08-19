@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/*
+  Highways & Byways Travel — luxury brand system.
+  Palette from the brand sheet: gold, champagne, onyx, midnight blue, platinum.
+*/
+:root {
+  --onyx: #0a0b0d;
+  --onyx-raised: #101215;
+  --onyx-panel: #14171b;
+  --midnight: #0d1b2a;
+  --midnight-deep: #08121c;
+  --gold: #d4af37;
+  --gold-deep: #a8842a;
+  --champagne: #e6c47a;
+  --platinum: #c0c0c0;
+  --ivory: #f4f1ea;
+  --smoke: #9aa1a9;
+  --hairline: rgba(212, 175, 55, 0.22);
+  --hairline-soft: rgba(192, 192, 192, 0.14);
+}
+
+@theme inline {
+  --color-onyx: var(--onyx);
+  --color-onyx-raised: var(--onyx-raised);
+  --color-onyx-panel: var(--onyx-panel);
+  --color-midnight: var(--midnight);
+  --color-midnight-deep: var(--midnight-deep);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-champagne: var(--champagne);
+  --color-platinum: var(--platinum);
+  --color-ivory: var(--ivory);
+  --color-smoke: var(--smoke);
+  --color-hairline: var(--hairline);
+
+  --font-display: var(--font-display), "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--onyx);
+  color: var(--ivory);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--onyx);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ---------- Type ---------- */
+.display {
+  font-family: var(--font-display), "Cormorant Garamond", serif;
+  font-weight: 300;
+  font-variant-numeric: lining-nums;
+  letter-spacing: 0.01em;
+  line-height: 1.06;
+}
+
+.eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--champagne);
+}
+
+.lede {
+  color: color-mix(in srgb, var(--ivory) 74%, transparent);
+  line-height: 1.75;
+}
+
+/* ---------- Surfaces ---------- */
+.gold-text {
+  background: linear-gradient(100deg, var(--gold-deep) 0%, var(--champagne) 42%, var(--gold) 70%, var(--champagne) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gold-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold) 18%, var(--champagne) 50%, var(--gold) 82%, transparent);
+}
+
+.panel {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012) 45%, rgba(0, 0, 0, 0.25));
+  border: 1px solid var(--hairline-soft);
+  backdrop-filter: blur(6px);
+}
+
+.panel-gold {
+  border-color: var(--hairline);
+  box-shadow: 0 24px 60px -32px rgba(212, 175, 55, 0.45);
+}
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+}
+
+/* ---------- Motion ---------- */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+.rise {
+  animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes shimmer {
+  0% { background-position: -180% 0; }
+  100% { background-position: 180% 0; }
+}
+
+.shimmer {
+  background-size: 220% auto;
+  animation: shimmer 7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .rise, .shimmer { animation: none; }
+}
